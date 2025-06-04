@@ -3,33 +3,35 @@ function Invoke-WithRetry {
         [Parameter(Mandatory = $true)]
         [scriptblock]$ScriptBlock,
 
-        [scriptblock]$OnFail,
+        [scriptblock]$OnFail = {},
 
         [int]$MaxRetries = 3,
         [int]$DelaySeconds = 2,
         [switch]$VerboseOutput
     )
 
+    if (-not $ScriptBlock) {
+        throw "ScriptBlock is null or not provided"
+    }
+
     $attempt = 0
     while ($attempt -lt $MaxRetries) {
         try {
             $attempt++
-            if ($VerboseOutput) {
+            if ($VerboseOutput -and $attempt -gt 1) {
                 Write-Host "Attempt $attempt..."
             }
+
             return & $ScriptBlock
         }
         catch {
-            if ($OnFail) {
-                & $OnFail.Invoke($_, $attempt)
-            }
-
             if ($attempt -lt $MaxRetries) {
                 Write-Warning "Attempt $attempt failed: $_. Retrying in $DelaySeconds second(s)..."
                 Start-Sleep -Seconds $DelaySeconds
             }
             else {
                 Write-Error "All $MaxRetries attempts failed. Last error: $_"
+                if ($OnFail) { & $OnFail }
                 return $null
             }
         }
