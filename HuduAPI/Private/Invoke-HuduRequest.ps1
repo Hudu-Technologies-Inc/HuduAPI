@@ -1,15 +1,19 @@
-function Get-CastIfNumeric {
-    param([Parameter(Mandatory=$true)][object]$Value)
+function Set-AssetCustomFieldNumerals {
+    param([ref]$BodyObject)
 
-    if ($Value -is [string]) {
-        if ($Value -match '^\d+$') {
-            return [int]$Value
-        }
-        elseif ($Value -match '^\d+\.\d+$') {
-            return [double]$Value
+    if (
+        $BodyObject.Value.asset -and
+        $BodyObject.Value.asset.custom_fields -and
+        $BodyObject.Value.asset.custom_fields -is [System.Collections.IEnumerable]
+    ) {
+        foreach ($field in $BodyObject.Value.asset.custom_fields) {
+            foreach ($key in $field.Keys) {
+                if ($key -match 'seats|quantity|count' -and $field[$key] -is [string]) {
+                    $field[$key] = Get-CastIfNumeric $field[$key]
+                }
+            }
         }
     }
-    return $Value
 }
 
 function Invoke-HuduRequest {
@@ -65,7 +69,7 @@ function Invoke-HuduRequest {
 
     # Sort parameters
     foreach ($Item in ($Params.GetEnumerator() | Sort-Object -CaseSensitive -Property Key)) {
-        $ParamCollection.Add($Item.Key, $(Get-CastIfNumeric $Item.Value))
+        $ParamCollection.Add($Item.Key, $Item.Value)
     }
 
     # Query string
@@ -101,8 +105,11 @@ function Invoke-HuduRequest {
     }
 
     if ($Body) {
-        $RestMethod.Body = $Body
-        Write-Verbose $Body
+        if ($Body -is [hashtable]) {
+            Set-AssetCustomFieldNumerals -BodyObject ([ref]$Body)
+        }
+        $RestMethod.Body = $Body | ConvertTo-Json -Depth 256
+        Write-Verbose $RestMethod.Body
     }
 
     if ($Form) {
