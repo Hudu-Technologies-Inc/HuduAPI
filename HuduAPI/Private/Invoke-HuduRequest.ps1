@@ -1,3 +1,16 @@
+function Get-CastIfNumeric {
+    param([Parameter(Mandatory=$true)][object]$Value)
+
+    if ($Value -is [string]) {
+        if ($Value -match '^\d+$') {
+            return [int]$Value
+        }
+        elseif ($Value -match '^\d+\.\d+$') {
+            return [double]$Value
+        }
+    }
+    return $Value
+}
 
 function Invoke-HuduRequest {
     <#
@@ -52,7 +65,7 @@ function Invoke-HuduRequest {
 
     # Sort parameters
     foreach ($Item in ($Params.GetEnumerator() | Sort-Object -CaseSensitive -Property Key)) {
-        $ParamCollection.Add($Item.Key, $Item.Value)
+        $ParamCollection.Add($Item.Key, $(Get-CastIfNumeric $Item.Value))
     }
 
     # Query string
