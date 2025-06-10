@@ -105,9 +105,14 @@ function Invoke-HuduRequest {
     }
 
     if ($Body) {
-        if ($Body -is [hashtable]) {
+        if ($Body -is [string] -and $Body.Trim().StartsWith('{')) {
+            $Body = $Body | ConvertFrom-Json -Depth 256
+        }
+
+        if ($Body -is [hashtable] -or $Body -is [pscustomobject]) {
             Set-AssetCustomFieldNumerals -BodyObject ([ref]$Body)
         }
+
         $RestMethod.Body = $Body | ConvertTo-Json -Depth 256
         Write-Verbose $RestMethod.Body
     }
