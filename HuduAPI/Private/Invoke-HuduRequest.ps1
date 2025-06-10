@@ -1,3 +1,17 @@
+function Get-CastIfNumeric {
+    param([Parameter(Mandatory=$true)][object]$Value)
+
+    if ($Value -is [string]) {
+        $Value = $Value.Trim()
+        if ($Value -match '^\d+$') {
+            return [int]$Value
+        }
+        elseif ($Value -match '^\d+\.\d+$') {
+            return [double]$Value
+        }
+    }
+    return $Value
+}
 function Set-AssetCustomFieldNumerals {
     param([ref]$BodyObject)
 
@@ -7,11 +21,9 @@ function Set-AssetCustomFieldNumerals {
         $BodyObject.Value.asset.custom_fields -is [System.Collections.IEnumerable]
     ) {
         foreach ($field in $BodyObject.Value.asset.custom_fields) {
-            foreach ($key in $field.Keys) {
-                if ($key -match 'seats|quantity|count' -and $field[$key] -is [string]) {
+            foreach ($key in $field.Keys | Where-Object $_ -is [string]) {
                     $field[$key] = Get-CastIfNumeric $field[$key]
                 }
-            }
         }
     }
 }
@@ -106,7 +118,11 @@ function Invoke-HuduRequest {
 
     if ($Body) {
         if ($Body -is [string] -and $Body.Trim().StartsWith('{')) {
-            $Body = $Body | ConvertFrom-Json -Depth 256
+            try {
+                $Body = $Body | ConvertFrom-Json -Depth 256
+            } catch {
+                Write-Warning "Failed to deserialize Body JSON. Sending as-is."
+            }
         }
 
         if ($Body -is [hashtable] -or $Body -is [pscustomobject]) {
