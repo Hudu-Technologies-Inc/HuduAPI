@@ -14,33 +14,84 @@ function Get-UnderscoresAllowable {
 }
 
 function Remove-UnderscoresInFields {
-    param (
-        [Array]$fields,
-        [bool]$isLayout=$false
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)]
+        $Fields,
+
+        # Only clean the "label" property in asset layout field objects
+        [switch]$IsLayout,
+
+        # Default is a space; coerced to string to prevent $true -> "True"
+        [string]$ReplaceWith = ' ',
+
+        # Optionally drop null/empty values
+        [switch]$DropNullValues
     )
-    $cleansed = @()
-    if (-not $fields){ return $null }
-    if ($true -eq $isLayout){
-        foreach ($f in $fields){
-            $field = @{}
-            foreach ($prop in $f.Keys | where-object {$_ -ne 'label'}){
-                if (-not ([string]::IsNullOrWhiteSpace($prop)) -and -not [string]::IsNullOrWhiteSpace($f[$prop])){
-                    $field[$prop]=$f[$prop]
-                }
-                $field["label"]="$($f["label"] -replace '_'," ")".Trim()
-            }
-            $cleansed+=$field
+
+    begin {
+        # Coerce once; guarantees string even if caller passed a bool accidentally
+        $Replacement = [string]$ReplaceWith
+
+        function As-Enumerable($x) {
+            if ($null -eq $x) { @() }
+            elseif ($x -is [System.Collections.IEnumerable] -and -not ($x -is [string])) { $x }
+            else { ,$x }
         }
-    } else {
-        foreach ($f in $fields){
-            $field = @{}
-            foreach ($kvpair in $f.GetEnumerator()){
-                if (-not ([string]::IsNullOrWhiteSpace($kvpair.Name)) -and -not [string]::IsNullOrWhiteSpace("$($kvpair.Value)")){
-                    $newKey = "$("$($kvpair.Name)" -replace "_"," ")".Trim()
-                    $field[$newKey] = $kvpair.Value}
+        function Get-Pairs($obj) {
+            if ($obj -is [System.Collections.IDictionary]) {
+                $obj.GetEnumerator() | ForEach-Object {
+                    [PSCustomObject]@{ Name = $_.Key; Value = $_.Value }
+                }
+            } else {
+                $obj.PSObject.Properties | ForEach-Object {
+                    [PSCustomObject]@{ Name = $_.Name; Value = $_.Value }
                 }
             }
-            $cleansed += $field
         }
-    return $cleansed
+        function Is-Empty([object]$v) {
+            if ($null -eq $v) { return $true }
+            if ($v -is [string]) { return [string]::IsNullOrWhiteSpace($v) }
+            return $false
+        }
+    }
+
+    process {
+        $out = @()
+
+        foreach ($f in (As-Enumerable $Fields)) {
+            if ($null -eq $f) { continue }
+
+            if ($IsLayout) {
+                # Only touch "label"
+                $new = [ordered]@{}
+                foreach ($p in Get-Pairs $f) {
+                    if ($p.Name -eq 'label' -and $p.Value -is [string]) {
+                        $new['label'] = $p.Value.Replace('_', $Replacement).Trim()
+                    } else {
+                        if ($DropNullValues) {
+                            if (-not (Is-Empty $p.Value)) { $new[$p.Name] = $p.Value }
+                        } else {
+                            $new[$p.Name] = $p.Value
+                        }
+                    }
+                }
+                $out += $new
+            } else {
+                # Transform ALL keys
+                $new = [ordered]@{}
+                foreach ($p in Get-Pairs $f) {
+                    $newKey = ($p.Name.ToString()).Replace('_', $Replacement).Trim()
+                    if ($DropNullValues) {
+                        if (-not (Is-Empty $p.Value)) { $new[$newKey] = $p.Value }
+                    } else {
+                        $new[$newKey] = $p.Value
+                    }
+                }
+                $out += $new
+            }
+        }
+
+        $out
+    }
 }

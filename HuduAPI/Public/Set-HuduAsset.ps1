@@ -104,7 +104,8 @@ function Set-HuduAsset {
         }
     
         if ($Fields) {
-            $Asset.asset.custom_fields = $Fields
+            $validatedFields = $( if (-not $(Get-UnderscoresAllowable)) {Remove-UnderscoresInFields -Fields $Fields -DropNullValues} else {$Fields})
+            $Asset.asset.custom_fields = $validatedFields
         }
     
         if ($Slug) {
