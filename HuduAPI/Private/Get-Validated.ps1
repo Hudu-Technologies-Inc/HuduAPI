@@ -3,22 +3,25 @@ function Get-UnderscoresReplacedFields {
     param(
         [Parameter(Mandatory)][string]$AssetLayoutId
     )
-    $cacheKey = "assetlayout:$AssetLayoutId"
-    $layout = Get-CacheItem -Key $cacheKey
-    if (-not $layout) {
-        $layout = Get-HuduAssetLayouts -Id $AssetLayoutId
+    $layout = $null
+    try {
+        $layout = get-huduassetlayout -id $assetlayoutid
         $layout = $layout.asset_layout ?? $layout
-    }
+    } catch {return $null}
     if (-not $layout) { return $null }
 
     # Detect if any label actually contains underscores
-    $hasUnders = @(
-        $layout.fields |
-        ForEach-Object { $_.label } |
-        Where-Object { $_ -is [string] -and $_ -match '_' }
-    ).Count -gt 0
+    $hasUnders = $false
+    if ($layout.fields) {
+        $hasUnders = @(
+            $layout.fields |
+            ForEach-Object { $_.label } |
+            Where-Object { $_ -is [string] -and $_ -match '_' }
+        ).Count -gt 0
+    }
 
     if ($hasUnders) {
+        write-host "warn- underscores present in layout"
         $updatedFields = $layout.fields | Remove-UnderscoresInFields -IsLayout
 
         $oldJson = $layout.fields    | ConvertTo-Json -Depth 50 -Compress
@@ -29,10 +32,9 @@ function Get-UnderscoresReplacedFields {
             $null = Set-HuduAssetLayout -Id $AssetLayoutId -Fields $updatedFields
             $layout = Get-HuduAssetLayouts -Id $AssetLayoutId
             $layout = $layout.asset_layout ?? $layout
+            write-host "layout updated to not include underscores in fields."
         }
     }
-
-    Set-CacheItem -Key $cacheKey -Value $layout
     return $layout
 }
 
@@ -42,19 +44,34 @@ function Get-ValidatedAssetFields {
         [int]$assetLayoutId
     )
     $layout = Get-UnderscoresReplacedFields -AssetLayoutId $assetLayoutId
-    $layoutlabelset = $layout.fields.label
-    $validatedFields = @()
-    foreach ($field in $fields){
-        foreach ($layoutLabel in $layoutlabelset) {
-            if (test-equiv -A $field.label -B $label){
-                $updated = $field
+    if (-not $layout) { return @() }
+
+    $layoutLabelSet = @($layout.fields.label)
+
+    $validatedFields = foreach ($field in $fields) {
+        $matched = $false
+        foreach ($layoutLabel in $layoutLabelSet) {
+            if (Test-Equiv -A $field.label -B $layoutLabel) {
+                # shallow clone to avoid mutating original
+                $updated = @()
+                if ($field -is [PSCustomObject]){
+                    foreach ($p in $field.PSObject.Properties) {
+                        $updated+= @{$p.Name = $p.Value}
+                    }
+                } else {
+                    $updated = $field.clone()
+                }
                 $updated.label = $layoutLabel
-                $validatedFields += $updated
+                $matched = $true
+                $updated
+                break
             }
         }
+        if (-not $matched) { $field }
     }
-    return $($validatedFields | Remove-UnderscoresInFields)
+    $validatedFields | Remove-UnderscoresInFields
 }
+
 
 function Remove-UnderscoresInFields {
     [CmdletBinding()]
