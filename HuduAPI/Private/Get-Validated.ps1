@@ -69,7 +69,7 @@ function Set-UnderscoresSanitizedLayout {
 function Convert-AssetFieldsToCanonical {
   param(
     [Parameter(Mandatory)][array]$Fields,      # PSCustomObject[] or Hashtable[]
-    [Parameter(Mandatory)][int]$AssetLayoutId,
+    [Parameter(Mandatory)][int]$AssetLayoutId
   )
 
   $labelMap = Get-LayoutLabelMap -AssetLayoutId $AssetLayoutId
