@@ -12,7 +12,7 @@
     RootModule        = '.\HuduAPI.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '3.14.15'
+    ModuleVersion     = '3.14.77'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()

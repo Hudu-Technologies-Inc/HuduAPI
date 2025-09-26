@@ -182,7 +182,7 @@ It "Creates a Procedure (with tasks), switches to procedure template, creates fr
         Write-Host "Created global process template $($createdGlobalProcedureFromTemplate.id)" -ForegroundColor Green
 
         # 2.7 Kick off a procedure against first asset of test company
-        $target_asset=$(Get-HuduAssets -CompanyId $testCompanyId | Select-Object -First 1).asset
+        $target_asset=Get-HuduAssets -CompanyId $testCompanyId | Select-Object -First 1
         $kickoff = Start-HuduProcedure -id $createdProcedureFromTemplate.id -AssetId $target_asset.id -name "kickoff -$($target_asset.name)"
         $kickoff | Get-Member
         Write-Host "Kicked off new process $($kickoff.id) against asset $($target_asset.id)" -ForegroundColor Green
