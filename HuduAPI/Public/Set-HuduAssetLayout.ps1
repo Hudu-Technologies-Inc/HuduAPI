@@ -134,8 +134,7 @@ function Set-HuduAssetLayout {
     }
 
     if ($Fields) {
-        $validatedFields = Remove-UnderscoresInFields -Fields $Fields -isLayout
-        $AssetLayout.asset_layout.fields = $validatedFields
+        $AssetLayout.asset_layout.fields = $Fields
     }
 
     if ($IncludePasswords) {

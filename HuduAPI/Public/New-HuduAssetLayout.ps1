@@ -119,8 +119,7 @@ function New-HuduAssetLayout {
     $AssetLayout.asset_layout.add('color', $Color)
     $AssetLayout.asset_layout.add('icon_color', $IconColor)
 
-    $validatedFields = Remove-UnderscoresInFields -Fields $Fields -isLayout
-    $AssetLayout.asset_layout.add('fields', $validatedFields)
+    $AssetLayout.asset_layout.add('fields', $Fields)
     #$AssetLayout.asset_layout.add('active', $Active)
 
     if ($IncludePasswords) {

@@ -88,7 +88,7 @@ function New-HuduAsset {
     }
 
     if ($Fields) {
-        $validatedFields = Get-ValidatedAssetFields -Fields $Fields -AssetLayoutId $AssetLayoutId
+        $validatedFields = Convert-AssetFieldsToCanonical -Fields $Fields -AssetLayoutId $AssetLayoutId
         $Asset.asset.add('custom_fields', $validatedFields)
     }
 
