@@ -112,7 +112,7 @@ function Set-HuduAssetLayout {
             Default { Write-Error "Invalid field type: $($field.'field_type') found in field $($field.name)"; break }
         }
     }
-    $Object = Get-HuduAssetLayouts -id $Id
+    $Object = Get-UnderscoresReplacedFields -AssetLayoutId $Id
 
     $AssetLayout = [ordered]@{asset_layout = $Object }
     #$AssetLayout.asset_layout = $Object
@@ -134,7 +134,7 @@ function Set-HuduAssetLayout {
     }
 
     if ($Fields) {
-        $validatedFields = $( if (-not $(Get-UnderscoresAllowable)) {Remove-UnderscoresInFields -Fields $Fields -isLayout} else {$Fields})
+        $validatedFields = Remove-UnderscoresInFields -Fields $Fields -isLayout
         $AssetLayout.asset_layout.fields = $validatedFields
     }
 

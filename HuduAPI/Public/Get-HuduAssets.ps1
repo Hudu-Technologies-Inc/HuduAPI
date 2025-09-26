@@ -53,8 +53,8 @@ function Get-HuduAssets {
     )
 
     if ($AssetLayout) {
-        if (!$script:AssetLayouts) { Get-HuduAssetLayouts | Out-Null }
-        $AssetLayoutId = $script:AssetLayouts | Where-Object { $_.name -eq $AssetLayout } | Select-Object -ExpandProperty id
+        $assetLayout = Get-UnderscoresReplacedFields
+        $AssetLayoutId = $assetLayout.id
     }
 
     if ($id -and $CompanyId) {

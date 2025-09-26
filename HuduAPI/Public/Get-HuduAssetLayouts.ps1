@@ -47,6 +47,11 @@ function Get-HuduAssetLayouts {
         if (!$Name -and !$Slug) {
             $script:AssetLayouts = $AssetLayouts | Sort-Object -Property name
         }
+        foreach ($layout in $AssetLayouts) {
+            $layoutid = $layout.asset_layout.id ?? $layout.id
+            Set-CacheItem -Key "assetlayout:$layoutid" -Value $layout          
+        }
+
         $AssetLayouts
     }
 }

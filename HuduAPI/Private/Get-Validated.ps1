@@ -1,16 +1,59 @@
-$underscoreAllowableVersionArray = @(([version]"2.37.1"),([version]"2.38.0"))
+function Get-UnderscoresReplacedFields {
+    [CmdletBinding(SupportsShouldProcess)]
+    param(
+        [Parameter(Mandatory)][string]$AssetLayoutId
+    )
+    $cacheKey = "assetlayout:$AssetLayoutId"
+    $layout = Get-CacheItem -Key $cacheKey
+    if (-not $layout) {
+        $layout = Get-HuduAssetLayouts -Id $AssetLayoutId
+        $layout = $layout.asset_layout ?? $layout
+    }
+    if (-not $layout) { return $null }
 
-function Get-UnderscoresAllowable {
-    $version = $null
-    try {
-        [version]$version = $([version]$(Get-HuduAppInfo).version)
-    } catch {
-        return $false
+    # Detect if any label actually contains underscores
+    $hasUnders = @(
+        $layout.fields |
+        ForEach-Object { $_.label } |
+        Where-Object { $_ -is [string] -and $_ -match '_' }
+    ).Count -gt 0
+
+    if ($hasUnders) {
+        $updatedFields = $layout.fields | Remove-UnderscoresInFields -IsLayout
+
+        $oldJson = $layout.fields    | ConvertTo-Json -Depth 50 -Compress
+        $newJson = $updatedFields    | ConvertTo-Json -Depth 50 -Compress
+        $changed = ($oldJson -ne $newJson)
+
+        if ($changed -and $PSCmdlet.ShouldProcess("AssetLayout $AssetLayoutId","Replace underscores in labels")) {
+            $null = Set-HuduAssetLayout -Id $AssetLayoutId -Fields $updatedFields
+            $layout = Get-HuduAssetLayouts -Id $AssetLayoutId
+            $layout = $layout.asset_layout ?? $layout
+        }
     }
-    if ($version){
-        return [bool]$($underscoreAllowableVersionArray -contains $version)
+
+    Set-CacheItem -Key $cacheKey -Value $layout
+    return $layout
+}
+
+function Get-ValidatedAssetFields {
+    param (
+        [array]$fields,
+        [int]$assetLayoutId
+    )
+    $layout = Get-UnderscoresReplacedFields -AssetLayoutId $assetLayoutId
+    $layoutlabelset = $layout.fields.label
+    $validatedFields = @()
+    foreach ($field in $fields){
+        foreach ($layoutLabel in $layoutlabelset) {
+            if (test-equiv -A $field.label -B $label){
+                $updated = $field
+                $updated.label = $layoutLabel
+                $validatedFields += $updated
+            }
+        }
     }
-    return $false
+    return $($validatedFields | Remove-UnderscoresInFields)
 }
 
 function Remove-UnderscoresInFields {
