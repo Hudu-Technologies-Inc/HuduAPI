@@ -25,7 +25,7 @@ function Get-HuduAssetLayoutFieldID {
         [Int]$LayoutId
     )
 
-    $Layout = Get-HuduAssetLayouts -LayoutId $LayoutId
+    $Layout = Get-SanitizedAssetLayout
 
     $Fields = [Collections.Generic.List[Object]]($Layout.fields)
     $Index = $Fields.FindIndex( { $args[0].label -eq $Name } )

@@ -112,7 +112,7 @@ function Set-HuduAssetLayout {
             Default { Write-Error "Invalid field type: $($field.'field_type') found in field $($field.name)"; break }
         }
     }
-    $Object = Get-UnderscoresReplacedFields -AssetLayoutId $Id
+    $Object = Get-SanitizedAssetLayout -AssetLayoutId $Id
 
     $AssetLayout = [ordered]@{asset_layout = $Object }
     #$AssetLayout.asset_layout = $Object

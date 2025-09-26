@@ -53,7 +53,7 @@ function Get-HuduAssets {
     )
 
     if ($AssetLayout) {
-        $assetLayout = Get-UnderscoresReplacedFields
+        $assetLayout = Get-SanitizedAssetLayout
         $AssetLayoutId = $assetLayout.id
     }
 

@@ -1,4 +1,4 @@
-function Get-UnderscoresReplacedFields {
+function Get-SanitizedAssetLayout {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory)][string]$AssetLayoutId
@@ -14,12 +14,10 @@ function Get-UnderscoresReplacedFields {
     $hasUnders = $false
     if ($layout.fields) {
         $hasUnders = @(
-            $layout.fields |
-            ForEach-Object { $_.label } |
+            $layout.fields | ForEach-Object { $_.label } |
             Where-Object { $_ -is [string] -and $_ -match '_' }
         ).Count -gt 0
     }
-
     if ($hasUnders) {
         write-host "warn- underscores present in layout"
         $updatedFields = $layout.fields | Remove-UnderscoresInFields -IsLayout
@@ -39,39 +37,47 @@ function Get-UnderscoresReplacedFields {
 }
 
 function Get-ValidatedAssetFields {
-    param (
-        [array]$fields,
-        [int]$assetLayoutId
+    param(
+        [array]$Fields,
+        [int]$AssetLayoutId
     )
-    $layout = Get-UnderscoresReplacedFields -AssetLayoutId $assetLayoutId
-    if (-not $layout) { return @() }
-
-    $layoutLabelSet = @($layout.fields.label)
-
-    $validatedFields = foreach ($field in $fields) {
-        $matched = $false
-        foreach ($layoutLabel in $layoutLabelSet) {
-            if (Test-Equiv -A $field.label -B $layoutLabel) {
-                # shallow clone to avoid mutating original
-                $updated = @()
-                if ($field -is [PSCustomObject]){
-                    foreach ($p in $field.PSObject.Properties) {
-                        $updated+= @{$p.Name = $p.Value}
-                    }
-                } else {
-                    $updated = $field.clone()
-                }
-                $updated.label = $layoutLabel
-                $matched = $true
-                $updated
-                break
-            }
+    function Copy-ToHashtable {
+        param($obj)
+        if ($obj -is [System.Collections.IDictionary]) {
+            return $obj.Clone()           # shallow clone of hashtable
         }
-        if (-not $matched) { $field }
+        $h = @{}
+        foreach ($p in $obj.PSObject.Properties) { $h[$p.Name] = $p.Value }
+        return $h
     }
-    $validatedFields | Remove-UnderscoresInFields
-}
 
+    function Normalize-Label([string]$s) {
+        return ($s ?? '').Trim().ToLowerInvariant()
+    }
+
+    $layout = Get-SanitizedAssetLayout -AssetLayoutId $AssetLayoutId
+    if (-not $layout -or -not $layout.fields) { return @() }
+
+    $canon = @{}
+    foreach ($lf in $layout.fields) {
+        $lbl = if ($lf -is [System.Collections.IDictionary]) { $lf['label'] } else { $lf.label }
+        if ($lbl) { $canon[(Normalize-Label $lbl)] = $lbl }
+    }
+
+    $validated = foreach ($field in $Fields) {
+        # Get current label from either type
+        $cur = if ($field -is [System.Collections.IDictionary]) { $field['label'] } else { $field.label }
+        $key = Normalize-Label $cur
+        if ($canon.ContainsKey($key)) {
+            $clone = Copy-ToHashtable $field
+            $clone['label'] = $canon[$key]
+            $clone
+        }
+        
+    }
+
+    $validated | Remove-UnderscoresInFields
+}
 
 function Remove-UnderscoresInFields {
     [CmdletBinding()]
