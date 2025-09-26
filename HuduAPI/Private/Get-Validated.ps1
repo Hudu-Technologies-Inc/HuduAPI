@@ -1,20 +1,3 @@
-
-function To-HashtableArray {
-  param($items)
-  ,(@($items) | ForEach-Object { Copy-ToHashtable $_ })
-}
-function Get-LayoutLabelMap {
-  param([Parameter(Mandatory)][int]$AssetLayoutId)
-
-  $layout = Set-UnderscoresSanitizedLayout -AssetLayoutId $AssetLayoutId
-  $map = @{}
-  foreach ($f in @($layout.fields)) {
-    $lbl = if ($f -is [System.Collections.IDictionary]) { $f['label'] } else { $f.label }
-    if ($lbl) { $map[(Normalize-Label $lbl)] = $lbl } # normalized key -> canonical label
-  }
-  return $map
-}
-
 function Copy-ToHashtable {
   param($obj)
   if ($obj -is [System.Collections.IDictionary]) { return @{} + $obj } # shallow copy
@@ -23,11 +6,6 @@ function Copy-ToHashtable {
   return $h
 }
 
-function Normalize-Label([string]$s) {
-  if (-not $s) { return '' }
-  # treat underscores/spaces the same, case-insensitive
-  ($s -replace '[_\s]+',' ' ).Trim().ToLowerInvariant()
-}
 function Set-UnderscoresSanitizedLayout {
   [CmdletBinding(SupportsShouldProcess)]
   param([Parameter(Mandatory)][int]$AssetLayoutId, [string]$ReplaceWith = ' ')
@@ -66,6 +44,19 @@ function Set-UnderscoresSanitizedLayout {
   return $layout
 }
 
+
+function Get-LayoutLabelMap {
+  param([Parameter(Mandatory)][int]$AssetLayoutId)
+
+  $layout = Set-UnderscoresSanitizedLayout -AssetLayoutId $AssetLayoutId
+  $map = @{}
+  foreach ($f in @($layout.fields)) {
+    $lbl = if ($f -is [System.Collections.IDictionary]) { $f['label'] } else { $f.label }
+    if ($lbl) { $map[(Normalize-Label $lbl)] = $lbl } # normalized key -> canonical label
+  }
+  return $map
+}
+
 function Convert-AssetFieldsToCanonical {
   param(
     [Parameter(Mandatory)][array]$Fields,      # PSCustomObject[] or Hashtable[]
@@ -90,4 +81,16 @@ function Convert-AssetFieldsToCanonical {
   }
 
   return ,$out   # ensure hashtable[]
+}
+
+function To-HashtableArray {
+  param($items)
+  ,(@($items) | ForEach-Object { Copy-ToHashtable $_ })
+}
+
+
+function Normalize-Label([string]$s) {
+  if (-not $s) { return '' }
+  # treat underscores/spaces the same, case-insensitive
+  ($s -replace '[_\s]+',' ' ).Trim().ToLowerInvariant()
 }
