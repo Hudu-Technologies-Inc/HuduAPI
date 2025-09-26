@@ -70,7 +70,6 @@ function Convert-AssetFieldsToCanonical {
   param(
     [Parameter(Mandatory)][array]$Fields,      # PSCustomObject[] or Hashtable[]
     [Parameter(Mandatory)][int]$AssetLayoutId,
-    [switch]$DropUnmatched
   )
 
   $labelMap = Get-LayoutLabelMap -AssetLayoutId $AssetLayoutId
@@ -84,9 +83,7 @@ function Convert-AssetFieldsToCanonical {
       $norm = Normalize-Label $k
       if ($labelMap.ContainsKey($norm)) {
         $new[$labelMap[$norm]] = $h[$k]     # rename key to canonical label
-      } elseif (-not $DropUnmatched) {
-        $new[$k] = $h[$k]                   # keep as-is if you prefer
-      }
+      } 
     }
 
     if ($new.Count -gt 0) { $out += ,$new }
