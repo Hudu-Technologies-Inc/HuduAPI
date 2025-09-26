@@ -31,6 +31,7 @@ function Set-HuduArticleArchive {
     }
 
     if ($PSCmdlet.ShouldProcess($Id)) {
-        Invoke-HuduRequest -Method put -Resource "/api/v1/articles/$Id/$Action"
+        $response = Invoke-HuduRequest -Method put -Resource "/api/v1/articles/$Id/$Action"
+        return $response.article ?? $response
     }
 }

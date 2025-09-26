@@ -36,8 +36,8 @@ function New-HuduProcedureFromTemplate {
     if ($Description) { $params.description = $Description }
 
     try {
-        $res = Invoke-HuduRequest -Method POST -Resource "/api/v1/procedures/$Id/create_from_template" -Params $params
-        return $res.procedure
+        $response = Invoke-HuduRequest -Method POST -Resource "/api/v1/procedures/$Id/create_from_template" -Params $params
+        return $response.procedure ?? $response
     } catch {
         Write-Warning "Failed to create procedure from template ID $Id"
         return $null

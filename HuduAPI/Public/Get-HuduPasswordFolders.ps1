@@ -36,10 +36,10 @@ function Get-HuduPasswordFolders {
         [Alias('company_id')]
         [Int]$CompanyId
     )
-
+    $result = $null
     if ($id) {
-        $Folder = Invoke-HuduRequest -Method get -Resource "/api/v1/password_folders/$id"
-        return $Folder.password_folder
+        $result = Invoke-HuduRequest -Method get -Resource "/api/v1/password_folders/$id"
+        return $result.password_folder ?? $result
     } else {
         $Params = @{}
 
@@ -51,6 +51,7 @@ function Get-HuduPasswordFolders {
             Resource = '/api/v1/password_folders'
             Params   = $Params
         }
-        Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property password_folders
+        $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property password_folders
     }
+    return $result.password_folder ?? $result
 }

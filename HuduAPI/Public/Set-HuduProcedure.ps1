@@ -46,8 +46,8 @@ function Set-HuduProcedure {
     } | ConvertTo-Json -Depth 10
 
     try {
-        $res = Invoke-HuduRequest -Method PUT -Resource "/api/v1/procedures/$Id" -Body $payload
-        return $res.procedure
+        $response = Invoke-HuduRequest -Method PUT -Resource "/api/v1/procedures/$Id" -Body $payload
+        return $response.procedure ?? $response
     } catch {
         Write-Warning "Failed to update procedure ID $Id"
         return $null

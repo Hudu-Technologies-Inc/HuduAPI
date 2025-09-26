@@ -71,8 +71,8 @@ New-HuduVLAN -Name "VLAN-200" -CompanyId 1 -VLANId 200 -Description "Internal tr
         vlan = $vlan
     } | ConvertTo-Json -Depth 10
     try {
-        $res = Invoke-HuduRequest -Method POST -Resource "/api/v1/vlans" -Body $payload
-        return $res
+        $response = Invoke-HuduRequest -Method POST -Resource "/api/v1/vlans" -Body $payload
+        return $response.vlan ?? $response
     } catch {
         Write-Warning "Failed to create vlan '$Name'"
         return $null

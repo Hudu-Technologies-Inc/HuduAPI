@@ -105,5 +105,6 @@ function Get-HuduRackStorageItems {
         }
     }
 
-    Invoke-HuduRequest @HuduRequest
+    $result = Invoke-HuduRequest @HuduRequest
+    return $result.rack_storage_item ?? $result.rack_storage_items ?? $result
 }

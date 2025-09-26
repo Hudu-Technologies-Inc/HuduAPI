@@ -18,5 +18,6 @@ function Get-HuduPublicPhotos {
         Resource = '/api/v1/public_photos'
         Params   = @{}
     }
-    Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'public_photos'
+    $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'public_photos'
+    return $result.public_photo ?? $result
 }

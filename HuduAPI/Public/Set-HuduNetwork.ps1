@@ -80,7 +80,7 @@ Set-HuduNetwork -Id 123 -Address "10.20.30.0/24" -VlanId 30 -LocationId 456
     $payload = $hudunetwork | ConvertTo-Json -depth 10
     try {
         $response = Invoke-HuduRequest -Method PUT -Resource "/api/v1/networks/$Id" -Body $payload
-        return $response
+        return $response.network ?? $response
     } catch {
         Write-Warning "Failed to set network '$Id'"
         return $null

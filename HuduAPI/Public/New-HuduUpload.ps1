@@ -43,6 +43,7 @@ function New-HuduUpload {
     }
 
     if ($PSCmdlet.ShouldProcess($File.FullName)) {
-        Invoke-HuduRequest -Method POST -Resource '/api/v1/uploads' -Form $form
+        $response = Invoke-HuduRequest -Method POST -Resource '/api/v1/uploads' -Form $form
+        return $response.upload ?? $response
     }
 }

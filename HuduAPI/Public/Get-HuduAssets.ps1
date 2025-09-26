@@ -53,7 +53,7 @@ function Get-HuduAssets {
     )
 
     if ($AssetLayout) {
-        $assetLayout = Get-UnderscoresReplacedFields
+        $assetLayout = Get-SanitizedAssetLayout
         $AssetLayoutId = $assetLayout.id
     }
 
@@ -78,6 +78,9 @@ function Get-HuduAssets {
             Method   = 'GET'
             Params   = $Params
         }
-        Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property assets
+        $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest
+        # account for singular or plural propname
+        return $result.assets ?? $result.asset ?? $result
+
     }
 }

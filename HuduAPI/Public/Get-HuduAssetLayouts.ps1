@@ -34,20 +34,20 @@ function Get-HuduAssetLayouts {
 
     if ($LayoutId) {
         $HuduRequest.Resource = '{0}/{1}' -f $HuduRequest.Resource, $LayoutId
-        $AssetLayout = Invoke-HuduRequest @HuduRequest
-        return $AssetLayout.asset_layout
+        $result = Invoke-HuduRequest @HuduRequest
+        return $result.asset_layout ?? $result
     } else {
         $Params = @{}
         if ($Name) { $Params.name = $Name }
         if ($Slug) { $Params.slug = $Slug }
         $HuduRequest.Params = $Params
 
-        $AssetLayouts = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'asset_layouts' -PageSize 25
+        $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -PageSize 25
 
         if (!$Name -and !$Slug) {
-            $script:AssetLayouts = $AssetLayouts | Sort-Object -Property name
+            $script:AssetLayouts = $result | Sort-Object -Property name
         }
-
-        $AssetLayouts
+        # account for singular or plural propname
+        return $result.asset_layouts ?? $result.asset_layout ?? $result
     }
 }

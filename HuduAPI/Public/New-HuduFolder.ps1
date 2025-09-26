@@ -36,7 +36,7 @@ function New-HuduFolder {
         [Alias('company_id')]
         [Int]$CompanyId = ''
     )
-
+    $result = $null
     $Folder = [ordered]@{folder = [ordered]@{} }
 
     $Folder.folder.add('name', $Name)
@@ -60,6 +60,7 @@ function New-HuduFolder {
     $JSON = $Folder | ConvertTo-Json
 
     if ($PSCmdlet.ShouldProcess($Name)) {
-        Invoke-HuduRequest -Method post -Resource '/api/v1/folders' -Body $JSON
+        $result = Invoke-HuduRequest -Method post -Resource '/api/v1/folders' -Body $JSON
     }
+    return $result.folder ?? $result
 }

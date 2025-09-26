@@ -43,7 +43,7 @@ function Set-HuduList {
 
     try {
         $response = Invoke-HuduRequest -Method PUT -Resource "/api/v1/lists/$Id" -Body $payload
-        return $response
+        return $response.list ?? $response
     } catch {
         Write-Warning "Failed to update list with ID $Id"
         return $null

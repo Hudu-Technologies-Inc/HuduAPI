@@ -19,5 +19,6 @@ function Get-HuduRelations {
         Params   = @{}
     }
 
-    Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'relations'
+    $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'relations'
+    return $result.relation ?? $result
 }

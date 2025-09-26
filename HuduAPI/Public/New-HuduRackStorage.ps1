@@ -83,5 +83,6 @@ function New-HuduRackStorage {
         Body     = $Body
     }
 
-    Invoke-HuduRequest @HuduRequest
+    $response=Invoke-HuduRequest @HuduRequest
+    return $response.rack_storage ?? $response
 }

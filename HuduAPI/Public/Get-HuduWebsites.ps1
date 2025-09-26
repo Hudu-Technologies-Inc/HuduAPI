@@ -30,9 +30,9 @@ function Get-HuduWebsites {
         [String]$Slug,
         [string]$Search
     )
-
+    $result = $null
     if ($WebsiteId) {
-        Invoke-HuduRequest -Method get -Resource "/api/v1/websites/$($WebsiteId)"
+        $result = Invoke-HuduRequest -Method get -Resource "/api/v1/websites/$($WebsiteId)"
     } else {
         $Params = @{}
         if ($Name) { $Params.name = $Name }
@@ -44,6 +44,7 @@ function Get-HuduWebsites {
             Resource = '/api/v1/websites'
             Params   = $Params
         }
-        Invoke-HuduRequestPaginated -HuduRequest $HuduRequest
+        $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest
     }
+    return $result.websites ?? $result.website ?? $result 
 }

@@ -38,9 +38,10 @@ function Get-HuduGroups {
         [String]$Search,
         [bool]$Default
     )
-
+    $result = $null
     if ($id) {
-        return $(Invoke-HuduRequest -Method get -Resource "/api/v1/groups/$id").group
+        $result = Invoke-HuduRequest -Method get -Resource "/api/v1/groups/$id"
+        return $result.group ?? $result
     } else {
         $Params = @{}
 
@@ -53,6 +54,7 @@ function Get-HuduGroups {
             Resource = '/api/v1/groups'
             Params   = $Params
         }
-        Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -property groups
+        $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -property groups
     }
+    return $result.groups ?? $result.group ?? $result
 }

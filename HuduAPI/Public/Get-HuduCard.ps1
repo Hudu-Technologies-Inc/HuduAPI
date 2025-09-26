@@ -31,7 +31,7 @@ function Get-HuduCard {
         [Alias('integration_identifier')]
         [String]$IntegrationIdentifier
     )
-
+    $result = $null
     $Params = @{
         integration_slug = $IntegrationSlug
     }
@@ -49,5 +49,6 @@ function Get-HuduCard {
         Params   = $Params
     }
 
-    Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property integrator_cards
+    $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest
+    return $result.integrator_cards ?? $result.integrator_card ?? $result
 }

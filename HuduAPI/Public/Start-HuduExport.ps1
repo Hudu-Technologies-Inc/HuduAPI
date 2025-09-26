@@ -42,8 +42,8 @@ function Start-HuduExport {
             asset_layout_ids        = @($AssetLayoutIDs)
         }} | ConvertTo-Json -Depth 10
     try {
-        $res = Invoke-HuduRequest -Method POST -Resource "/api/v1/exports" -Body $payload
-        return $res
+        $response = Invoke-HuduRequest -Method POST -Resource "/api/v1/exports" -Body $payload
+        return $response.export ?? $response
     } catch {
         Write-Warning "Failed to initiate backup for company $CompanyID- $_"
     }

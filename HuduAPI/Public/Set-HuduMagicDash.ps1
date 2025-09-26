@@ -106,6 +106,7 @@ function Set-HuduMagicDash {
     $JSON = $MagicDash | ConvertTo-Json
 
     if ($PSCmdlet.ShouldProcess("$Companyname - $Title")) {
-        Invoke-HuduRequest -Method post -Resource '/api/v1/magic_dash' -Body $JSON
+        $response = Invoke-HuduRequest -Method post -Resource '/api/v1/magic_dash' -Body $JSON
+        return $response.magic_dash ?? $response
     }
 }

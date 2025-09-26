@@ -95,5 +95,6 @@ function Set-HuduRackStorageItem {
         Resource    = "/api/v1/rack_storage_items/$Id"
         Body        = ($Body | ConvertTo-Json -Depth 10)
     }
-    Invoke-HuduRequest @HuduRequest
+    $response = Invoke-HuduRequest @HuduRequest
+    return $response.rack_storage_item ?? $response
 }

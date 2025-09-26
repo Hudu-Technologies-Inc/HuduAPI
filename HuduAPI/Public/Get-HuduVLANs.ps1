@@ -57,11 +57,11 @@ Get-HuduVLANs -CompanyId 5 -Archived "false"
         [datetime]$UpdatedAfter,
         [datetime]$UpdatedBefore        
     )
-
+    $result = $null
     if ($Id) {
         try {
-            $res = Invoke-HuduRequest -Method GET -Resource "/api/v1/vlans/$Id"
-            return $res
+            $result = Invoke-HuduRequest -Method GET -Resource "/api/v1/vlans/$Id"
+            return $result
         } catch {
             Write-Warning "Failed to retrieve vlan ID $Id"
             return $null
@@ -86,8 +86,9 @@ Get-HuduVLANs -CompanyId 5 -Archived "false"
         $params.updated_at = $updatedRange
     }
     if ($params) {
-        Invoke-HuduRequest -Method GET -Resource '/api/v1/vlans' -Params $params
+        $result = Invoke-HuduRequest -Method GET -Resource '/api/v1/vlans' -Params $params
     } else {
-        Invoke-HuduRequest -Method GET -Resource "/api/v1/vlans"    
+        $result = Invoke-HuduRequest -Method GET -Resource "/api/v1/vlans"    
     }
+    return $result.vlan ?? $result.vlans ?? $result
 }

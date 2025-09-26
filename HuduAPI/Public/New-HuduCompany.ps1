@@ -103,7 +103,7 @@ function New-HuduCompany {
         [string]$Slug
     )
 
-
+    $result= $null
     $Company = [ordered]@{company = [ordered]@{} }
 
     $Company.company.add('name', $Name)
@@ -127,6 +127,7 @@ function New-HuduCompany {
     Write-Verbose $JSON
 
     if ($PSCmdlet.ShouldProcess($Name)) {
-        Invoke-HuduRequest -Method post -Resource '/api/v1/companies' -Body $JSON
+        $result = Invoke-HuduRequest -Method post -Resource '/api/v1/companies' -Body $JSON
     }
+    return $result.company ?? $result
 }

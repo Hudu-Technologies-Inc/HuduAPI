@@ -56,6 +56,7 @@ function Get-HuduUsers {
             Params   = $Params
     }
 
-        Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property Users
+        $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property Users
     }
+    return $result.user ?? $result
 }

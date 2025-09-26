@@ -47,16 +47,15 @@ Set-HuduVLANZone -Id 5 -Description "Updated description" -Archived "false"
     if ($CompanyId) {
         $vlan_zone | Add-Member -MemberType NoteProperty -Name company_id -Force -Value $CompanyId
     }
-        
-
+    
 
     $payload = @{
         vlan_zone = $vlan_zone
     } | ConvertTo-Json -Depth 10
 
     try {
-        $res = Invoke-HuduRequest -Method PUT -Resource "/api/v1/vlan_zones/$Id" -Body $payload
-        return $res
+        $response = Invoke-HuduRequest -Method PUT -Resource "/api/v1/vlan_zones/$Id" -Body $payload
+        return $response.vlan_zone ?? $response
     } catch {
         Write-Warning "Failed to archive vlan zone ID $Id"
         return $null

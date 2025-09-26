@@ -122,6 +122,7 @@ function New-HuduWebsite {
     $JSON = $Website | ConvertTo-Json
 
     if ($PSCmdlet.ShouldProcess($Name)) {
-        Invoke-HuduRequest -Method post -Resource '/api/v1/websites' -Body $JSON
+        $response = Invoke-HuduRequest -Method post -Resource '/api/v1/websites' -Body $JSON
+        return $response.website ?? $response
     }
 }

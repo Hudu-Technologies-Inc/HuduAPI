@@ -80,5 +80,6 @@ function Set-HuduRackStorage {
         Body     = ($Body | ConvertTo-Json -Depth 10)
     }
 
-    Invoke-HuduRequest @Request
+    $response = Invoke-HuduRequest @Request
+    return $response.rack_storage ?? $response
 }

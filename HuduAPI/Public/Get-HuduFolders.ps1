@@ -26,10 +26,10 @@ function Get-HuduFolders {
         [Alias('company_id')]
         [Int]$CompanyId = ''
     )
-
+    $result = $null
     if ($id) {
-        $Folder = Invoke-HuduRequest -Method get -Resource "/api/v1/folders/$id"
-        return $Folder.Folder
+        $result = Invoke-HuduRequest -Method get -Resource "/api/v1/folders/$id"
+        return $result.Folder ?? $folder
     } else {
         $Params = @{}
 
@@ -41,6 +41,7 @@ function Get-HuduFolders {
             Resource = '/api/v1/folders'
             Params   = $Params
         }
-        Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property folders
+        $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest
     }
+    return $result.folders ?? $result.folder ?? $result
 }

@@ -35,7 +35,7 @@ function New-HuduList {
 
     try {
         $response = Invoke-HuduRequest -Method POST -Resource "/api/v1/lists" -Body $payload
-        return $response
+        return $response.list ?? $response
     } catch {
         Write-Warning "Failed to create list '$Name'"
         return $null

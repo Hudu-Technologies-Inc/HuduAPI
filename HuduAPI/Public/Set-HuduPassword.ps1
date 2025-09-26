@@ -152,6 +152,7 @@ function Set-HuduPassword {
     $JSON = $AssetPassword | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Id)) {
-        Invoke-HuduRequest -Method put -Resource "/api/v1/asset_passwords/$Id" -Body $JSON
+        $response = Invoke-HuduRequest -Method put -Resource "/api/v1/asset_passwords/$Id" -Body $JSON
+        return $response.asset_password ?? $response
     }
 }

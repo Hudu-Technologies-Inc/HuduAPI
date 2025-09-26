@@ -80,8 +80,8 @@ Set-HuduVLAN -Id 7 -Description "Changed purpose" -VLANId 250
     } | ConvertTo-Json -Depth 10
 
     try {
-        $res = Invoke-HuduRequest -Method PUT -Resource "/api/v1/vlans/$Id" -Body $payload
-        return $res
+        $response = Invoke-HuduRequest -Method PUT -Resource "/api/v1/vlans/$Id" -Body $payload
+        return $response.vlan ?? $response
     } catch {
         Write-Warning "Failed to vlan ID $Id"
         return $null

@@ -30,9 +30,10 @@ function Get-HuduArticles {
         [String]$Name = '',
         [String]$Slug
     )
-
+    $result = $null
     if ($Id) {
-        Invoke-HuduRequest -Method get -Resource "/api/v1/articles/$Id"
+        $result = Invoke-HuduRequest -Method get -Resource "/api/v1/articles/$Id"
+        return $result.article ?? $result
     } else {
         $Params = @{}
 
@@ -46,6 +47,7 @@ function Get-HuduArticles {
             Params   = $Params
         }
 
-        Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property articles
+        $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property articles
     }
+    return $result.articles ?? $result.article ?? $result
 }

@@ -53,5 +53,6 @@ function Get-HuduIntegrationMatchers {
         Resource = '/api/v1/matchers'
         Params   = $Params
     }
-    Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'matchers'
+    $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'matchers'
+    return $result.matcher ?? $result
 }

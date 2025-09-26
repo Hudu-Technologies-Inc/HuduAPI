@@ -70,6 +70,7 @@ function Set-HuduFolder {
     $JSON = $Folder | ConvertTo-Json
 
     if ($PSCmdlet.ShouldProcess($Id)) {
-        Invoke-HuduRequest -Method put -Resource "/api/v1/folders/$Id" -Body $JSON
+        $response = Invoke-HuduRequest -Method put -Resource "/api/v1/folders/$Id" -Body $JSON
+        return $response.folder ?? $response
     }
 }

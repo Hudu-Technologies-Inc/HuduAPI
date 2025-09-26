@@ -20,5 +20,5 @@ function Get-HuduUploads {
     } else {
         $Upload = Invoke-HuduRequest -Method Get -Resource "/api/v1/uploads"
     }
-    return $Upload
+    return $Upload.upload ?? $upload.uploads ?? $upload
 }

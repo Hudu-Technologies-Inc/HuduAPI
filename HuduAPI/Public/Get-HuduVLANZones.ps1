@@ -51,11 +51,11 @@ Get-HuduVLANZones -CompanyId 5 -Archived "false"
         [datetime]$UpdatedAfter,
         [datetime]$UpdatedBefore        
     )
-
+    $result = $null
     if ($Id) {
         try {
-            $res = Invoke-HuduRequest -Method GET -Resource "/api/v1/vlan_zones/$Id"
-            return $res
+            $result = Invoke-HuduRequest -Method GET -Resource "/api/v1/vlan_zones/$Id"
+            return $result.vlan_zone ?? $result
         } catch {
             Write-Warning "Failed to retrieve vlan zone ID $Id"
             return $null
@@ -77,8 +77,9 @@ Get-HuduVLANZones -CompanyId 5 -Archived "false"
         $params.updated_at = $updatedRange
     }
     if ($params){
-        Invoke-HuduRequest -Method GET -Resource '/api/v1/vlan_zones' -Params $params
+        $result = Invoke-HuduRequest -Method GET -Resource '/api/v1/vlan_zones' -Params $params
     } else {
-        Invoke-HuduRequest -Method GET -Resource '/api/v1/vlan_zones'
+        $result = Invoke-HuduRequest -Method GET -Resource '/api/v1/vlan_zones'
     }
+    $result.vlan_zones ?? $result.vlan_zone ?? $result
 }

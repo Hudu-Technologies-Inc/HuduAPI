@@ -112,7 +112,7 @@ function Set-HuduAssetLayout {
             Default { Write-Error "Invalid field type: $($field.'field_type') found in field $($field.name)"; break }
         }
     }
-    $Object = Get-UnderscoresReplacedFields -AssetLayoutId $Id
+    $Object = Get-SanitizedAssetLayout -AssetLayoutId $Id
 
     $AssetLayout = [ordered]@{asset_layout = $Object }
     #$AssetLayout.asset_layout = $Object
@@ -173,6 +173,7 @@ function Set-HuduAssetLayout {
     $JSON = $AssetLayout | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Id)) {
-        Invoke-HuduRequest -Method put -Resource "/api/v1/asset_layouts/$Id" -Body $JSON
+        $response = Invoke-HuduRequest -Method put -Resource "/api/v1/asset_layouts/$Id" -Body $JSON
+        return $response.asset_layout ?? $response
     }
 }

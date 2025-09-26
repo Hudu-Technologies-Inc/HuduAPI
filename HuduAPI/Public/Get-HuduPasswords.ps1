@@ -55,5 +55,6 @@ function Get-HuduPasswords {
         Resource = '/api/v1/asset_passwords'
         Params   = $Params
     }
-    Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'asset_passwords'
+    $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'asset_passwords'
+    return $asset_passwords.asset_password ?? $result
 }

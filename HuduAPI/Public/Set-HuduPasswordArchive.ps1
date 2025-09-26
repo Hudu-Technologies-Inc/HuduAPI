@@ -32,7 +32,8 @@ function Set-HuduPasswordArchive {
         }
 
         if ($PSCmdlet.ShouldProcess($Id)) {
-            Invoke-HuduRequest -Method put -Resource "/api/v1/asset_passwords/$Id/$Action"
+            $response = Invoke-HuduRequest -Method put -Resource "/api/v1/asset_passwords/$Id/$Action"
+            return $response.asset_password ?? $response
         }
     }
 }

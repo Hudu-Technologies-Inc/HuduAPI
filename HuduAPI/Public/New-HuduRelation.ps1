@@ -70,6 +70,7 @@ function New-HuduRelation {
     $JSON = $Relation | ConvertTo-Json -Depth 100
 
     if ($PSCmdlet.ShouldProcess($FromableType)) {
-        Invoke-HuduRequest -Method post -Resource '/api/v1/relations' -Body $JSON
+        $response = Invoke-HuduRequest -Method post -Resource '/api/v1/relations' -Body $JSON
+        return $response.relation ?? $response
     }
 }

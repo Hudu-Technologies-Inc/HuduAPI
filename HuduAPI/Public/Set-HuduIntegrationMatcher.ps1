@@ -74,7 +74,8 @@ function Set-HuduIntegrationMatcher {
         $JSON = $Matcher | ConvertTo-Json -Depth 10
 
         if ($PSCmdlet.ShouldProcess($Id)) {
-            Invoke-HuduRequest -Method put -Resource "/api/v1/matchers/$Id" -Body $JSON
+            $response = Invoke-HuduRequest -Method put -Resource "/api/v1/matchers/$Id" -Body $JSON
+            return $response.matcher ?? $response
         }
     }
 }

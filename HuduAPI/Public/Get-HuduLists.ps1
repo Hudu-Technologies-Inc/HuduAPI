@@ -29,14 +29,16 @@ function Get-HuduLists {
 
     if ($Id) {
         try {
-            return Invoke-HuduRequest -Method GET -Resource "/api/v1/lists/$Id"
+            $list = Invoke-HuduRequest -Method GET -Resource "/api/v1/lists/$Id"
+            return $list.list ?? $list
         } catch {
             Write-Warning "Failed to retrieve list with ID $Id"
             return $null
         }
     }
 
-    $lists = Invoke-HuduRequest -Method GET -Resource "/api/v1/lists"
+    $result = Invoke-HuduRequest -Method GET -Resource "/api/v1/lists"
+    $lists = $result.lists ?? $result.list ?? $result
 
     if ($Name) {
         $match = $lists | Where-Object { $_.name -eq $Name }

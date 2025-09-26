@@ -76,7 +76,7 @@ New-HuduNetwork -Name "Server VLAN 30" -Address "10.20.30.0/24" -CompanyId 42 -L
     $payload = $network | ConvertTo-Json -depth 10
     try {
         $response = Invoke-HuduRequest -Method POST -Resource "/api/v1/networks" -Body $payload
-        return $response
+        return $response.network ?? $response
     } catch {
         Write-Warning "Failed to create network '$Name'"
         return $null

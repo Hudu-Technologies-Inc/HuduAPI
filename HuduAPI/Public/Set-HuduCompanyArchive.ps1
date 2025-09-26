@@ -30,6 +30,7 @@ function Set-HuduCompanyArchive {
         $Action = 'unarchive'
     }
     if ($PSCmdlet.ShouldProcess($Id)) {
-        Invoke-HuduRequest -Method put -Resource "/api/v1/companies/$Id/$Action"
+        $response = Invoke-HuduRequest -Method put -Resource "/api/v1/companies/$Id/$Action"
+        return $response.company ?? $response
     }
 }

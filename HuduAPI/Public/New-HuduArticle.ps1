@@ -46,7 +46,7 @@ function New-HuduArticle {
 
         [string]$Slug
     )
-
+    $result = $null
     $Article = [ordered]@{article = [ordered]@{} }
 
     $Article.article.add('name', $Name)
@@ -71,6 +71,7 @@ function New-HuduArticle {
     $JSON = $Article | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Name)) {
-        Invoke-HuduRequest -Method post -Resource '/api/v1/articles' -Body $JSON
+        $result = Invoke-HuduRequest -Method post -Resource '/api/v1/articles' -Body $JSON
     }
+    return $result.article ?? $result
 }

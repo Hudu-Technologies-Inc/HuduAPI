@@ -64,7 +64,7 @@ function New-HuduAsset {
         [Alias('primary_manufacturer')]
         [string]$PrimaryManufacturer
     )
-
+    $result = $null
     $Asset = [ordered]@{asset = [ordered]@{} }
 
     $Asset.asset.add('name', $Name)
@@ -99,6 +99,7 @@ function New-HuduAsset {
     $JSON = $Asset | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Name)) {
-        Invoke-HuduRequest -Method post -Resource "/api/v1/companies/$CompanyId/assets" -Body $JSON
+        $result = Invoke-HuduRequest -Method post -Resource "/api/v1/companies/$CompanyId/assets" -Body $JSON
     }
+    return $result.asset ?? $result
 }

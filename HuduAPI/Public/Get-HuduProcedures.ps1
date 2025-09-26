@@ -64,9 +64,11 @@ function Get-HuduProcedures {
     if ($CompanyTemplate) { $params.company_template = $CompanyTemplate }
     if ($ParentProcedureId) { $params.parent_procedure_id = $ParentProcedureId }
 
-    Invoke-HuduRequestPaginated -HuduRequest @{
+    $result = Invoke-HuduRequestPaginated -HuduRequest @{
         Method   = 'GET'
         Resource = '/api/v1/procedures'
         Params   = $params
     } -Property procedures
+    return $result.procedure ?? $result
+
 }

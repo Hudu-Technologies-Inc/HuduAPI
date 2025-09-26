@@ -1,4 +1,4 @@
-function Get-UnderscoresReplacedFields {
+function Get-SanitizedAssetLayout {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory)][string]$AssetLayoutId
@@ -43,7 +43,7 @@ function Get-ValidatedAssetFields {
         [array]$fields,
         [int]$assetLayoutId
     )
-    $layout = Get-UnderscoresReplacedFields -AssetLayoutId $assetLayoutId
+    $layout = Get-SanitizedAssetLayout -AssetLayoutId $assetLayoutId
     if (-not $layout) { return @() }
 
     $layoutLabelSet = @($layout.fields.label)
@@ -69,7 +69,7 @@ function Get-ValidatedAssetFields {
         }
         if (-not $matched) { $field }
     }
-    $validatedFields | Remove-UnderscoresInFields
+    return $($validatedFields | Remove-UnderscoresInFields)
 }
 
 

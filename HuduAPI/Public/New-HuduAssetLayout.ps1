@@ -84,7 +84,7 @@ function New-HuduAssetLayout {
         [Parameter(Mandatory = $true)]
         [system.collections.generic.list[hashtable]]$Fields
     )
-
+    $result = $null
     foreach ($field in $fields) {
         if ($field.show_in_list) { $field.show_in_list = [System.Convert]::ToBoolean($field.show_in_list) } else { $field.remove('show_in_list') }
         if ($field.required) { $field.required = [System.Convert]::ToBoolean($field.required) } else { $field.remove('required') }
@@ -152,6 +152,7 @@ function New-HuduAssetLayout {
     Write-Verbose $JSON
 
     if ($PSCmdlet.ShouldProcess($Name)) {
-        Invoke-HuduRequest -Method post -Resource '/api/v1/asset_layouts' -Body $JSON
+        $result = Invoke-HuduRequest -Method post -Resource '/api/v1/asset_layouts' -Body $JSON
     }
+    return $result.asset_layout ?? $result
 }

@@ -40,6 +40,7 @@ function New-HuduPublicPhoto {
     if ($RecordType) { $form['record_type'] = $RecordType }
 
     if ($PSCmdlet.ShouldProcess($File.FullName)) {
-        Invoke-HuduRequest -Method POST -Resource '/api/v1/public_photos' -Form $form
+        $response = Invoke-HuduRequest -Method POST -Resource '/api/v1/public_photos' -Form $form
+        return $response.public_photo ?? $response
     }
 }

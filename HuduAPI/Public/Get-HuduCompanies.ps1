@@ -51,10 +51,10 @@ function Get-HuduCompanies {
         [string]$Search,
         [String]$Slug
     )
-
+    $result = $null
     if ($Id) {
-        $Company = (Invoke-HuduRequest -Method get -Resource "/api/v1/companies/$Id").company
-        return $Company
+        $result = Invoke-HuduRequest -Method get -Resource "/api/v1/companies/$Id"
+        return $result.company ?? $result
     } else {
         $Params = @{}
         if ($Name) { $Params.name = $Name }
@@ -72,6 +72,7 @@ function Get-HuduCompanies {
             Params   = $Params
         }
 
-        Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'companies'
+        $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'companies'
     }
+    return $result.companies ?? $result.company ?? $result
 }

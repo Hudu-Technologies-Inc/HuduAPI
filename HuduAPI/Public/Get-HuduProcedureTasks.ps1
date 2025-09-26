@@ -47,9 +47,10 @@ function Get-HuduProcedureTasks {
     if ($Name)        { $params.name         = $Name }
     if ($CompanyId)   { $params.company_id   = $CompanyId }
 
-    Invoke-HuduRequestPaginated -HuduRequest @{
+    $result = Invoke-HuduRequestPaginated -HuduRequest @{
         Method   = 'GET'
         Resource = '/api/v1/procedure_tasks'
         Params   = $params
     } -Property procedure_tasks
+    return $result.procedure_task ?? $result
 }

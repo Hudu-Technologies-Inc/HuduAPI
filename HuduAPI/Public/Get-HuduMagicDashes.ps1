@@ -32,5 +32,6 @@ function Get-HuduMagicDashes {
         Resource = '/api/v1/magic_dash'
         Params   = $Params
     }
-    Invoke-HuduRequestPaginated -HuduRequest $HuduRequest
+    $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest
+    return $result.magic_dashes ?? $result.magic_dash ?? $result
 }

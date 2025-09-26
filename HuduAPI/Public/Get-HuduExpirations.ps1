@@ -39,7 +39,7 @@ function Get-HuduExpirations {
     )
 
     $Params = @{}
-
+    $result = $null
     if ($CompanyId) { $Params.company_id = $CompanyId }
     if ($ExpirationType) { $Params.expiration_type = $ExpirationType }
     if ($ResourceType) { $Params.resource_type = $ResourceType }
@@ -51,5 +51,6 @@ function Get-HuduExpirations {
         Params   = $Params
     }
 
-    Invoke-HuduRequestPaginated -HuduRequest $HuduRequest
+    $result = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest
+    return $result.expirations ?? $result.expiration ?? $result
 }

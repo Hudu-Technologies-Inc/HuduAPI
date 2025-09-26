@@ -179,6 +179,7 @@ function Set-HuduCompany {
     $JSON = $Company | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Id)) {
-        Invoke-HuduRequest -Method put -Resource "/api/v1/companies/$Id" -Body $JSON
+        $response = Invoke-HuduRequest -Method put -Resource "/api/v1/companies/$Id" -Body $JSON
+        return $response.company ?? $response
     }
 }

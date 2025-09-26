@@ -51,8 +51,8 @@ New-HuduVLANZone -Name "East Coast Zone" -CompanyId 1 -VLANIdRanges "200-300" -D
         vlan_zone = $vlan_zone
     } | ConvertTo-Json -Depth 10
     try {
-        $res = Invoke-HuduRequest -Method POST -Resource "/api/v1/vlan_zones" -Body $payload
-        return $res
+        $response = Invoke-HuduRequest -Method POST -Resource "/api/v1/vlan_zones" -Body $payload
+        return $response.vlan_zone ?? $response
     } catch {
         Write-Warning "Failed to create vlan zone '$Name'"
         return $null

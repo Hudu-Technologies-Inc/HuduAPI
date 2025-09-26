@@ -37,6 +37,7 @@ function Set-HuduAssetArchive {
     }
 
     if ($PSCmdlet.ShouldProcess($Id)) {
-        Invoke-HuduRequest -Method put -Resource "/api/v1/companies/$CompanyId/assets/$Id/$Action"
+        $response=Invoke-HuduRequest -Method put -Resource "/api/v1/companies/$CompanyId/assets/$Id/$Action"
+        return $response.asset ?? $response
     }
 }

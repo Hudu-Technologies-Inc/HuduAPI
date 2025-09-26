@@ -136,6 +136,7 @@ function Set-HuduWebsite {
     $JSON = $Website | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Id)) {
-        Invoke-HuduRequest -Method put -Resource "/api/v1/websites/$Id" -Body $JSON
+        $response = Invoke-HuduRequest -Method put -Resource "/api/v1/websites/$Id" -Body $JSON
+        return $response.website ?? $response
     }
 }

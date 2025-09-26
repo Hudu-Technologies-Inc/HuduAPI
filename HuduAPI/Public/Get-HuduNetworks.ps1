@@ -106,5 +106,6 @@ Get-HuduNetworks -CreatedAfter ([datetime]'2025-08-01') -UpdatedBefore ([datetim
         }
     }
 
-    Invoke-HuduRequest @HuduRequest
+    $result = Invoke-HuduRequest @HuduRequest
+    return $result.networks ?? $result.network ?? $result
 }

@@ -37,8 +37,8 @@ function New-HuduProcedure {
     } | ConvertTo-Json -Depth 10
 
     try {
-        $res = Invoke-HuduRequest -Method POST -Resource "/api/v1/procedures" -Body $payload
-        return $res
+        $response = Invoke-HuduRequest -Method POST -Resource "/api/v1/procedures" -Body $payload
+        return $response.procedure ?? $response
     } catch {
         Write-Warning "Failed to create procedure '$Name'"
         return $null

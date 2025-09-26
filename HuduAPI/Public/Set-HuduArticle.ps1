@@ -81,6 +81,7 @@ function Set-HuduArticle {
     $JSON = $Article | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Name)) {
-        Invoke-HuduRequest -Method put -Resource "/api/v1/articles/$ArticleId" -Body $JSON
+        $response = Invoke-HuduRequest -Method put -Resource "/api/v1/articles/$ArticleId" -Body $JSON
+        return $response.article ?? $response
     }
 }

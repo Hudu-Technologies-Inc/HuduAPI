@@ -61,8 +61,8 @@ function New-HuduProcedureTask {
     $payload = @{ procedure_task = $task } | ConvertTo-Json -Depth 10
 
     try {
-        $res = Invoke-HuduRequest -Method POST -Resource "/api/v1/procedure_tasks" -Body $payload
-        return $res.procedure_task
+        $response = Invoke-HuduRequest -Method POST -Resource "/api/v1/procedure_tasks" -Body $payload
+        return $response.procedure_task ?? $response
     } catch {
         Write-Warning "Failed to create procedure task '$Name'"
         return $null

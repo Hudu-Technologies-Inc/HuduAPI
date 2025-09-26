@@ -66,8 +66,8 @@ function Set-HuduPasswordFolder {
 
 
     try {
-        $res = Invoke-HuduRequest -Method POST -Resource "/api/v1/password_folders" -Body $(@{password_folder = $updatePasswordFolder} | ConvertTo-Json -Depth 10)
-        return $res
+        $response = Invoke-HuduRequest -Method POST -Resource "/api/v1/password_folders" -Body $(@{password_folder = $updatePasswordFolder} | ConvertTo-Json -Depth 10)
+        return $response.password_folder ?? $response
     } catch {
         Write-Warning "Failed to create new password folder '$Name'"
         return $null
