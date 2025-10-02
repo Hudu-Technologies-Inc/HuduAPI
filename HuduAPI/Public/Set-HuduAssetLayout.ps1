@@ -118,6 +118,7 @@ function Set-HuduAssetLayout {
         }
     }
     $Object = Get-HuduAssetLayouts -id $Id
+    $object = $object.asset_layout ?? $object
 
     $AssetLayout = [ordered]@{asset_layout = $Object }
     #$AssetLayout.asset_layout = $Object
@@ -139,7 +140,8 @@ function Set-HuduAssetLayout {
     }
 
     if ($Fields) {
-        $AssetLayout.asset_layout.fields = $Fields
+        $validatedFields = $Fields | Remove-UnderscoresInFields -isLayout
+        $AssetLayout.asset_layout.fields = $validatedFields
     }
 
     if ($IncludePasswords) {
@@ -171,12 +173,13 @@ function Set-HuduAssetLayout {
     }
 
     if ($Active) {
-        $AssetLayout.asset_layout.active = [System.Convert]::ToBoolean($Active)
+        $AssetLayout.asset_layout.active = $([System.Convert]::ToBoolean($Active))
     }
 
     $JSON = $AssetLayout | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Id)) {
+        Set-LayoutsCacheMarkedDirty
         Invoke-HuduRequest -Method put -Resource "/api/v1/asset_layouts/$Id" -Body $JSON
     }
 }

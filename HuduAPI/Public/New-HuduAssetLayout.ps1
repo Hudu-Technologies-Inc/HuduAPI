@@ -119,7 +119,8 @@ function New-HuduAssetLayout {
     $AssetLayout.asset_layout.add('icon', $Icon)
     $AssetLayout.asset_layout.add('color', $Color)
     $AssetLayout.asset_layout.add('icon_color', $IconColor)
-    $AssetLayout.asset_layout.add('fields', $Fields)
+    $validatedFields = $Fields | Remove-UnderscoresInFields -isLayout
+    $AssetLayout.asset_layout.add('fields', $validatedFields)
     #$AssetLayout.asset_layout.add('active', $Active)
 
     if ($IncludePasswords) {
@@ -151,6 +152,7 @@ function New-HuduAssetLayout {
     Write-Verbose $JSON
 
     if ($PSCmdlet.ShouldProcess($Name)) {
+        Set-LayoutsCacheMarkedDirty
         Invoke-HuduRequest -Method post -Resource '/api/v1/asset_layouts' -Body $JSON
     }
 }
