@@ -342,3 +342,4 @@ function Remove-UnderscoresInFields {
 
   end { $out }
 }
+}
