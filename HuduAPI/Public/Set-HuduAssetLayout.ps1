@@ -118,6 +118,7 @@ function Set-HuduAssetLayout {
         }
     }
     $Object = Get-HuduAssetLayouts -id $Id
+    $object = $object.asset_layout ?? $object
 
     $AssetLayout = [ordered]@{asset_layout = $Object }
     #$AssetLayout.asset_layout = $Object

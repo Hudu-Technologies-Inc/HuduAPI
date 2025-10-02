@@ -5,6 +5,13 @@ function Copy-ToHashtable {
   foreach ($p in $obj.PSObject.Properties) { $h[$p.Name] = $p.Value }
   return $h
 }
+function Unwrap-LayoutObject {
+  param($x)
+  if ($null -eq $x) { return $null }
+  if ($x.PSObject.Properties.Match('asset_layout')) { $x = $x.asset_layout }
+  if ($x -is [System.Collections.IEnumerable] -and -not ($x -is [string])) { return $x }  # could be list of layouts
+  return $x
+}
 
 function Normalize-Label([string]$s) {
   if (-not $s) { return '' }
@@ -81,11 +88,11 @@ function Add-HuduAssetLayoutsToCache {
 
         $byId = @{}
         foreach ($existing in ($script:AssetLayoutsCache.Data ?? @())) {
-            $byId[[string]$existing.id] = $existing
+            $byId[[string]$existing.id] = $($existing.asset_layout ?? $existing)
         }
         foreach ($item in $buffer) {
             if ($item -and $item.PSObject.Properties.Match('id')) {
-                $byId[[string]$item.id] = $item
+                $byId[[string]$item.id] = $($item.asset_layout ?? $item)
             }
         }
 
@@ -96,7 +103,7 @@ function Add-HuduAssetLayoutsToCache {
         # legacy list for completer
         $script:AssetLayouts = $script:AssetLayoutsCache.Data
 
-        if ($PassThru) { return $script:AssetLayoutsCache.Data }  # return only the data list
+        if ($PassThru) { return Unwrap-LayoutObject $script:AssetLayoutsCache.Data }  # return only the data list
         return  # default: output nothing to avoid accidental reuse
     }
 }
@@ -126,6 +133,7 @@ function Get-HuduAssetLayoutsCached {
     }
 
     $live = Get-HuduAssetLayouts @PSBoundParameters
+    $live = $live.asset_layout ?? $live
     if ($LayoutId) {
         return $live | Where-Object { $_.id -eq $LayoutId }
     }
@@ -140,9 +148,8 @@ function Get-SanitizedAssetLayout {
     $ReplaceWith=" "
     $rxU = [regex]'_+'
     $rxS = [regex]'\s{2,}'
-    $layout = Get-HuduAssetLayoutsCached -LayoutId $AssetLayoutId
-    $layout = $layout.data.asset_layout ?? $layout.asset_layout ?? $layout
-
+    $layout = Unwrap-LayoutObject (Get-HuduAssetLayoutsCached -LayoutId $AssetLayoutId)
+    $layout = $layout.asset_layout ?? $layout; $layout = $layout.asset_layout ?? $layout;
     if (-not $layout -or -not $layout.fields) { return $layout }
 
   # Build sanitized fields as hashtable[]
