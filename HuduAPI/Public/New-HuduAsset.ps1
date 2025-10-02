@@ -90,7 +90,7 @@ function New-HuduAsset {
 
     if ($Fields) {
         $validatedFields = Convert-AssetFieldsToCanonical -Fields $Fields -AssetLayoutId $AssetLayoutId `
-                                -DropUnmatched -DropNull
+                                -DropUnmatched
         $Asset.asset.add('custom_fields', $validatedFields)
     }
 
