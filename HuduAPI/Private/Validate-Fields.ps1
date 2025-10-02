@@ -269,77 +269,84 @@ function Convert-AssetFieldsToCanonical {
   return ,$out   # ensure hashtable[]
 }
 function Remove-UnderscoresInFields {
-  [CmdletBinding()]
-  [OutputType([hashtable[]])]
-  param(
-    [Parameter(Mandatory, ValueFromPipeline)] $Fields,
-    [switch]$IsLayout,     # existing layout: only mutate "label"
-    [switch]$NewLayout,    # creating new layout: only mutate "label", never drop props
-    [string]$ReplaceWith = ' ',
-    [switch]$DropNullValues
-  )
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)]
+        $Fields,
 
-    if ($IsLayout -and $NewLayout) { throw "Use either -IsLayout or -NewLayout, not both." }
-    $Replacement = [string]$ReplaceWith
+        # Only clean the "label" property in asset layout field objects
+        [switch]$IsLayout,
 
-    function Get-AsEnum($x){
-      if ($null -eq $x) { @() }
-      elseif ($x -is [System.Collections.IEnumerable] -and -not ($x -is [string])) { $x }
-      else { ,$x }
-    }
-    function Get-Pairs($o){
-      if ($o -is [System.Collections.IDictionary]) { $o.GetEnumerator() | ForEach-Object { [pscustomobject]@{Name=$_.Key; Value=$_.Value} } 
-      else { $o.PSObject.Properties | ForEach-Object { [pscustomobject]@{Name=$_.Name; Value=$_.Value} } }
-    }
-    function Get-IsEmpty([object]$v){
-      if ($null -eq $v) { $true }
-      elseif ($v -is [string]) { [string]::IsNullOrWhiteSpace($v) }
-      else { $false }
-    }
+        # Default is a space; coerced to string to prevent $true -> "True"
+        [string]$ReplaceWith = ' ',
 
-    $out = @()
-  
-    foreach ($f in (Get-AsEnum $Fields)) {
-      if ($null -eq $f) { continue }
-      $labelOnly = $IsLayout -or $NewLayout
+        # Optionally drop null/empty values
+        [switch]$DropNullValues
+    )
 
-      if ($labelOnly) {
-        # Only mutate the *value* of "label" (case-insensitive); preserve every other prop as-is.
-        $new = @{}
-        foreach ($p in Get-Pairs $f) {
-          if ($p.Name -ieq 'label' -and $p.Value -is [string]) {
-            $new['label'] = Normalize-Label $p.Value $Replacement
-          } else {
-            if ($NewLayout) {
-              # Creation-safe: never drop props
-              $new[$p.Name] = $p.Value
+    begin {
+        # Coerce once; guarantees string even if caller passed a bool accidentally
+        $Replacement = [string]$ReplaceWith
+
+        function As-Enumerable($x) {
+            if ($null -eq $x) { @() }
+            elseif ($x -is [System.Collections.IEnumerable] -and -not ($x -is [string])) { $x }
+            else { ,$x }
+        }
+        function Get-Pairs($obj) {
+            if ($obj -is [System.Collections.IDictionary]) {
+                $obj.GetEnumerator() | ForEach-Object {
+                    [PSCustomObject]@{ Name = $_.Key; Value = $_.Value }
+                }
             } else {
-              if ($DropNullValues) {
-                if (-not (Get-IsEmpty $p.Value)) { $new[$p.Name] = $p.Value }
-              } else {
-                $new[$p.Name] = $p.Value
-              }
+                $obj.PSObject.Properties | ForEach-Object {
+                    [PSCustomObject]@{ Name = $_.Name; Value = $_.Value }
+                }
             }
-          }
         }
-        $out += ,$new
-      }
-      else {
-        # Non-layout mode: transform *keys* (not typical for Hudu fields)
-        $new = @{}
-        foreach ($p in Get-Pairs $f) {
-          $newKey = ($p.Name.ToString()) -replace '_+', $Replacement
-          $newKey = ($newKey -replace '\s+',' ').Trim()
-          if ($DropNullValues) {
-            if (-not (Get-IsEmpty $p.Value)) { $new[$newKey] = $p.Value }
-          } else {
-            $new[$newKey] = $p.Value
-          }
+        function Is-Empty([object]$v) {
+            if ($null -eq $v) { return $true }
+            if ($v -is [string]) { return [string]::IsNullOrWhiteSpace($v) }
+            return $false
         }
-        $out += ,$new
-      }
     }
 
-  end { $out }
-}
+    process {
+        $out = @()
+
+        foreach ($f in (As-Enumerable $Fields)) {
+            if ($null -eq $f) { continue }
+
+            if ($IsLayout) {
+                # Only touch "label"
+                $new = [ordered]@{}
+                foreach ($p in Get-Pairs $f) {
+                    if ($p.Name -eq 'label' -and $p.Value -is [string]) {
+                        $new['label'] = $p.Value.Replace('_', $Replacement).Trim()
+                    } else {
+                        if ($DropNullValues) {
+                            if (-not (Is-Empty $p.Value)) { $new[$p.Name] = $p.Value }
+                        } else {
+                            $new[$p.Name] = $p.Value
+                        }
+                    }
+                }
+                $out += $new
+            } else {
+                # Transform ALL keys
+                $new = [ordered]@{}
+                foreach ($p in Get-Pairs $f) {
+                    $newKey = ($p.Name.ToString()).Replace('_', $Replacement).Trim()
+                    if ($DropNullValues) {
+                        if (-not (Is-Empty $p.Value)) { $new[$newKey] = $p.Value }
+                    } else {
+                        $new[$newKey] = $p.Value
+                    }
+                }
+                $out += $new
+            }
+        }
+
+        $out
+    }
 }
