@@ -7,6 +7,6 @@ foreach ($import in @($Public)) {
     }
 }
 $script:AssetLayoutsCache     = $null
-$script:AssetLayoutsCacheTtl  = [TimeSpan]::FromMinutes(5)
+$script:AssetLayoutsCacheTtl  = [TimeSpan]::FromMinutes(2)
 
 Export-ModuleMember -Function $Public.BaseName -Alias *

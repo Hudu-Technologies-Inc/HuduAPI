@@ -178,6 +178,9 @@ function Set-HuduAssetLayout {
     $JSON = $AssetLayout | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Id)) {
-        Invoke-HuduRequest -Method put -Resource "/api/v1/asset_layouts/$Id" -Body $JSON
+        $result = Invoke-HuduRequest -Method put -Resource "/api/v1/asset_layouts/$Id" -Body $JSON
+        $NewLayout = Get-HuduAssetLayouts -id $($result.asset_layout.id ?? $result.id)
+        Add-HuduAssetLayoutsToCache -Layout $($NewLayout.asset_layout ?? $NewLayout)
+        return $result
     }
 }

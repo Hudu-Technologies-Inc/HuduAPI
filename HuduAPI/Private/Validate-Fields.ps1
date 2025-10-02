@@ -23,6 +23,97 @@ function Test-Equiv {
     if ($a.Replace(' ', '') -eq $b.Replace(' ', '')) { return $true }
     return $false
 }
+function Add-HuduAssetLayoutsToCache {
+<#
+.SYNOPSIS
+Merge asset layout objects into the in-memory cache.
+
+.DESCRIPTION
+Adds or replaces asset layout records in $script:AssetLayoutsCache.Data keyed by Id.
+By default, does NOT update the cache timestamp (CachedAt). Pass -MarkFresh to stamp now.
+Also keeps $script:AssetLayouts (used by your completer) in sync.
+
+.PARAMETER Layout
+One or more layout objects. Accepts:
+ - A raw layout object (with properties like id, name, fields, slug, …), or
+ - An API wrapper object with an 'asset_layout' property (will be unwrapped).
+
+.PARAMETER MarkFresh
+If present, sets $script:AssetLayoutsCache.CachedAt = (Get-Date) after merging.
+
+.OUTPUTS
+The updated cache object ($script:AssetLayoutsCache).
+
+.EXAMPLE
+# After updating a single layout live, merge it into cache without touching timestamp
+$layout = Get-HuduAssetLayouts -Id 15
+Add-HuduAssetLayoutsToCache -Layout $layout
+
+.EXAMPLE
+# Bulk-merge and mark the cache fresh (full-list semantics)
+$all = Get-HuduAssetLayouts
+#>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [object[]]$Layout,
+        [switch]$MarkFresh
+    )
+
+    begin {
+        $buffer = New-Object System.Collections.Generic.List[object]
+    }
+    process {
+        foreach ($item in $Layout) {
+            # Unwrap { asset_layout = <obj> } responses if present
+            if ($item -and $item.PSObject.Properties.Match('asset_layout')) {
+                $item = $item.asset_layout
+            }
+            if (-not $item) { continue }
+
+            # Normalize ID to int when possible (defensive)
+            if ($item.PSObject.Properties.Match('id') -and $item.id -isnot [int]) {
+                try { $item.id = [int]$item.id } catch { }
+            }
+
+            $buffer.Add($item)
+        }
+    }
+    end {
+        if (-not $script:AssetLayoutsCache) {
+            $script:AssetLayoutsCache = [pscustomobject]@{
+                Data     = @()
+                CachedAt = $null
+            }
+        }
+
+        # Build a map of existing by id, replace or add new/updated
+        $byId = @{}
+        foreach ($existing in ($script:AssetLayoutsCache.Data ?? @())) {
+            $byId[[string]$existing.id] = $existing
+        }
+        foreach ($item in $buffer) {
+            if ($item -and $item.PSObject.Properties.Match('id')) {
+                $byId[[string]$item.id] = $item
+            }
+        }
+
+        # Stable-ish sort: by name when available, then by id
+        $sorted = $byId.Values | Sort-Object -Property `
+            @{Expression = { $_.name }; Ascending = $true}, `
+            @{Expression = { $_.id };   Ascending = $true}
+
+        $script:AssetLayoutsCache.Data = @($sorted)
+        if ($MarkFresh) {
+            $script:AssetLayoutsCache.CachedAt = Get-Date
+        }
+
+        # Keep legacy var for your completer identical to Data
+        $script:AssetLayouts = $script:AssetLayoutsCache.Data
+
+        return $script:AssetLayoutsCache
+    }
+}
 
 function Get-HuduAssetLayoutsCached {
     [CmdletBinding()]
