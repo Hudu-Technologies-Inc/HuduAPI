@@ -140,27 +140,9 @@ function Get-SanitizedAssetLayout {
     $ReplaceWith=" "
     $rxU = [regex]'_+'
     $rxS = [regex]'\s{2,}'
-    $layout   = $null
-    $now      = Get-Date
-    $isFresh  = $false
+    $layout = Get-HuduAssetLayoutsCached -LayoutId $AssetLayoutId
+    $layout = $layout.data.asset_layout ?? $layout.asset_layout ?? $layout
 
-    # ---------- Try cache first ----------
-    if ($script:AssetLayoutsCache -and $script:AssetLayoutsCache.CachedAt) {
-        $isFresh = (($now - $script:AssetLayoutsCache.CachedAt) -lt $script:AssetLayoutsCacheTtl)
-        if ($isFresh) {
-            $layout = $script:AssetLayoutsCache.Data | Where-Object { $_.id -eq $AssetLayoutId }
-        }
-    }
-
-    # ---------- LIVE FETCH PATH (no cache, stale cache, or cache miss) ----------
-    if (-not $layout) {
-        try {
-            $layout = Get-HuduAssetLayouts -Id $AssetLayoutId
-            $layout = $layout.asset_layout ?? $layout
-        } catch {
-            return $null
-        }
-      }
     if (-not $layout -or -not $layout.fields) { return $layout }
 
   # Build sanitized fields as hashtable[]
