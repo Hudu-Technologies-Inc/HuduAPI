@@ -1,15 +1,66 @@
+
+function Get-HuduAssetLayoutsCached {
+    [CmdletBinding()]
+    Param (
+        [String]$Name,
+        [Alias('id', 'layout_id')]
+        [int]$LayoutId,
+        [String]$Slug
+    )
+
+    $now     = Get-Date
+    $isFresh = $false
+    if ($script:AssetLayoutsCache) {
+        $isFresh = ($script:AssetLayoutsCache.CachedAt -ne $null) -and
+                   (($now - $script:AssetLayoutsCache.CachedAt) -lt $script:AssetLayoutsCacheTtl)
+    }
+
+    if ($isFresh) {
+        if ($LayoutId) {
+            $hit = $script:AssetLayoutsCache.Data | Where-Object { $_.id -eq $LayoutId }
+            if ($hit) { return $hit }
+            # miss in fresh cache -> fetch live
+        } elseif ($Name -or $Slug) {
+            $filtered = $script:AssetLayoutsCache.Data
+            if ($Name) { $filtered = $filtered | Where-Object { $_.name -eq $Name } }
+            if ($Slug) { $filtered = $filtered | Where-Object { $_.slug -eq $Slug } }
+            return $filtered
+        } else {
+            return $script:AssetLayoutsCache.Data
+        }
+    }
+
+    # stale or cache miss -> live fetch (which will write-through cache)
+    return Get-HuduAssetLayouts @PSBoundParameters
+}
 function Get-SanitizedAssetLayout {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory)][string]$AssetLayoutId
     )
     $layout = $null
-    try {
-        $layout = get-huduassetlayout -id $assetlayoutid
-        $layout = $layout.asset_layout ?? $layout
-    } catch {return $null}
-    if (-not $layout) { return $null }
 
+    $layout   = $null
+    $now      = Get-Date
+    $isFresh  = $false
+
+    # ---------- Try cache first ----------
+    if ($script:AssetLayoutsCache -and $script:AssetLayoutsCache.CachedAt) {
+        $isFresh = (($now - $script:AssetLayoutsCache.CachedAt) -lt $script:AssetLayoutsCacheTtl)
+        if ($isFresh) {
+            $layout = $script:AssetLayoutsCache.Data | Where-Object { $_.id -eq $AssetLayoutId }
+        }
+    }
+
+    if (-not $layout) {
+        try {
+            $layout = Get-HuduAssetLayouts -Id $AssetLayoutId
+            $layout = $layout.asset_layout ?? $layout
+        } catch {
+            return $null
+        }
+        if (-not $layout) { return $null }
+    }
     # Detect if any label actually contains underscores
     $hasUnders = $false
     if ($layout.fields) {

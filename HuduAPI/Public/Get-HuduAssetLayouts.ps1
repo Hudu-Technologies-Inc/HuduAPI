@@ -1,24 +1,4 @@
 function Get-HuduAssetLayouts {
-    <#
-    .SYNOPSIS
-    Get a list of Asset Layouts
-
-    .DESCRIPTION
-    Call Hudu API to retrieve asset layouts for server
-
-    .PARAMETER Name
-    Filter by name of Asset Layout
-
-    .PARAMETER LayoutId
-    Id of Asset Layout
-
-    .PARAMETER Slug
-    Filter by url slug
-
-    .EXAMPLE
-    Get-HuduAssetLayouts -Name 'Contacts'
-
-    #>
     [CmdletBinding()]
     Param (
         [String]$Name,
@@ -34,19 +14,61 @@ function Get-HuduAssetLayouts {
 
     if ($LayoutId) {
         $HuduRequest.Resource = '{0}/{1}' -f $HuduRequest.Resource, $LayoutId
-        $AssetLayout = Invoke-HuduRequest @HuduRequest
-        return $AssetLayout.asset_layout
-    } else {
+        $resp   = Invoke-HuduRequest @HuduRequest
+        $layout = $resp.asset_layout ?? $resp
+
+        # lazily merge into cache (do NOT bump CachedAt so partial refreshes don't mark cache "fresh")
+        if ($layout) {
+            if ($script:AssetLayoutsCache -and $script:AssetLayoutsCache.Data) {
+                $data = @($script:AssetLayoutsCache.Data | Where-Object { $_.id -ne $layout.id })
+                $data += $layout
+                $script:AssetLayoutsCache.Data = $data | Sort-Object -Property name
+            } else {
+                $script:AssetLayoutsCache = [pscustomobject]@{
+                    Data     = @($layout)
+                    CachedAt = $null   # not a full refresh
+                }
+            }
+            # keep legacy var for completers in sync
+            $script:AssetLayouts = $script:AssetLayoutsCache.Data
+        }
+
+        return $layout
+    }
+    else {
         $Params = @{}
         if ($Name) { $Params.name = $Name }
         if ($Slug) { $Params.slug = $Slug }
-        $HuduRequest.Params = $Params
+        if ($Params.Count -gt 0) { $HuduRequest.Params = $Params }
 
-        $AssetLayouts = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'asset_layouts' -PageSize 25
+        $items = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'asset_layouts' -PageSize 25
 
-        if (!$Name -and !$Slug) {
-            $script:AssetLayouts = $AssetLayouts | Sort-Object -Property name
+        if ($Params.Count -eq 0) {
+            $sorted = $items | Sort-Object -Property name
+            $script:AssetLayoutsCache = [pscustomobject]@{
+                Data     = $sorted
+                CachedAt = Get-Date
+            }
+            $script:AssetLayouts = $sorted # for your completer
+        } else {
+            # FILTERED SET: merge, but don't bump timestamp
+            if ($items) {
+                if ($script:AssetLayoutsCache -and $script:AssetLayoutsCache.Data) {
+                    # replace (or add) by id
+                    $byId = @{}
+                    foreach ($x in $script:AssetLayoutsCache.Data) { $byId[$x.id] = $x }
+                    foreach ($x in $items)                         { $byId[$x.id] = $x }
+                    $script:AssetLayoutsCache.Data = $byId.Values | Sort-Object -Property name
+                } else {
+                    $script:AssetLayoutsCache = [pscustomobject]@{
+                        Data     = $items
+                        CachedAt = $null
+                    }
+                }
+                $script:AssetLayouts = $script:AssetLayoutsCache.Data
+            }
         }
-        $AssetLayouts
+
+        return $items
     }
 }
