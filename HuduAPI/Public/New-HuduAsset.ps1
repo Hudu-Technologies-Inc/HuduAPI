@@ -87,8 +87,10 @@ function New-HuduAsset {
         $Asset.asset.add('primary_manufacturer', $PrimaryManufacturer)
     }
 
+
     if ($Fields) {
-        $Asset.asset.add('custom_fields', $Fields)
+        $validatedFields = Get-ValidatedAssetFields -Fields $Fields -AssetLayoutId $AssetLayoutId
+        $Asset.asset.add('custom_fields', $validatedFields)
     }
 
     if ($Slug) {
