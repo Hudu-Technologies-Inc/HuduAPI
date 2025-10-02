@@ -140,7 +140,7 @@ function Set-HuduAssetLayout {
 
     if ($Fields) {
         $validatedFields = $Fields | Remove-UnderscoresInFields -isLayout
-        $AssetLayout.asset_layout.fields = $validatedFields    
+        $AssetLayout.asset_layout.fields = $validatedFields
     }
 
     if ($IncludePasswords) {
@@ -172,7 +172,7 @@ function Set-HuduAssetLayout {
     }
 
     if ($Active) {
-        $AssetLayout.asset_layout.active = [System.Convert]::ToBoolean($Active)
+        $AssetLayout.asset_layout.active = $([System.Convert]::ToBoolean($Active))
     }
 
     $JSON = $AssetLayout | ConvertTo-Json -Depth 10

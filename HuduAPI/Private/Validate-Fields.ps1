@@ -47,58 +47,25 @@ Also clears cached data and the legacy $script:AssetLayouts list.
     return $script:AssetLayoutsCache
 }
 function Add-HuduAssetLayoutsToCache {
-<#
-.SYNOPSIS
-Merge asset layout objects into the in-memory cache.
-
-.DESCRIPTION
-Adds or replaces asset layout records in $script:AssetLayoutsCache.Data keyed by Id.
-By default, does NOT update the cache timestamp (CachedAt). Pass -MarkFresh to stamp now.
-Also keeps $script:AssetLayouts (used by completer) in sync.
-
-.PARAMETER Layout
-One or more layout objects. Accepts:
- - A raw layout object (with properties like id, name, fields, slug, …), or
- - An API wrapper object with an 'asset_layout' property (will be unwrapped).
-
-.PARAMETER MarkFresh
-If present, sets $script:AssetLayoutsCache.CachedAt = (Get-Date) after merging.
-
-.OUTPUTS
-The updated cache object ($script:AssetLayoutsCache).
-
-.EXAMPLE
-# After updating a single layout live, merge it into cache without touching timestamp
-$layout = Get-HuduAssetLayouts -Id 15
-Add-HuduAssetLayoutsToCache -Layout $layout
-
-.EXAMPLE
-# Bulk-merge and mark the cache fresh (full-list semantics)
-$all = Get-HuduAssetLayouts
-#>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [object[]]$Layout,
-        [switch]$MarkFresh
+        [switch]$MarkFresh,
+        [switch]$PassThru
     )
-
     begin {
         $buffer = New-Object System.Collections.Generic.List[object]
     }
     process {
         foreach ($item in $Layout) {
-            # Unwrap { asset_layout = <obj> } responses if present
             if ($item -and $item.PSObject.Properties.Match('asset_layout')) {
                 $item = $item.asset_layout
             }
             if (-not $item) { continue }
-
-            # Normalize ID to int when possible (defensive)
             if ($item.PSObject.Properties.Match('id') -and $item.id -isnot [int]) {
                 try { $item.id = [int]$item.id } catch { }
             }
-
             $buffer.Add($item)
         }
     }
@@ -108,9 +75,10 @@ $all = Get-HuduAssetLayouts
                 Data     = @()
                 CachedAt = $null
             }
+            # tag it so we can detect accidental use
+            $script:AssetLayoutsCache.PSTypeNames.Insert(0,'Hudu.AssetLayoutsCache')
         }
 
-        # Build a map of existing by id, replace or add new/updated
         $byId = @{}
         foreach ($existing in ($script:AssetLayoutsCache.Data ?? @())) {
             $byId[[string]$existing.id] = $existing
@@ -121,31 +89,22 @@ $all = Get-HuduAssetLayouts
             }
         }
 
-        # Sort by name
-        $sorted = $byId.Values | Sort-Object -Property @{Expression = { $_.name }; Ascending = $true}
-
+        $sorted = $byId.Values | Sort-Object -Property @{e={$_.name}}, @{e={$_.id}}
         $script:AssetLayoutsCache.Data = @($sorted)
-        if ($MarkFresh) {
-            $script:AssetLayoutsCache.CachedAt = Get-Date
-        }
+        if ($MarkFresh) { $script:AssetLayoutsCache.CachedAt = Get-Date }
 
-        # Keep legacy script layout cache for completer
+        # legacy list for completer
         $script:AssetLayouts = $script:AssetLayoutsCache.Data
 
-        return $script:AssetLayoutsCache
+        if ($PassThru) { return $script:AssetLayoutsCache.Data }  # return only the data list
+        return  # default: output nothing to avoid accidental reuse
     }
 }
-
 function Get-HuduAssetLayoutsCached {
     [CmdletBinding()]
-    Param (
-        [String]$Name,
-        [Alias('id', 'layout_id')]
-        [int]$LayoutId,
-        [String]$Slug
-    )
+    Param ([String]$Name,[Alias('id','layout_id')][int]$LayoutId,[String]$Slug)
 
-    $now     = Get-Date
+    $now = Get-Date
     $isFresh = $false
     if ($script:AssetLayoutsCache) {
         $isFresh = ($null -ne $script:AssetLayoutsCache.CachedAt) -and
@@ -156,7 +115,6 @@ function Get-HuduAssetLayoutsCached {
         if ($LayoutId) {
             $hit = $script:AssetLayoutsCache.Data | Where-Object { $_.id -eq $LayoutId }
             if ($hit) { return $hit }
-            # miss in fresh cache -> fetch live
         } elseif ($Name -or $Slug) {
             $filtered = $script:AssetLayoutsCache.Data
             if ($Name) { $filtered = $filtered | Where-Object { $_.name -eq $Name } }
@@ -167,7 +125,11 @@ function Get-HuduAssetLayoutsCached {
         }
     }
 
-    return Get-HuduAssetLayouts @PSBoundParameters
+    $live = Get-HuduAssetLayouts @PSBoundParameters
+    if ($LayoutId) {
+        return $live | Where-Object { $_.id -eq $LayoutId }
+    }
+    return $live
 }
 function Get-SanitizedAssetLayout {
     [CmdletBinding(SupportsShouldProcess)]
