@@ -12,7 +12,7 @@
     RootModule        = '.\HuduAPI.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '3.14.15'
+    ModuleVersion     = '3.2.25'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -33,7 +33,7 @@
     Description       = 'This module provides an interface to the Hudu Rest API further information can be found at https://github.com/lwhitelock/HuduAPI'
 
     # Minimum version of the Windows PowerShell engine required by this module
-    PowerShellVersion = '7.0'
+    PowerShellVersion = '7.5.1'
 
     # Name of the Windows PowerShell host required by this module
     # PowerShellHostName = ''
