@@ -35,6 +35,8 @@ function Get-HuduAssetLayouts {
     if ($LayoutId) {
         $HuduRequest.Resource = '{0}/{1}' -f $HuduRequest.Resource, $LayoutId
         $AssetLayout = Invoke-HuduRequest @HuduRequest
+        if ($AssetLayout) {Add-HuduAssetLayoutsToCache -Layout $AssetLayout.asset_layout}
+
         return $AssetLayout.asset_layout 
     } else {
         $Params = @{}
