@@ -11,7 +11,7 @@ function Get-HuduAssetLayoutsCached {
     $now     = Get-Date
     $isFresh = $false
     if ($script:AssetLayoutsCache) {
-        $isFresh = ($script:AssetLayoutsCache.CachedAt -ne $null) -and
+        $isFresh = ($null -ne $script:AssetLayoutsCache.CachedAt) -and
                    (($now - $script:AssetLayoutsCache.CachedAt) -lt $script:AssetLayoutsCacheTtl)
     }
 
