@@ -175,6 +175,7 @@ function Get-SanitizedAssetLayout {
         [Parameter(Mandatory)][string]$AssetLayoutId
     )
     $updatedFields = @()
+    $ReplaceWith=" "
     $rxU = [regex]'_+'
     $rxS = [regex]'\s{2,}'
     $layout   = $null
