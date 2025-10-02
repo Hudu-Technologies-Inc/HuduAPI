@@ -1,28 +1,3 @@
-function Normalize-Text {
-    param([string]$s)
-    if ([string]::IsNullOrWhiteSpace($s)) { return $null }
-    $s = $s.Trim().ToLowerInvariant()
-    $s = [regex]::Replace($s, '[\s_-]+', ' ')  # "primary_email" -> "primary email"
-    # strip diacritics (prénom -> prenom)
-    $formD = $s.Normalize([System.Text.NormalizationForm]::FormD)
-    $sb = New-Object System.Text.StringBuilder
-    foreach ($ch in $formD.ToCharArray()){
-        if ([System.Globalization.CharUnicodeInfo]::GetUnicodeCategory($ch) -ne
-            [System.Globalization.UnicodeCategory]::NonSpacingMark) { [void]$sb.Append($ch) }
-    }
-    ($sb.ToString()).Normalize([System.Text.NormalizationForm]::FormC)
-}
-function Test-Equiv {
-    param([string]$A, [string]$B)
-    $a = Normalize-Text $A; $b = Normalize-Text $B
-    if (-not $a -or -not $b) { return $false }
-    if ($a -eq $b) { return $true }
-    $reA = "(^| )$([regex]::Escape($a))( |$)"
-    $reB = "(^| )$([regex]::Escape($b))( |$)"
-    if ($b -match $reA -or $a -match $reB) { return $true } 
-    if ($a.Replace(' ', '') -eq $b.Replace(' ', '')) { return $true }
-    return $false
-}
 function Copy-ToHashtable {
   param($obj)
   if ($obj -is [System.Collections.IDictionary]) { return @{} + $obj } # shallow copy
@@ -74,7 +49,7 @@ Merge asset layout objects into the in-memory cache.
 .DESCRIPTION
 Adds or replaces asset layout records in $script:AssetLayoutsCache.Data keyed by Id.
 By default, does NOT update the cache timestamp (CachedAt). Pass -MarkFresh to stamp now.
-Also keeps $script:AssetLayouts (used by your completer) in sync.
+Also keeps $script:AssetLayouts (used by completer) in sync.
 
 .PARAMETER Layout
 One or more layout objects. Accepts:
@@ -141,17 +116,15 @@ $all = Get-HuduAssetLayouts
             }
         }
 
-        # Stable-ish sort: by name when available, then by id
-        $sorted = $byId.Values | Sort-Object -Property `
-            @{Expression = { $_.name }; Ascending = $true}, `
-            @{Expression = { $_.id };   Ascending = $true}
+        # Sort by name
+        $sorted = $byId.Values | Sort-Object -Property @{Expression = { $_.name }; Ascending = $true}
 
         $script:AssetLayoutsCache.Data = @($sorted)
         if ($MarkFresh) {
             $script:AssetLayoutsCache.CachedAt = Get-Date
         }
 
-        # Keep legacy var for your completer identical to Data
+        # Keep legacy script layout cache for completer
         $script:AssetLayouts = $script:AssetLayoutsCache.Data
 
         return $script:AssetLayoutsCache
@@ -189,7 +162,6 @@ function Get-HuduAssetLayoutsCached {
         }
     }
 
-    # stale or cache miss -> live fetch (which will write-through cache)
     return Get-HuduAssetLayouts @PSBoundParameters
 }
 function Get-SanitizedAssetLayout {
@@ -212,6 +184,7 @@ function Get-SanitizedAssetLayout {
         }
     }
 
+    # ---------- LIVE FETCH PATH (no cache, stale cache, or cache miss) ----------
     if (-not $layout) {
         try {
             $layout = Get-HuduAssetLayouts -Id $AssetLayoutId
@@ -219,7 +192,7 @@ function Get-SanitizedAssetLayout {
         } catch {
             return $null
         }
-    }
+      }
     if (-not $layout -or -not $layout.fields) { return $layout }
 
   # Build sanitized fields as hashtable[]
@@ -241,7 +214,6 @@ function Get-SanitizedAssetLayout {
     # Re-fetch & update cache
     $layout = Get-HuduAssetLayouts -Id $AssetLayoutId
     $layout = $layout.asset_layout ?? $layout
-    Add-HuduAssetLayoutsToCache -Layout $layout -MarkFresh | Out-Null
   }
 
   return $layout
@@ -259,24 +231,30 @@ function Get-LayoutLabelMap {
 }
 function Convert-AssetFieldsToCanonical {
   param(
-    [Parameter(Mandatory)][array]$Fields,      # PSCustomObject[] or Hashtable[]
+    [Parameter(Mandatory)][array]$Fields,
     [Parameter(Mandatory)][int]$AssetLayoutId,
-    [switch]$DropUnmatched
+    [switch]$DropUnmatched,
+    [switch]$DropNull
   )
-
   $labelMap = Get-LayoutLabelMap -AssetLayoutId $AssetLayoutId
+  function Is-Nullish([object]$v) {
+    if ($null -eq $v) { return $true }
+    if ($v -is [string]) { return [string]::IsNullOrWhiteSpace($v) }
+    return $false
+  }
 
   $out = @()
   foreach ($item in @($Fields)) {
     $h = Copy-ToHashtable $item
     $new = @{}
-
     foreach ($k in @($h.Keys)) {
+      if ($DropNull -and (Is-Nullish $h[$k])) { continue }
+
       $norm = Normalize-Label $k
       if ($labelMap.ContainsKey($norm)) {
         $new[$labelMap[$norm]] = $h[$k]     # rename key to canonical label
       } elseif (-not $DropUnmatched) {
-        $new[$k] = $h[$k]                   # keep as-is if you prefer
+        $new[$k] = $h[$k]
       }
     }
 
@@ -285,6 +263,7 @@ function Convert-AssetFieldsToCanonical {
 
   return ,$out   # ensure hashtable[]
 }
+
 function Remove-UnderscoresInFields {
   [CmdletBinding()]
   [OutputType([hashtable[]])]
@@ -295,14 +274,14 @@ function Remove-UnderscoresInFields {
     [switch]$DropNullValues
   )
     $Replacement = [string]$ReplaceWith
-    function As-Enumerable($x){ if ($null -eq $x){@()} elseif ($x -is [System.Collections.IEnumerable] -and -not ($x -is [string])){$x} else {,$x} }
+    function Get-AsEnum($x){ if ($null -eq $x){@()} elseif ($x -is [System.Collections.IEnumerable] -and -not ($x -is [string])){$x} else {,$x} }
     function Get-Pairs($o){
       if ($o -is [System.Collections.IDictionary]) { $o.GetEnumerator() | ForEach-Object { [pscustomobject]@{Name=$_.Key;Value=$_.Value} } 
       else { $o.PSObject.Properties | ForEach-Object { [pscustomobject]@{Name=$_.Name;Value=$_.Value} } }
     }
-    function Is-Empty([object]$v){ if ($null -eq $v){$true} elseif ($v -is [string]){[string]::IsNullOrWhiteSpace($v)} else {$false} }
+    function Get-IsEmpty([object]$v){ if ($null -eq $v){$true} elseif ($v -is [string]){[string]::IsNullOrWhiteSpace($v)} else {$false} }
     $out = @()
-    foreach ($f in (As-Enumerable $Fields)) {
+    foreach ($f in (Get-AsEnum $Fields)) {
       if ($null -eq $f) { continue }
 
       if ($IsLayout) {
@@ -312,7 +291,7 @@ function Remove-UnderscoresInFields {
           if ($p.Name -eq 'label' -and $p.Value -is [string]) {
             $new['label'] = $p.Value.Replace('_',$Replacement).Trim()
           } else {
-            if ($DropNullValues) { if (-not (Is-Empty $p.Value)) { $new[$p.Name] = $p.Value } }
+            if ($DropNullValues) { if (-not (Get-IsEmpty $p.Value)) { $new[$p.Name] = $p.Value } }
             else { $new[$p.Name] = $p.Value }
           }
         }
@@ -322,7 +301,7 @@ function Remove-UnderscoresInFields {
         $new = @{}
         foreach ($p in Get-Pairs $f) {
           $newKey = ($p.Name.ToString()).Replace('_',$Replacement).Trim()
-          if ($DropNullValues) { if (-not (Is-Empty $p.Value)) { $new[$newKey] = $p.Value } }
+          if ($DropNullValues) { if (-not (Get-IsEmpty $p.Value)) { $new[$newKey] = $p.Value } }
           else { $new[$newKey] = $p.Value }
         }
         $out += ,$new

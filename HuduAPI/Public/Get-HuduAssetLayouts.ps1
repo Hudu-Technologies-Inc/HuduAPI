@@ -36,7 +36,7 @@ function Get-HuduAssetLayouts {
         $HuduRequest.Resource = '{0}/{1}' -f $HuduRequest.Resource, $LayoutId
         $AssetLayout = Invoke-HuduRequest @HuduRequest
         Add-HuduAssetLayoutsToCache -Layout $($AssetLayout.asset_layout ?? $AssetLayout)
-        return $AssetLayout.asset_layout
+        return $AssetLayout
     } else {
         $Params = @{}
         if ($Name) { $Params.name = $Name }
@@ -49,6 +49,6 @@ function Get-HuduAssetLayouts {
             $script:AssetLayouts = $AssetLayouts | Sort-Object -Property name
             Add-HuduAssetLayoutsToCache -Layout $AssetLayouts -MarkFresh
         }
-        $AssetLayouts
+        return $AssetLayouts
     }
 }

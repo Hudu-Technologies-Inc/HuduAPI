@@ -89,7 +89,8 @@ function New-HuduAsset {
 
 
     if ($Fields) {
-        $Fields | Remove-UnderscoresInFields
+        $validatedFields = Convert-AssetFieldsToCanonical -Fields $Fields -AssetLayoutId $AssetLayoutId `
+                                -DropUnmatched -DropNull
         $Asset.asset.add('custom_fields', $validatedFields)
     }
 
