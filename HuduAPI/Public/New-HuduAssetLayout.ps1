@@ -152,9 +152,7 @@ function New-HuduAssetLayout {
     Write-Verbose $JSON
 
     if ($PSCmdlet.ShouldProcess($Name)) {
-        $result = Invoke-HuduRequest -Method post -Resource '/api/v1/asset_layouts' -Body $JSON
-        $NewLayout = Get-HuduAssetLayouts -id $($result.asset_layout.id ?? $result.id)
-        Add-HuduAssetLayoutsToCache -Layout $($NewLayout.asset_layout ?? $NewLayout)
-        return $result
+        Set-LayoutsCacheMarkedDirty
+        Invoke-HuduRequest -Method post -Resource '/api/v1/asset_layouts' -Body $JSON
     }
 }

@@ -117,7 +117,7 @@ function Set-HuduAssetLayout {
             Default { throw "Invalid field type: $($field.'field_type') found in field $($field.name)" }
         }
     }
-    $Object = Get-SanitizedAssetLayout -AssetLayoutId $Id
+    $Object = Get-HuduAssetLayouts -id $Id
 
     $AssetLayout = [ordered]@{asset_layout = $Object }
     #$AssetLayout.asset_layout = $Object
@@ -140,8 +140,7 @@ function Set-HuduAssetLayout {
 
     if ($Fields) {
         $validatedFields = Remove-UnderscoresInFields -Fields $Fields -isLayout
-        $AssetLayout.asset_layout.fields = $validatedFields
-    }
+        $AssetLayout.asset_layout.fields = $validatedFields    }
 
     if ($IncludePasswords) {
         $AssetLayout.asset_layout.include_passwords = [System.Convert]::ToBoolean($IncludePasswords)
@@ -178,9 +177,7 @@ function Set-HuduAssetLayout {
     $JSON = $AssetLayout | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Id)) {
-        $result = Invoke-HuduRequest -Method put -Resource "/api/v1/asset_layouts/$Id" -Body $JSON
-        $NewLayout = Get-HuduAssetLayouts -id $($result.asset_layout.id ?? $result.id)
-        Add-HuduAssetLayoutsToCache -Layout $($NewLayout.asset_layout ?? $NewLayout)
-        return $result
+        Set-LayoutsCacheMarkedDirty
+        Invoke-HuduRequest -Method put -Resource "/api/v1/asset_layouts/$Id" -Body $JSON
     }
 }

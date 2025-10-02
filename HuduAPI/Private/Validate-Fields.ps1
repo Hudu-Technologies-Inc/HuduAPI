@@ -23,6 +23,37 @@ function Test-Equiv {
     if ($a.Replace(' ', '') -eq $b.Replace(' ', '')) { return $true }
     return $false
 }
+
+function Set-LayoutsCacheMarkedDirty {
+<#
+.SYNOPSIS
+Mark the Asset Layouts cache as stale (or wipe it).
+
+.PARAMETER Hard
+Also clears cached data and the legacy $script:AssetLayouts list.
+#>
+    [CmdletBinding()]
+    param([switch]$Hard)
+
+    if (-not $script:AssetLayoutsCache) {
+        $script:AssetLayoutsCache = [pscustomobject]@{
+            Data     = @()
+            CachedAt = $null
+        }
+        $script:AssetLayouts = @()
+        return $script:AssetLayoutsCache
+    }
+
+    # Mark NOT fresh (stale) but keep data by default
+    $script:AssetLayoutsCache.CachedAt = $null
+
+    if ($Hard) {
+        $script:AssetLayoutsCache.Data = @()
+        $script:AssetLayouts = @()
+    }
+
+    return $script:AssetLayoutsCache
+}
 function Add-HuduAssetLayoutsToCache {
 <#
 .SYNOPSIS
