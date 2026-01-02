@@ -4,7 +4,7 @@ function Get-HuduFlagTypes {
     param(
         # Get one
         [Parameter(ParameterSetName = 'ById', Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [Alias('FlagTypeId','id')]
+        [Alias('FlagTypeId')]
         [int]$Id,
 
         # List filters

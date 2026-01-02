@@ -7,6 +7,7 @@ function New-HuduFlagType {
 
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
+        [ValidateSet('Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Orange', 'LightPink', 'LightBlue', 'LightGreen', 'LightPurple', 'LightOrange', 'LightYellow', 'White', 'Grey')]
         [string]$Color
     )
 

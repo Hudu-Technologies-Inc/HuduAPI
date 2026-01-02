@@ -2,7 +2,7 @@ function Remove-HuduFlagType {
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
     param(
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [Alias('FlagTypeId','id')]
+        [Alias('FlagTypeId')]
         [int]$Id
     )
 

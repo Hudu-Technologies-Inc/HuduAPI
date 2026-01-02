@@ -47,7 +47,7 @@ function Set-HuduFlag {
         [int]$FlagableId
     )
 
-    $Object = Get-HuduFlag -Id $Id
+    $Object = Get-HuduFlags -Id $Id
     if (-not $Object) { return $null }
 
     $Flag = [ordered]@{ flag = $Object }

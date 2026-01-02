@@ -2,7 +2,7 @@ function Remove-HuduFlag {
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
     param(
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName)]
-        [Alias('FlagId','id')]
+        [Alias('FlagId')]
         [int]$Id
     )
 

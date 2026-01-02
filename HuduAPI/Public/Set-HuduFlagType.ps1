@@ -13,7 +13,6 @@ function Set-HuduFlagType {
     Updated name
 
     .PARAMETER Color
-    Updated color (e.g. "Red" or "#FF0000" depending on your instance conventions)
 
     .EXAMPLE
     Set-HuduFlagType -Id 1 -Name "Updated Flag Type" -Color "Green"
@@ -25,10 +24,10 @@ function Set-HuduFlagType {
 
         [string]$Name = '',
 
-        [string]$Color = ''
-    )
+        [ValidateSet('Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Orange', 'LightPink', 'LightBlue', 'LightGreen', 'LightPurple', 'LightOrange', 'LightYellow', 'White', 'Grey')]
+        [string]$Color)
 
-    $Object = Get-HuduFlagType -Id $Id
+    $Object = Get-HuduFlagTypes -Id $Id
     if (-not $Object) { return $null }
 
     $FlagType = [ordered]@{ flag_type = $Object }
@@ -39,6 +38,7 @@ function Set-HuduFlagType {
     $JSON = $FlagType | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Id)) {
-        Invoke-HuduRequest -Method PUT -Resource "/api/v1/flag_types/$Id" -Body $JSON
+        $result = Invoke-HuduRequest -Method PUT -Resource "/api/v1/flag_types/$Id" -Body $JSON
+        return ($result.flag_type ?? $result)
     }
 }
