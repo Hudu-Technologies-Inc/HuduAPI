@@ -9,6 +9,11 @@ param (
 $testsPath = Join-Path $PSScriptRoot "HuduAPI" "tests"
 $modulePath = Join-Path $PSScriptRoot "HuduAPI" 'Huduapi.psd1'
 $envFile = Join-Path $testsPath $EnvironFile
+if (-not $envFile -or -not (Test-Path $envFile)) {
+    $baseName = [System.IO.Path]::GetFileNameWithoutExtension($EnvironFile)
+    $envFile = Get-ChildItem -Recurse -Path $(resolve-path .) -Filter "*$baseName*.ps1" | Select-Object -First 1 | ForEach-Object { $_.FullName }
+}
+
 
 Write-Host "Starting tests in: $testsPath"
 Write-Host "Using module: $modulePath"
@@ -30,7 +35,7 @@ Import-Module $modulePath -Force
 # Load env
 if (Test-Path $envFile) {
     Write-Host "Sourcing environment from $envFile" -ForegroundColor Cyan
-    . $envFile
+    . "$envFile"
 }
 
 # Validate env vars

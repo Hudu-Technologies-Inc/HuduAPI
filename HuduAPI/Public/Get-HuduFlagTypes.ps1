@@ -3,8 +3,8 @@ function Get-HuduFlagTypes {
     [CmdletBinding(DefaultParameterSetName = 'List')]
     param(
         # Get one
-        [Parameter(ParameterSetName = 'ById', Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [Alias('FlagTypeId')]
+        [Parameter(ParameterSetName = 'ById')]
+        [Alias('FlagTypeId','flag_type_id')]
         [int]$Id,
 
         # List filters
@@ -21,16 +21,7 @@ function Get-HuduFlagTypes {
         [string]$CreatedAt,
 
         [Parameter(ParameterSetName = 'List')]
-        [string]$UpdatedAt,
-
-        # If you want to allow single-page retrieval sometimes
-        [Parameter(ParameterSetName = 'List')]
-        [ValidateRange(1, [int]::MaxValue)]
-        [int]$Page,
-
-        [Parameter(ParameterSetName = 'List')]
-        [ValidateRange(1, 1000)]
-        [int]$PageSize = 1000
+        [string]$UpdatedAt
     )
 
     process {
@@ -46,20 +37,12 @@ function Get-HuduFlagTypes {
         if ($PSBoundParameters.ContainsKey('CreatedAt')) { $params.created_at = $CreatedAt }
         if ($PSBoundParameters.ContainsKey('UpdatedAt')) { $params.updated_at = $UpdatedAt }
 
-        # If Page explicitly provided, do a single request for that page
-        if ($PSBoundParameters.ContainsKey('Page')) {
-            $params.page = $Page
-            $params.page_size = $PageSize
-            $resp = Invoke-HuduRequest -Method GET -Resource "/api/v1/flag_types" -Params $params
-            return ($resp.flag_types ?? $resp)
-        }
-
         $req = @{
             Method   = 'GET'
             Resource = "/api/v1/flag_types"
             Params   = $params
         }
 
-        Invoke-HuduRequestPaginated -HuduRequest $req -Property 'flag_types' -PageSize $PageSize
+        Invoke-HuduRequestPaginated -HuduRequest $req -Property 'flag_types'
     }
 }

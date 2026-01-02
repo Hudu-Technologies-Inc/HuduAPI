@@ -17,34 +17,35 @@ function Set-HuduFlag {
     .PARAMETER Description
     Updated description
 
-    .PARAMETER FlagableType
+    .PARAMETER flagable_type
     Updated flagable type (Asset, Website, Article, AssetPassword, Company, Procedure, RackStorage, Network, IpAddress, Vlan, VlanZone)
 
-    .PARAMETER FlagableId
+    .PARAMETER flagable_id
     Updated flagable record ID
 
     .EXAMPLE
     Set-HuduFlag -Id 10 -Description "Updated flag description" -FlagTypeId 2
 
     .EXAMPLE
-    Set-HuduFlag -Id 10 -FlagableType Asset -FlagableId 123
+    Set-HuduFlag -Id 10 -flagable_type Asset -flagable_id 123
     #>
     [CmdletBinding(SupportsShouldProcess)]
     Param(
         [Parameter(Mandatory = $true)]
+        [Alias('FlagId','flag_id')]
         [int]$Id,
 
-        [Alias('flag_type_id')]
+        [Alias('flag_type_id',"flagType_Id")]
         [int]$FlagTypeId,
 
         [string]$Description = '',
 
-        [Alias('flagable_type')]
+        [Alias("flaggable_type","flagabletype","flaggabletype","Flag_type","FlagType")]
         [ValidateSet('Asset','Website','Article','AssetPassword','Company','Procedure','RackStorage','Network','IpAddress','Vlan','VlanZone')]
-        [string]$FlagableType = '',
+        [string]$flagable_type = '',
 
-        [Alias('flagable_id')]
-        [int]$FlagableId
+        [Alias("FlaggableId","flaggable_id","flagableid")]
+        [int]$flagable_id
     )
 
     $Object = Get-HuduFlags -Id $Id
@@ -60,12 +61,12 @@ function Set-HuduFlag {
         $Flag.flag.description = $Description
     }
 
-    if ($FlagableType) {
-        $Flag.flag.flagable_type = $FlagableType
+    if ($flagable_type) {
+        $Flag.flag.flagable_type = $flagable_type
     }
 
-    if ($PSBoundParameters.ContainsKey('FlagableId')) {
-        $Flag.flag.flagable_id = $FlagableId
+    if ($PSBoundParameters.ContainsKey('flagable_id')) {
+        $Flag.flag.flagable_id = $flagable_id
     }
 
     $JSON = $Flag | ConvertTo-Json -Depth 10

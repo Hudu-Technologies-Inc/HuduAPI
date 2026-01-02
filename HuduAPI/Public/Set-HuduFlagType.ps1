@@ -13,6 +13,7 @@ function Set-HuduFlagType {
     Updated name
 
     .PARAMETER Color
+    Human friendly color name. Valid colors are: Red, Blue, Green, Yellow, Purple, Orange, LightPink, LightBlue, LightGreen, LightPurple, LightOrange, LightYellow, White, Grey
 
     .EXAMPLE
     Set-HuduFlagType -Id 1 -Name "Updated Flag Type" -Color "Green"
