@@ -20,11 +20,7 @@ function Get-HuduFlags {
         [Alias("FlaggableId","flaggable_id","flagableid")]
         [int]$flagable_id,
 
-        [string]$Description,
-
-        [string]$CreatedAt,
-
-        [string]$UpdatedAt
+        [string]$Description
     )
 
     process {

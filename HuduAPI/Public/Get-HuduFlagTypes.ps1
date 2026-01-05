@@ -20,11 +20,7 @@ function Get-HuduFlagTypes {
         )]
         [string]$Color,
 
-        [string]$Slug,
-
-        [string]$CreatedAt,
-
-        [string]$UpdatedAt
+        [string]$Slug
     )
 
     process {
