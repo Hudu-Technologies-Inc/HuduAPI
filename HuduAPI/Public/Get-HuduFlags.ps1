@@ -56,8 +56,8 @@ API Endpoints:
         [int]$FlagTypeId,
 
         [Parameter(ParameterSetName = 'List')]
-        [ValidateSet('Asset','Website','Article','AssetPassword','Company','Procedure','RackStorage','Network','IpAddress','Vlan','VlanZone')]
         [Alias('flagabletype',"flaggable_type","flaggabletype","Flag_type","FlagType")]
+        [ValidateSet('asset', 'assets', 'anlage', 'objekt', 'actif', 'bene', 'activo', 'website', 'webseite', 'site', 'sito', 'sitio', 'article', 'articles', 'kb', 'knowledgebase', 'artikel', 'article', 'articolo', 'artículo', 'assetpassword', 'asset_password', 'password', 'passwort', 'motdepasse', 'password', 'contraseña', 'company', 'companies', 'firma', 'entreprise', 'azienda', 'empresa', 'procedure', 'process', 'verfahren', 'procédure', 'procedura', 'procedimiento', 'rackstorage', 'rack_storage', 'rack', 'rackstorages', 'rack', 'armoire', 'network', 'netzwerk', 'réseau', 'rete', 'red', 'ipaddress', 'ip_address', 'ip', 'ipadresse', 'adresseip', 'indirizzoip', 'direccionip', 'vlan', 'vlans', 'vlan', 'vlanzone', 'vlan_zone', 'zone', 'zonevlan',IgnoreCase = $true)]
         [string]$flagable_type,
 
         [Parameter(ParameterSetName = 'List')]
