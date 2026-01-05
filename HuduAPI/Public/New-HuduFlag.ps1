@@ -40,26 +40,25 @@ Requires Hudu API access configured for Invoke-HuduRequest.
 
         [Parameter()]
         [string]$Description,
+    
         [Parameter(Mandatory)]
-        [ValidateSet(
-            'Asset','Website','Article','AssetPassword','Company',
-            'Procedure','RackStorage','Network','IpAddress','Vlan','VlanZone',
-            IgnoreCase = $true
-        )]
         [Alias('flaggabletype','flaggable_type','flagabletype','Flag_type','FlagType')]
+        [ValidateSet(
+            'Asset','Website','Article','AssetPassword','Company','Procedure','RackStorage','Network','IpAddress','Vlan','VlanZone',
+            IgnoreCase = $true
+        )]    
         [string]$Flagable_Type,
 
         [Parameter(Mandatory)]
         [Alias("FlaggableId","flaggable_id","flagableid")]
         [int]$flagable_id
     )
-    $flagable_type = Set-FlagableFromCanonical -inputData $flagable_type
 
     $bodyObj = @{
         flag = @{
             flag_type_id  = $FlagTypeId
             description   = $Description
-            flagable_type = $flagable_type
+            flagable_type = $(Set-FlagableFromCanonical -inputData $Flagable_Type)
             flagable_id   = $flagable_id
         }
     }

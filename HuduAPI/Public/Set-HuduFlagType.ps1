@@ -39,10 +39,8 @@ function Set-HuduFlagType {
     if (-not $Object) { return $null }
 
     $FlagType = [ordered]@{ flag_type = $Object }
-    $Color = Set-ColorFromCanonical -inputData $Color
-
     if ($Name)  { $FlagType.flag_type.name  = $Name }
-    if ($Color) { $FlagType.flag_type.color = $Color }
+    if ($Color) { $FlagType.flag_type.color = $(Set-ColorFromCanonical -inputData $Color) }
 
     $JSON = $FlagType | ConvertTo-Json -Depth 10
 

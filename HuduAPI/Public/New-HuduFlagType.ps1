@@ -36,12 +36,10 @@ API Endpoint: POST /api/v1/flag_types
         )]
         [string]$Color
     )
-    $Color = Set-ColorFromCanonical -inputData $Color
-
     $bodyObj = @{
         flag_type = @{
             name  = $Name
-            color = $Color
+            color = $(Set-ColorFromCanonical -inputData $Color)
         }
     }
 

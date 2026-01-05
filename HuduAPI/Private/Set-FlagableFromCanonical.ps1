@@ -3,18 +3,18 @@ function Set-FlagableFromCanonical {
     if ([string]::IsNullOrWhiteSpace($inputData)) { return $null }
 
         if (-not $(get-variable -name 'script:FlaggableTypeLookup' -scope 'script' -erroraction silentlycontinue)) {
-            $script:FlaggableTypeMap = [ordered]@{
-                Asset         = @('assets','asset')
-                Website       = @('website')
-                Article       = @('article','articles','kb','knowledgebase')
-                AssetPassword = @('assetpassword','asset_password','password')
-                Company       = @('company','companies')
-                Procedure     = @('procedure','process')
-                RackStorage   = @('rackstorage','rack_storage','rack','rackstorages')
-                Network       = @('network')
-                IpAddress     = @('ipaddress','ip_address','ip')
-                Vlan          = @('vlan','vlans')
-                VlanZone      = @('vlanzone','vlan_zone','zone')
+            $script:FlaggableTypeMap = [ordered]@{ # German, French, Italian, Spanish
+                Asset         = @('asset','assets', 'anlage','objekt', 'actif', 'bene', 'activo')
+                Website       = @('website', 'webseite', 'site', 'sito', 'sitio')
+                Article       = @('article','articles','kb','knowledgebase', 'artikel', 'article', 'articolo', 'artículo')
+                AssetPassword = @('assetpassword','asset_password','password', 'passwort', 'motdepasse', 'password', 'contraseña')
+                Company       = @('company','companies', 'firma', 'entreprise', 'azienda', 'empresa')
+                Procedure     = @('procedure','process', 'verfahren', 'procédure', 'procedura', 'procedimiento')
+                RackStorage   = @('rackstorage','rack_storage','rack','rackstorages', 'rack', 'armoire')
+                Network       = @('network', 'netzwerk', 'réseau', 'rete', 'red')
+                IpAddress     = @('ipaddress','ip_address','ip', 'ipadresse', 'adresseip', 'indirizzoip', 'direccionip')
+                Vlan          = @('vlan','vlans', 'vlan')
+                VlanZone      = @('vlanzone','vlan_zone','zone', 'zonevlan')
             }
             $script:FlaggableTypeLookup = @{}
             foreach ($canonical in $script:FlaggableTypeMap.Keys) {
