@@ -1,4 +1,38 @@
 function New-HuduFlag {
+<#
+.SYNOPSIS
+Creates a Flag on a Hudu object (asset, website, article, etc.).
+
+.DESCRIPTION
+Creates a new Flag record in Hudu by associating a Flag Type with a specific object
+(e.g., a Company, Asset, Network, VLAN). Use FlagTypeId to choose the flag style/color,
+and Flagable_Type + Flagable_Id to point at the target object.
+
+.PARAMETER FlagTypeId
+The ID of the Flag Type to apply. Use Get-HuduFlagTypes to discover IDs.
+
+.PARAMETER Description
+Optional note shown on the flag. Useful for context like "Needs review" or "Decommission pending".
+
+.PARAMETER Flagable_Type
+The type of object to attach the flag to (e.g., Company, Asset, Website, Network).
+This value is normalized to Hudu's canonical flagable_type before the request is sent.
+
+.PARAMETER flagable_id
+The ID of the target object (matching Flagable_Type). For example, a Company ID if Flagable_Type is Company.
+
+.EXAMPLE
+# Flag company 123 with flag type 5
+New-HuduFlag -FlagTypeId 5 -Flagable_Type Company -flagable_id 123 -Description "Contract renewal due"
+
+.EXAMPLE
+# Flag asset 88 with flag type 2
+New-HuduFlag -FlagTypeId 2 -Flagable_Type Asset -flagable_id 88
+
+.NOTES
+API Endpoint: POST /api/v1/flags
+Requires Hudu API access configured for Invoke-HuduRequest.
+#>    
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory)]

@@ -1,13 +1,49 @@
 
 function Get-HuduFlagTypes {
+<#
+.SYNOPSIS
+Gets Flag Types from Hudu.
+
+.DESCRIPTION
+Retrieves Flag Types by ID or lists Flag Types with optional filtering. When listing,
+filters match exact values for name/color/slug when provided. Results are paginated.
+
+.PARAMETER Id
+Return a single Flag Type by ID.
+
+.PARAMETER Name
+Filter by exact Flag Type name.
+
+.PARAMETER Color
+Filter by exact color value (canonicalized to Hudu).
+
+.PARAMETER Slug
+Filter by exact slug value.
+
+.EXAMPLE
+Get-HuduFlagTypes
+# List all flag types
+
+.EXAMPLE
+Get-HuduFlagTypes -Name "Security Risk"
+# Find the "Security Risk" flag type
+
+.EXAMPLE
+Get-HuduFlagTypes -Id 12
+# Get a specific flag type by ID
+
+.NOTES
+API Endpoints:
+- GET /api/v1/flag_types
+- GET /api/v1/flag_types/{id}
+#>
+
     [CmdletBinding(DefaultParameterSetName = 'List')]
     param(
-        # Get one
         [Parameter(ParameterSetName = 'ById')]
         [Alias('FlagTypeId','flag_type_id')]
         [int]$Id,
 
-        # List filters
         [Parameter(ParameterSetName = 'List')]
         [string]$Name,
 
@@ -35,8 +71,6 @@ function Get-HuduFlagTypes {
             $params.color      = $(Set-ColorFromCanonical -inputData $Color) 
         }
         if ($PSBoundParameters.ContainsKey('Slug'))      { $params.slug       = $Slug }
-        if ($PSBoundParameters.ContainsKey('CreatedAt')) { $params.created_at = $CreatedAt }
-        if ($PSBoundParameters.ContainsKey('UpdatedAt')) { $params.updated_at = $UpdatedAt }
 
         $req = @{
             Method   = 'GET'
