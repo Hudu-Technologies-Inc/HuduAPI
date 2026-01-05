@@ -1,4 +1,3 @@
-
 function Set-HuduFlag {
     <#
     .SYNOPSIS
@@ -39,10 +38,13 @@ function Set-HuduFlag {
         [int]$FlagTypeId,
 
         [string]$Description = '',
-
-        [Alias("flaggable_type","flagabletype","flaggabletype","Flag_type","FlagType")]
-        [ValidateSet('Asset','Website','Article','AssetPassword','Company','Procedure','RackStorage','Network','IpAddress','Vlan','VlanZone')]
-        [string]$flagable_type = '',
+        [ValidateSet(
+            'Asset','Website','Article','AssetPassword','Company',
+            'Procedure','RackStorage','Network','IpAddress','Vlan','VlanZone',
+            IgnoreCase = $true
+        )]
+        [Alias('flaggabletype','flaggable_type','flagabletype','Flag_type','FlagType')]
+        [string]$Flagable_Type,
 
         [Alias("FlaggableId","flaggable_id","flagableid")]
         [int]$flagable_id
@@ -62,6 +64,7 @@ function Set-HuduFlag {
     }
 
     if ($flagable_type) {
+        $flagable_type = Set-FlagableFromCanonical -inputData $flagable_type
         $Flag.flag.flagable_type = $flagable_type
     }
 

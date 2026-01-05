@@ -5,11 +5,17 @@ function New-HuduFlagType {
         [ValidateNotNullOrEmpty()]
         [string]$Name,
 
-        [Parameter(Mandatory)]
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [ValidateSet('Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Orange', 'LightPink', 'LightBlue', 'LightGreen', 'LightPurple', 'LightOrange', 'LightYellow', 'White', 'Grey')]
+        [ValidateSet(
+            'Red','Blue','Green','Yellow','Purple','Orange',
+            'LightPink','LightBlue','LightGreen','LightPurple',
+            'LightOrange','LightYellow','White','Grey',
+            IgnoreCase = $true
+        )]
         [string]$Color
     )
+    $Color = Set-ColorFromCanonical -inputData $Color
 
     $bodyObj = @{
         flag_type = @{

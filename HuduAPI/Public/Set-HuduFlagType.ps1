@@ -25,13 +25,21 @@ function Set-HuduFlagType {
 
         [string]$Name = '',
 
-        [ValidateSet('Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Orange', 'LightPink', 'LightBlue', 'LightGreen', 'LightPurple', 'LightOrange', 'LightYellow', 'White', 'Grey')]
-        [string]$Color)
+        [Parameter()]
+        [ValidateSet(
+            'Red','Blue','Green','Yellow','Purple','Orange',
+            'LightPink','LightBlue','LightGreen','LightPurple',
+            'LightOrange','LightYellow','White','Grey',
+            IgnoreCase = $true
+        )]
+        [string]$Color
+    )
 
     $Object = Get-HuduFlagTypes -Id $Id
     if (-not $Object) { return $null }
 
     $FlagType = [ordered]@{ flag_type = $Object }
+    $Color = Set-ColorFromCanonical -inputData $Color
 
     if ($Name)  { $FlagType.flag_type.name  = $Name }
     if ($Color) { $FlagType.flag_type.color = $Color }

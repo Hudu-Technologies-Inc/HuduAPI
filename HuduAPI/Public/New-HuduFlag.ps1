@@ -6,16 +6,20 @@ function New-HuduFlag {
 
         [Parameter()]
         [string]$Description,
-
         [Parameter(Mandatory)]
-        [ValidateSet('Asset','Website','Article','AssetPassword','Company','Procedure','RackStorage','Network','IpAddress','Vlan','VlanZone')]
-        [Alias('flagabletype',"flaggable_type","flaggabletype","Flag_type","FlagType")]
-        [string]$flagable_type,
+        [ValidateSet(
+            'Asset','Website','Article','AssetPassword','Company',
+            'Procedure','RackStorage','Network','IpAddress','Vlan','VlanZone',
+            IgnoreCase = $true
+        )]
+        [Alias('flaggabletype','flaggable_type','flagabletype','Flag_type','FlagType')]
+        [string]$Flagable_Type,
 
         [Parameter(Mandatory)]
         [Alias("FlaggableId","flaggable_id","flagableid")]
         [int]$flagable_id
     )
+    $flagable_type = Set-FlagableFromCanonical -inputData $flagable_type
 
     $bodyObj = @{
         flag = @{

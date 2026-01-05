@@ -38,7 +38,7 @@ function Get-HuduFlags {
 
         $params = @{}
         if ($PSBoundParameters.ContainsKey('FlagTypeId'))   { $params.flag_type_id  = $FlagTypeId }
-        if ($PSBoundParameters.ContainsKey('flagable_type')) { $params.flagable_type = $flagable_type }
+        if ($PSBoundParameters.ContainsKey('flagable_type')) { $params.flagable_type = ([string]$flagable_type).Substring(0,1).ToUpper() + ([string]$flagable_type).Substring(1) }
         if ($PSBoundParameters.ContainsKey('flagable_id'))   { $params.flagable_id   = $flagable_id }
         if ($PSBoundParameters.ContainsKey('Description'))  { $params.description   = $Description }
         if ($PSBoundParameters.ContainsKey('CreatedAt'))    { $params.created_at    = $CreatedAt }
