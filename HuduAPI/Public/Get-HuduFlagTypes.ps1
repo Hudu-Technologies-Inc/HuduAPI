@@ -32,7 +32,10 @@ function Get-HuduFlagTypes {
 
         $params = @{}
         if ($PSBoundParameters.ContainsKey('Name'))      { $params.name       = $Name }
-        if ($PSBoundParameters.ContainsKey('Color'))     { $params.color      = $Color }
+        if ($PSBoundParameters.ContainsKey('Color'))     { 
+            $Color = Set-ColorFromCanonical -inputData $Color
+            $params.color      = $Color 
+        }
         if ($PSBoundParameters.ContainsKey('Slug'))      { $params.slug       = $Slug }
         if ($PSBoundParameters.ContainsKey('CreatedAt')) { $params.created_at = $CreatedAt }
         if ($PSBoundParameters.ContainsKey('UpdatedAt')) { $params.updated_at = $UpdatedAt }
