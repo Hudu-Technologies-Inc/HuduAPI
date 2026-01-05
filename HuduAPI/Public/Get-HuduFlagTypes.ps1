@@ -11,16 +11,19 @@ function Get-HuduFlagTypes {
         [Parameter(ParameterSetName = 'List')]
         [string]$Name,
 
-        [Parameter(ParameterSetName = 'List')]
+        [Parameter()]
+        [ValidateSet(
+            'Red','Blue','Green','Yellow','Purple','Orange',
+            'LightPink','LightBlue','LightGreen','LightPurple',
+            'LightOrange','LightYellow','White','Grey',
+            IgnoreCase = $true
+        )]
         [string]$Color,
 
-        [Parameter(ParameterSetName = 'List')]
         [string]$Slug,
 
-        [Parameter(ParameterSetName = 'List')]
         [string]$CreatedAt,
 
-        [Parameter(ParameterSetName = 'List')]
         [string]$UpdatedAt
     )
 
@@ -33,8 +36,7 @@ function Get-HuduFlagTypes {
         $params = @{}
         if ($PSBoundParameters.ContainsKey('Name'))      { $params.name       = $Name }
         if ($PSBoundParameters.ContainsKey('Color'))     { 
-            $Color = Set-ColorFromCanonical -inputData $Color
-            $params.color      = $Color 
+            $params.color      = $(Set-ColorFromCanonical -inputData $Color) 
         }
         if ($PSBoundParameters.ContainsKey('Slug'))      { $params.slug       = $Slug }
         if ($PSBoundParameters.ContainsKey('CreatedAt')) { $params.created_at = $CreatedAt }

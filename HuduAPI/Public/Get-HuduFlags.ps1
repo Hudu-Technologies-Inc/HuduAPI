@@ -20,13 +20,10 @@ function Get-HuduFlags {
         [Alias("FlaggableId","flaggable_id","flagableid")]
         [int]$flagable_id,
 
-        [Parameter(ParameterSetName = 'List')]
         [string]$Description,
 
-        [Parameter(ParameterSetName = 'List')]
         [string]$CreatedAt,
 
-        [Parameter(ParameterSetName = 'List')]
         [string]$UpdatedAt
     )
 
@@ -39,8 +36,7 @@ function Get-HuduFlags {
         $params = @{}
         if ($PSBoundParameters.ContainsKey('FlagTypeId'))   { $params.flag_type_id  = $FlagTypeId }
         if ($PSBoundParameters.ContainsKey('flagable_type')) {
-            $flagable_type = Set-FlagableFromCanonical -inputData $flagable_type
-            $params.flagable_type = $flagable_type
+            $params.flagable_type = $(Set-FlagableFromCanonical -inputData $flagable_type)
         }
         if ($PSBoundParameters.ContainsKey('flagable_id'))   { $params.flagable_id   = $flagable_id }
         if ($PSBoundParameters.ContainsKey('Description'))  { $params.description   = $Description }
