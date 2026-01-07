@@ -5,87 +5,77 @@ online version:
 schema: 2.0.0
 ---
 
-# New-HuduPasswordFolder
+# Invoke-HuduRequest
 
 ## SYNOPSIS
-Create a new password folder.
+Main Hudu API function
 
 ## SYNTAX
 
 ```
-New-HuduPasswordFolder [-Name] <String> [[-CompanyId] <Int32>] [[-Description] <String>] [[-Security] <String>]
- [[-AllowedGroups] <Array>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Invoke-HuduRequest [[-Method] <String>] [[-Resource] <String>] [[-Params] <Hashtable>] [[-Body] <String>]
+ [[-Form] <Hashtable>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Calls the Hudu API to create a password folder for a given company.
- 
-Supports configuring name, description, security settings, and allowed groups.
+Calls Hudu API with token
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-New-HuduPasswordFolder -Name "Infrastructure" -CompanyId 2
-Creates a folder named "Infrastructure" for company ID 2.
-```
-
-### EXAMPLE 2
-```
-New-HuduPasswordFolder -Name "Finance" -CompanyId 4 -Security specific -AllowedGroups @(10,12)
-Creates a folder for company 4 restricted to groups 10 and 12.
+Invoke-HuduRequest -Resource '/api/v1/articles' -Method GET
 ```
 
 ## PARAMETERS
 
-### -Name
-Name of the new folder (required).
+### -Method
+GET,POST,DELETE,PUT,etc
 
 ```yaml
 Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: 1
-Default value: None
+Default value: GET
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -CompanyId
-The company ID that owns the folder (required).
+### -Resource
+{{ Fill Resource Description }}
 
 ```yaml
-Type: Int32
+Type: String
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 2
-Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Description
-Description of the folder.
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Security
-Security mode.
-Accepts "all_users" or "specific".
+### -Params
+Hashtable of parameters
+
+```yaml
+Type: Hashtable
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: @{}
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Body
+JSON encoded body string
 
 ```yaml
 Type: String
@@ -99,11 +89,11 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -AllowedGroups
-Array of group IDs that should have access (if Security is "specific").
+### -Form
+Multipart form data
 
 ```yaml
-Type: Array
+Type: Hashtable
 Parameter Sets: (All)
 Aliases:
 
