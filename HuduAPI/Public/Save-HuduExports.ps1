@@ -23,7 +23,11 @@ function Save-HuduExports {
     foreach ($export in $exports) {
         $fileName = $export.file_name ?? "export-$($export.id)$(if ($export.is_pdf) { '.pdf' } else { '.csv' })"
 
-        if (-not $export.download_url -or [string]::isnullorempty($export.download_url)) {Write-Warning "Export id $($export.id) has no download_url (status=$($export.status)). Skipping.";  continue;}
+        if (-not $export.download_url -or [string]::isnullorempty($export.download_url)) {
+            Write-Warning "Export id $($export.id) has no download_url yet (status=$($export.status)). Skipping."
+            write-host "$($($export | convertto-json -depth 99).ToSTring())"
+            continue
+        }
 
         $outPath = Join-Path $OutDir $fileName
         if ($true -eq $SkipIfExists -and (Test-Path -LiteralPath $outPath)) {
