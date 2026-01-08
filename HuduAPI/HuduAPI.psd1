@@ -182,6 +182,7 @@
     'Set-HuduPassword',
     'Set-HuduPasswordFolder',
     'Set-HuduPasswordArchive',
+    'Set-HuduPublicPhoto',
     'Set-HuduVLAN',
     'Set-HuduVLANZone',
     'Set-HuduRackStorageItem',
