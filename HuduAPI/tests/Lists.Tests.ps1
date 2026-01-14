@@ -14,10 +14,11 @@ Context "Hudu Lists Integration Tests" {
 
     It "Creates, retrieves, updates, and deletes a List" {
         # 1.1 Create List
-        $listName = "IntegrationTestList-$(Get-Random)"
+        $listName = "IntegrationTestList-$(Get-Random -Minimum 111111 -Maximum 999999)"
         $itemNames = @("Alpha", "Beta", "Gamma")
 
         $createdList = New-HuduList -Name $listName -Items $itemNames
+        $createdList = $createdList.list ?? $createdList
         $createdList | Should -Not -BeNullOrEmpty
         $createdList.name | Should -Be $listName
         $createdList.list_items.Count | Should -Be 3
@@ -26,12 +27,14 @@ Context "Hudu Lists Integration Tests" {
 
         # 1.2 Retrieve by ID
         $fetchedById = Get-HuduLists -Id $createdList.id
+        $fetchedById = $fetchedById.list ?? $fetchedById
         $fetchedById | Should -Not -BeNullOrEmpty
         $fetchedById.name | Should -Be $listName
         $fetchedById.list_items.Count | Should -Be 3
 
         # 1.3 Retrieve by Name
         $fetchedByName = Get-HuduLists -Name $listName
+        $fetchedByName = $fetchedByName.list ?? $fetchedByName
         $fetchedByName | Should -Not -BeNullOrEmpty
         $fetchedByName.name | Should -Be $listName
 
