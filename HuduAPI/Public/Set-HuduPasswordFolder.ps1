@@ -37,6 +37,7 @@ function Set-HuduPasswordFolder {
         [string]$Description,
         [ValidateSet("all_users","specific")][String]$Security,
         [array]$AllowedGroups,
+        [Alias('company_id')]
         [int]$CompanyID
         )
     
@@ -50,8 +51,7 @@ function Set-HuduPasswordFolder {
         $updatePasswordFolder.company_id = $passwordFolder.company_id
     }
 
-    if ($PSBoundParameters.ContainsKey('CompanyID'))   { $passwordFolder.company_id   = $company_id }
-
+    if ($PSBoundParameters.ContainsKey('CompanyID'))   { $passwordFolder.company_id   = $CompanyID }
     
     if (($AllowedGroups -and $AllowedGroups -ne $passwordFolder.allowed_groups) -or ($security -and $security -eq "specific")){
         $updatePasswordFolder["security"] = $security
