@@ -82,12 +82,18 @@ function Get-HuduAssets {
         if ($PrimarySerial) { $Params.primary_serial = $PrimarySerial }
         if ($Id) { $Params.id = $Id }
         if ($Slug) { $Params.slug = $Slug }
-        if ($UpdatedAfter -and $UpdatedBefore) {
+        $updatedRange = $null
+        #auto-rangify dates for assets endpoint
+        if ($null -ne $UpdatedAfter -and $null -eq $UpdatedBefore){
+            $updatedRange = Convert-ToHuduDateRange -Start $UpdatedAfter -End $($(get-date).AddDays(1))
+        } elseif ($null -ne $UpdatedBefore -and $null -eq $UpdatedAfter){
+            $updatedRange = Convert-ToHuduDateRange -Start $([datetime]'1000-01-01') -End $UpdatedBefore
+        } elseif ($null -ne $UpdatedAfter -and $null -ne $UpdatedBefore) {
             $updatedRange = Convert-ToHuduDateRange -Start $UpdatedAfter -End $UpdatedBefore
-            if ($updatedRange -ne ',' -and -$null -ne $updatedRange) {
-                $Params.updated_at = $updatedRange
-            }
-        } elseif ($UpdatedAfter -or $UpdatedBefore) {Write-Warning "Both UpdatedAfter and UpdatedBefore must be provided to filter Assets by updated date. The singular date param you provided will be ignored this time."}
+        }
+        if ($updatedRange -ne ',' -and -$null -ne $updatedRange) {
+            $Params.updated_at = $updatedRange
+        }
 
         $HuduRequest = @{
             Resource = '/api/v1/assets'
