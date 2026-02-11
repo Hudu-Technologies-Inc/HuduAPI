@@ -86,13 +86,15 @@ function Get-HuduAssets {
         #auto-rangify dates for assets endpoint
         $updatedRange = $null
         if ($null -ne $UpdatedAfter -and $null -eq $UpdatedBefore){
+            Write-Warning "UpdatedAfter provided without UpdatedBefore, defaulting UpdatedBefore to now + 1 day to ensure results"
             $updatedRange = Convert-ToHuduDateRange -Start $UpdatedAfter -End $($(get-date).AddDays(1))
         } elseif ($null -ne $UpdatedBefore -and $null -eq $UpdatedAfter){
+            Write-Warning "UpdatedBefore provided without UpdatedAfter, defaulting UpdatedAfter to year 1000 to ensure results"
             $updatedRange = Convert-ToHuduDateRange -Start $([datetime]'1000-01-01') -End $UpdatedBefore
         } elseif ($null -ne $UpdatedAfter -and $null -ne $UpdatedBefore) {
             $updatedRange = Convert-ToHuduDateRange -Start $UpdatedAfter -End $UpdatedBefore
         }
-        if ($updatedRange -ne ',' -and -$null -ne $updatedRange) {
+        if ($updatedRange -ne ',' -and $null -ne $updatedRange) {
             $Params.updated_at = $updatedRange
         }
 
