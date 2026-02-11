@@ -39,6 +39,7 @@ function Get-HuduAssets {
     .EXAMPLE
     Get-HuduAssets -AssetLayout 'Contacts'
     Get-Huduassets -UpdatedAfter $(Get-date).AddDays(-4) -UpdatedBefore $(get-date).AddHours(-1)
+    Get-Huduassets -assetlayoutId 4 -UpdatedBefore $([datetime]"11/02/2026 4:44:00 PM")
     Get-Huduassets -assetlayoutId 4 -UpdatedAfter $(Get-date).AddYears(-2) -UpdatedBefore $(get-date).AddYears(-1)
 
     #>
@@ -82,12 +83,18 @@ function Get-HuduAssets {
         if ($PrimarySerial) { $Params.primary_serial = $PrimarySerial }
         if ($Id) { $Params.id = $Id }
         if ($Slug) { $Params.slug = $Slug }
-        if ($UpdatedAfter -and $UpdatedBefore) {
+        #auto-rangify dates for assets endpoint
+        $updatedRange = $null
+        if ($null -ne $UpdatedAfter -and $null -eq $UpdatedBefore){
+            $updatedRange = Convert-ToHuduDateRange -Start $UpdatedAfter -End $($(get-date).AddDays(1))
+        } elseif ($null -ne $UpdatedBefore -and $null -eq $UpdatedAfter){
+            $updatedRange = Convert-ToHuduDateRange -Start $([datetime]'1000-01-01') -End $UpdatedBefore
+        } elseif ($null -ne $UpdatedAfter -and $null -ne $UpdatedBefore) {
             $updatedRange = Convert-ToHuduDateRange -Start $UpdatedAfter -End $UpdatedBefore
-            if ($updatedRange -ne ',' -and -$null -ne $updatedRange) {
-                $Params.updated_at = $updatedRange
-            }
-        } elseif ($UpdatedAfter -or $UpdatedBefore) {Write-Warning "Both UpdatedAfter and UpdatedBefore must be provided to filter Assets by updated date. The singular date param you provided will be ignored this time."}
+        }
+        if ($updatedRange -ne ',' -and -$null -ne $updatedRange) {
+            $Params.updated_at = $updatedRange
+        }
 
         $HuduRequest = @{
             Resource = '/api/v1/assets'
