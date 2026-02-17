@@ -18,7 +18,7 @@ function Get-HuduUploads {
     if ($Id) {
         $Upload = Invoke-HuduRequest -Method Get -Resource "/api/v1/uploads/$Id"
     } else {
-        $Upload = Invoke-HuduRequest -Method Get -Resource "/api/v1/uploads"
+        $Upload = Invoke-HuduRequestPaginated -hudurequest @{Method = "Get"; Resource = "/api/v1/uploads"; property = "uploads"}
     }
     return $Upload
 }
