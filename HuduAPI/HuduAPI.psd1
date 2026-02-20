@@ -12,7 +12,7 @@
     RootModule        = '.\HuduAPI.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '3.14.15'
+    ModuleVersion     = '3.19.91'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -86,6 +86,9 @@
     'Get-HuduExports',
     'Get-HuduFlags',
     'Get-HuduFlagTypes',    
+    'Get-HuduFlags',
+    'Get-HuduFlagTypes',
+    'Get-HuduExports',
     'Get-HuduFolderMap',
     'Get-HuduFolders',
     'Get-HuduGroups',
@@ -122,7 +125,7 @@
     'New-HuduCompany',
     'New-HuduCustomHeaders',
     'New-HuduFlag',
-    'New-HuduFlagType',
+    'New-HuduFlagType',    
     'New-HuduFolder',
     'New-HuduIPAddress',
     'New-HuduList',
@@ -150,7 +153,7 @@
     'Remove-HuduCompany',
     'Remove-HuduCustomHeaders',
     'Remove-HuduFlag',
-    'Remove-HuduFlagType',    
+    'Remove-HuduFlagType',
     'Remove-HuduIPAddress',
     'Remove-HuduList',
     'Remove-HuduMagicDash',

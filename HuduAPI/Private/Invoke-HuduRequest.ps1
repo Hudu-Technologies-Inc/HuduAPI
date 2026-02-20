@@ -97,7 +97,7 @@ function Invoke-HuduRequest {
         $Results = Invoke-RestMethod @RestMethod
     } catch {
         $errorMessage = $_.Exception.Message
-        if ($errorMessage -like '*Retry later*' -or $errorMessage -like '*429*Too Many Requests*') {
+        if ($errorMessage -ilike '*Retry later*' -or $errorMessage -ilike '*429*Too Many Requests*') {
             $now = Get-Date
             $windowLength = 5 * 60  # 5 minutes in seconds
             $secondsIntoWindow = (($now.Minute % 5) * 60) + $now.Second
@@ -107,6 +107,8 @@ function Invoke-HuduRequest {
             $totalSleep = [math]::Max(0, $secondsUntilNextWindow + $jitter)
             Write-Host "Hudu API Rate limited; Sleeping for $totalSleep seconds to wait for next rate limit window..."
             Start-Sleep -Seconds $totalSleep
+        } elseif ($errorMessage -ilike '*Not Found*') {
+            return $null
         } else {
             if ($script:SKIP_HAPI_ERROR_RETRY -and $true -eq $script:SKIP_HAPI_ERROR_RETRY) { return $null }
             Write-APIErrorObject -name "$($resource ?? 'general')-$($method ?? 'unknown')" -ErrorObject @{

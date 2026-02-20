@@ -42,3 +42,4 @@ function Set-FlagableFromCanonical {
         $allowed = ($script:FlaggableTypeMap.Keys -join ', ')
         throw "Invalid flaggable type '$raw'. Allowed: $allowed"
 }
+
