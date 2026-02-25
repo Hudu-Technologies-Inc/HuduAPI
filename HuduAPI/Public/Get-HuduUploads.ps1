@@ -7,10 +7,10 @@ function Get-HuduUploads {
     Calls Hudu API to retrieve uploads
 
     .PARAMETER Id
-    ID of the Upload to retrieve or Download (Hudu 2.41.0+)
+    ID of the Upload to retrieve or Download (Hudu 2.39.0+)
 
     .PARAMETER OutFilePath
-    Directory to download uploads to. Used only with -Download (Hudu 2.41.0+). Defaults to current directory.
+    Directory to download uploads to. Used only with -Download (Hudu 2.39.0+). Defaults to current directory.
 
     .EXAMPLE
     Get-HuduUploads
@@ -24,11 +24,11 @@ function Get-HuduUploads {
     )
 
     [version]$script:Version = $script:Version ?? (Get-HuduAppInfo).version
-
+    $Upload = @()
     if ($Id) {
         $Upload = Invoke-HuduRequest -Method Get -Resource "/api/v1/uploads/$Id"
     } else {
-        if ($script:Version -lt [version]'2.41.0') {
+        if ($script:Version -lt [version]'2.39.0') {
             $Upload = Invoke-HuduRequest -Method Get -Resource "/api/v1/uploads"
         } else {
             $Upload = Invoke-HuduRequestPaginated -hudurequest @{ Method = 'Get'; Resource = '/api/v1/uploads'; property = 'uploads' }
@@ -36,15 +36,16 @@ function Get-HuduUploads {
     }
 
     if ($Download) {
-        if ($script:Version -lt [version]'2.41.0') {
-            Write-Warning "Download of uploads is only supported in Hudu v2.41.0 and above; skipping download."
+        if ($script:Version -lt [version]'2.39.0') {
+            Write-Warning "Download of uploads is only supported in Hudu v2.39.0 and above; skipping download."
         } else {
             $OutFilePath = if ([string]::IsNullOrWhiteSpace($OutFilePath)) { (Get-Location).Path } else { $OutFilePath }
             $OutFilePath = (New-Item -ItemType Directory -Path $OutFilePath -Force).FullName
 
-            $Headers = @{ 'x-api-key' = (New-Object PSCredential 'user', $HuduAPIKey).GetNetworkCredential().Password }
+            $Headers = @{ 'x-api-key' = (New-Object PSCredential 'user', $(Get-HuduApiKey)).GetNetworkCredential().Password }
 
             foreach ($u in @($Upload)) {
+                if (-not $u.id -or $u.id -lt 1){continue}
                 $safeName = ($u.name -replace '[<>:"/\\|?*\x00-\x1F]', '_')
                 if ([string]::IsNullOrWhiteSpace($safeName)) { $safeName = "upload-$($u.id)" }
 

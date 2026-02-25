@@ -3,7 +3,7 @@ function Remove-HuduPhoto {
     param(
         [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
         [Alias('PhotoId')]
-        [int]$Id,
+        [int]$Id
     )
 
     if ($PSCmdlet.ShouldProcess("Photo $Id", "Delete permanently")) {

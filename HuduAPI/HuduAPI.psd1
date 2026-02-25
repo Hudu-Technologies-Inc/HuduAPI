@@ -12,7 +12,7 @@
     RootModule        = '.\HuduAPI.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '3.19.91'
+    ModuleVersion     = '3.19.98'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -99,6 +99,7 @@
     'Get-HuduPasswordFolders',
     'Get-HuduProcedures',
     'Get-HuduProcedureTasks',
+    'Get-HuduPhotos',
     'Get-HuduPublicPhotos',
     'Get-HuduRackStorageItems',
     'Get-HuduRackStorages',
@@ -130,6 +131,7 @@
     'New-HuduPassword',
     'New-HuduPasswordFolder',
     'New-HuduPublicPhoto',
+    'New-HuduPhoto',
     'New-HuduProcedure',
     'New-HuduProcedureTask',
     'New-HuduProcedureFromTemplate',
@@ -191,6 +193,7 @@
     'Set-HuduPasswordFolder',
     'Set-HuduPasswordArchive',
     'Set-HuduPublicPhoto',
+    'Set-HuduPhoto',
     'Set-HuduVLAN',
     'Set-HuduVLANZone',
     'Set-HuduRackStorageItem',
