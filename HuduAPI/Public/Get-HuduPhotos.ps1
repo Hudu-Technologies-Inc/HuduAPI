@@ -13,10 +13,10 @@ function Get-HuduPhotos {
     .PARAMETER CompanyId
     Filter by company ID.
 
-    .PARAMETER PhotoableType
+    .PARAMETER Photoable_Type
     Filter by photoable type (Company, Asset, Article, etc).
 
-    .PARAMETER PhotoableId
+    .PARAMETER Photoable_Id
     Filter by photoable record ID.
 
     .PARAMETER FolderId
@@ -41,7 +41,7 @@ function Get-HuduPhotos {
     Get-HuduPhotos -CompanyId 123
 
     .EXAMPLE
-    Get-HuduPhotos -PhotoableType Asset -PhotoableId 456 -Download -OutDir "$env:TEMP\photos"
+    Get-HuduPhotos -Photoable_Type Asset -Photoable_Id 456 -Download -OutDir "$env:TEMP\photos"
 
     .EXAMPLE
     Get-HuduPhotos -Id 999 -Download
@@ -51,9 +51,12 @@ function Get-HuduPhotos {
         [int]$Id,
 
         [int]$CompanyId,
-        [ValidateSet('Company','Asset','Article','Website','Password','Network','Rack','Location','Folder','Procedure','Template','Other')]
-        [string]$PhotoableType,
-        [int]$PhotoableId,
+        [ValidateSet("Article", "AssetPassword", "Asset", "IpAddress", "Network", "RackStorage", "VlanZone", "Vlan", "Website",IgnoreCase = $true)]
+        [Alias('uploadabletype','recordtype','Photoable_Type','uploadable_type','record_type')]
+        [string]$Photoable_Type,
+        
+        [Alias('record_id','uploadable_id','recordid','Photoable_Id','uploadableid')]
+        [int]$Photoable_Id,
         [int]$FolderId,
 
         [Nullable[bool]]$Archived,
@@ -73,14 +76,20 @@ function Get-HuduPhotos {
         write-warning "Get-HuduPhotos: Hudu version $($script:Version) is below 2.41.0; Skipping."
         if ($id){ return $null } else { return @() }
     }
-
+    if (($Photoable_Type -and -not $Photoable_Id) -or ($Photoable_Id -and -not $Photoable_Type)) {
+        throw "PhotoableType and PhotoableId must be provided together."
+    }
 
     $params = @{}
-    if ($CompanyId)     { $params.company_id = $CompanyId }
-    if ($PhotoableType) { $params.photoable_type = $PhotoableType }
-    if ($PhotoableId)   { $params.photoable_id = $PhotoableId }
-    if ($FolderId)      { $params.folder_id = $FolderId }
-    if ($Archived -ne $null) { $params.archived = [bool]$Archived }
+    if ($PSBoundParameters.ContainsKey('CompanyId')) { $params.company_id = $CompanyId }
+    if ($PSBoundParameters.ContainsKey('Caption'))   { $params.caption = $Caption }
+    if ($PSBoundParameters.ContainsKey('Pinned'))      { $params.pinned = [bool]$Pinned }
+    if ($PSBoundParameters.ContainsKey('FolderId'))  { $params.folder_id = $FolderId }
+    if ($PSBoundParameters.ContainsKey('archived'))  { $params.archived = [bool]$Archived }
+
+    if ($PSBoundParameters.ContainsKey('Photoable_Type')) { $params.photoable_type = $Photoable_Type }
+    if ($PSBoundParameters.ContainsKey('Photoable_Id')) { $params.photoable_id = $Photoable_Id }
+
     $updatedRange = Convert-ToHuduDateRange -Start $UpdatedAfter -End $UpdatedBefore
     if ($updatedRange -ne ',' -and -$null -ne $updatedRange) {
         $Params.updated_at = $updatedRange
