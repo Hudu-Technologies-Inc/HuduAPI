@@ -6,52 +6,62 @@ function Get-HuduUploads {
     .DESCRIPTION
     Calls Hudu API to retrieve uploads
 
-
     .PARAMETER Id
-    ID of the Upload to retrieve or Download (hudu version 2.41.0 and above)
+    ID of the Upload to retrieve or Download (Hudu 2.41.0+)
 
-    .PARAMETER outFilePath
-    Optional path to download uploads to, defaults to current directory. Only used if -Download is specified and Hudu version is 2.41.0 or above.
+    .PARAMETER OutFilePath
+    Directory to download uploads to. Used only with -Download (Hudu 2.41.0+). Defaults to current directory.
 
     .EXAMPLE
     Get-HuduUploads
 
     #>
     [CmdletBinding()]
-    Param(
-        [Int]$Id,
-        [bool]$download = $false,
-        [string]$outFilePath = '.'
+    param(
+        [int]$Id,
+        [switch]$Download,
+        [string]$OutFilePath = '.'
     )
+
+    [version]$script:Version = $script:Version ?? (Get-HuduAppInfo).version
 
     if ($Id) {
         $Upload = Invoke-HuduRequest -Method Get -Resource "/api/v1/uploads/$Id"
     } else {
-        [version]$script:Version = $script:Version ?? (Get-HuduAppInfo).version
-        if ($script:Version -lt [version]("2.41.0")) {
+        if ($script:Version -lt [version]'2.41.0') {
             $Upload = Invoke-HuduRequest -Method Get -Resource "/api/v1/uploads"
         } else {
-            $Upload = Invoke-HuduRequestPaginated -hudurequest @{Method = "Get"; Resource = "/api/v1/uploads"; property = "uploads"}
+            $Upload = Invoke-HuduRequestPaginated -hudurequest @{ Method = 'Get'; Resource = '/api/v1/uploads'; property = 'uploads' }
         }
     }
-    if ($true -eq $download){
-        if ($script:Version -lt [version]("2.41.0")) {
-            Write-Warning "Download of uploads is only supported in Hudu v2.41.0 and above, skipping download"
-        } else {
-            $outFilePath = [string]::IsNullOrWhiteSpace($outFilePath) ? (Get-Location).Path : $outFilePath
-            $outFilePath = (New-Item -ItemType Directory -Path $outFilePath -Force).FullName
-            $Headers = @{'x-api-key' = (New-Object PSCredential 'user', $HuduAPIKey).GetNetworkCredential().Password;}
 
-            foreach ($upload in $Upload) {
-                $destinationPath = Join-Path -Path $outFilePath -ChildPath $upload.name
+    if ($Download) {
+        if ($script:Version -lt [version]'2.41.0') {
+            Write-Warning "Download of uploads is only supported in Hudu v2.41.0 and above; skipping download."
+        } else {
+            $OutFilePath = if ([string]::IsNullOrWhiteSpace($OutFilePath)) { (Get-Location).Path } else { $OutFilePath }
+            $OutFilePath = (New-Item -ItemType Directory -Path $OutFilePath -Force).FullName
+
+            $UploadsToDownload = @(); $UploadsToDownload = @($Upload);
+
+            $Headers = @{ 'x-api-key' = (New-Object PSCredential 'user', $HuduAPIKey).GetNetworkCredential().Password }
+
+            foreach ($u in $UploadsToDownload) {
+                $safeName = ($u.name -replace '[<>:"/\\|?*\x00-\x1F]', '_')
+                if ([string]::IsNullOrWhiteSpace($safeName)) { $safeName = "upload-$($u.id)" }
+
+                $destinationPath = Join-Path -Path $OutFilePath -ChildPath $safeName
+
+                $fileUrl = "$($script:Int_HuduBaseURL)/api/v1/uploads/$($u.id)?download=true"
+
                 try {
-                    Invoke-WebRequest -Uri "/api/v1/uploads/$($upload.id)?download=true" -OutFile $destinationPath -force -headers $Headers -MaximumRedirection 3 | Out-Null
-                    Write-Verbose "Downloaded '$fileName' to '$destinationPath'"
+                    Invoke-WebRequest -Uri $fileUrl -OutFile $destinationPath -Headers $Headers -MaximumRedirection 3 -ErrorAction Stop | Out-Null
+                    Write-Verbose "Downloaded '$($u.name)' to '$destinationPath'"
+                    if (Test-Path -LiteralPath $destinationPath) {
+                        $u | Add-Member -MemberType NoteProperty -Name localPath -Value $destinationPath -Force
+                    }
                 } catch {
-                    Write-Warning "Failed to download '$fileName' from '$fileUrl': $_"
-                }
-                if (Test-Path -Path $destinationPath) {
-                    $upload | Add-Member -MemberType NoteProperty -Name "localPath" -Value "$destinationPath" -Force
+                    Write-Warning "Failed to download '$($u.name)' from '$fileUrl': $($_.Exception.Message)"
                 }
             }
         }
@@ -59,4 +69,3 @@ function Get-HuduUploads {
 
     return $Upload
 }
- 
