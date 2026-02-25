@@ -55,7 +55,7 @@ function Get-HuduPhotos {
         [Alias('uploadabletype','recordtype','Photoable_Type','uploadable_type','record_type')]
         [string]$Photoable_Type,
         
-        [Alias('record_id','uploadable_id','recordid','Photoable_Id','uploadableid')]
+        [Alias('record_id','uploadable_id','recordid','PhotoableId','uploadableid')]
         [int]$Photoable_Id,
         [int]$FolderId,
 
