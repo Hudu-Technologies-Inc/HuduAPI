@@ -43,9 +43,9 @@ function New-HuduBaseURL {
         Set-Variable -Name 'Int_HuduBaseURL' -Value $BaseURL -Visibility Private -Scope script -Force
 
         if ($script:Int_HuduAPIKey) {
-            [version]$Version = (Get-HuduAppInfo).version
-            if ($Version -lt $script:HuduRequiredVersion) {
-                Write-Warning "A connection error occured or Hudu version is below $script:HuduRequiredVersion"
+            [version]$script:Version = (Get-HuduAppInfo).version
+            if ($script:Version -lt $script:HuduRequiredVersion) {
+                Write-Warning "A connection error occured or Hudu version $($script:Version ?? "unknown") is below $script:HuduRequiredVersion"
             }
         }
     }

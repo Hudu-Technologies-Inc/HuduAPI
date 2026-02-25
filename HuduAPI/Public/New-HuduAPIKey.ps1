@@ -30,9 +30,9 @@ function New-HuduAPIKey {
         Set-Variable -Name 'Int_HuduAPIKey' -Value $SecApiKey -Visibility Private -Scope script -Force
 
         if ($script:Int_HuduBaseURL) {
-            [version]$version = (Get-HuduAppInfo).version
-            if ($version -lt $script:HuduRequiredVersion) {
-                Write-Warning "A connection error occured or Hudu version is below $script:HuduRequiredVersion"
+            [version]$script:Version = (Get-HuduAppInfo).version
+            if ($script:Version -lt $script:HuduRequiredVersion) {
+                Write-Warning "A connection error occured or Hudu version $($script:Version ?? "unknown") is below $script:HuduRequiredVersion"
             }
         }
     }
