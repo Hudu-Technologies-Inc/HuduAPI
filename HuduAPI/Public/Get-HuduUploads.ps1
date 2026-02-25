@@ -42,11 +42,9 @@ function Get-HuduUploads {
             $OutFilePath = if ([string]::IsNullOrWhiteSpace($OutFilePath)) { (Get-Location).Path } else { $OutFilePath }
             $OutFilePath = (New-Item -ItemType Directory -Path $OutFilePath -Force).FullName
 
-            $UploadsToDownload = @(); $UploadsToDownload = @($Upload);
-
             $Headers = @{ 'x-api-key' = (New-Object PSCredential 'user', $HuduAPIKey).GetNetworkCredential().Password }
 
-            foreach ($u in $UploadsToDownload) {
+            foreach ($u in @($Upload)) {
                 $safeName = ($u.name -replace '[<>:"/\\|?*\x00-\x1F]', '_')
                 if ([string]::IsNullOrWhiteSpace($safeName)) { $safeName = "upload-$($u.id)" }
 
