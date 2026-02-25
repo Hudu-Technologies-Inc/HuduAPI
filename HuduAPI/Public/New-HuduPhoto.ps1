@@ -28,13 +28,18 @@ function New-HuduPhoto {
     if (($Photoable_Type -and -not $Photoable_Id) -or ($Photoable_Id -and -not $Photoable_Type)) {
         throw "PhotoableType and PhotoableId must be provided together."
     }
-    $form = @{file = $File; "upload[photoable_id]" = $PhotoableId; "upload[photoable_type]" = $Photoable_Type; }
-    if ($CompanyId)     { $form.company_id = $CompanyId }
-    if ($Photoable_Type) { $form.photoable_type = $Photoable_Type }
-    if ($PhotoableId)   { $form.photoable_id = $PhotoableId }
-    if ($FolderId)      { $form.folder_id = $FolderId }
-    if ($Pinned)        { $form.pinned =  }
+    if ([string]::IsNullOrWhiteSpace($Caption)) {
+        throw "Caption is required."
+    }
 
-    Invoke-HuduRequest -Method POST -Resource '/api/v1/photos' -Form 
+    $params = @{file = $File; "upload[photoable_id]" = $PhotoableId; "upload[photoable_type]" = $Photoable_Type; }
+    if ($PSBoundParameters.ContainsKey('CompanyId')) { $params.company_id = $CompanyId }
+    if ($PSBoundParameters.ContainsKey('Caption'))   { $params.caption = $Caption }
+    if ($PSBoundParameters.ContainsKey('Pinned'))      { $params.pinned = [bool]$Pinned }
+    if ($PSBoundParameters.ContainsKey('FolderId'))  { $params.folder_id = $FolderId }
+    if ($PSBoundParameters.ContainsKey('archived'))  { $params.archived = [bool]$Archived }
+
+
+    Invoke-HuduRequest -Method POST -Resource '/api/v1/photos' -Form $params
 
 }
