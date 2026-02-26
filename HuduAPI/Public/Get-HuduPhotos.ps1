@@ -128,6 +128,14 @@ function Get-HuduPhotos {
 
             try {
                 Invoke-WebRequest -Uri $fileUrl -OutFile $destinationPath -Headers $Headers -MaximumRedirection 5 -ErrorAction Stop | Out-Null
+                $imageType = $null; $imageType = Get-PhotoImageType -Path $destinationPath;
+                if ($null -ne $imageType -and $imageType -ne 'unknown') {
+                    $newPath = [System.IO.Path]::ChangeExtension($destinationPath, $imageType)
+                    Move-Item -LiteralPath $destinationPath -Destination $newPath -Force
+                    $destinationPath = $newPath
+                }
+
+
                 Write-Verbose "Downloaded '$($p.id)' to '$destinationPath'"
 
                 if (Test-Path -LiteralPath $destinationPath) {
