@@ -10,7 +10,10 @@ function New-HuduPhoto {
         [ValidateNotNullOrEmpty()]
         [string]$Caption,
 
+        [Alias('company_id')]
         [int]$CompanyId,
+        
+        [Alias('folder_id')]
         [int]$FolderId,
 
         [ValidateSet("Article", "AssetPassword", "Asset", "IpAddress", "Network", "RackStorage", "VlanZone", "Vlan", "Website",IgnoreCase = $true)]

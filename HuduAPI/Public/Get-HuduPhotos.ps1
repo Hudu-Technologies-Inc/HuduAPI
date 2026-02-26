@@ -124,7 +124,6 @@ function Get-HuduPhotos {
             $destinationPath = Join-Path -Path $OutDir -ChildPath "$safe-$($p.id).bin"
 
             $fileUrl = "$($script:HuduBaseUrl ?? $(get-hudubaseurl))/api/v1/photos/$($p.id)?download=true"
-            write-host "$($($p | convertto-json -depth 99).ToString()) - $fileUrl"
 
             try {
                 Invoke-WebRequest -Uri $fileUrl -OutFile $destinationPath -Headers $Headers -MaximumRedirection 5 -ErrorAction Stop | Out-Null

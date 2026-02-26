@@ -1,19 +1,40 @@
 function Set-HuduPhoto {
-    [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Mandatory)]
         [int]$Id,
 
-        [string]$Caption,
+
+        [int]$CompanyId,
+        [ValidateSet("Article", "Asset", "Website","Company",IgnoreCase = $true)]
+        [Alias('uploadabletype','recordtype','PhotoableType','uploadable_type','record_type')]
+        [string]$Photoable_Type,
+        
+        [Alias('record_id','uploadable_id','recordid','PhotoableId','uploadableid')]
+        [int]$Photoable_Id,
+
+        [Alias('folder_id')]
+        [int]$FolderId,
+
+        [Nullable[bool]]$Archived,
         [Nullable[bool]]$Pinned,
-        [int]$FolderId
+        [string]$Caption
     )
+    $params = @{}
+    if ($PSBoundParameters.ContainsKey('CompanyId')) { $params.company_id = $CompanyId }
+    if ($PSBoundParameters.ContainsKey('Caption'))   { $params.caption = $Caption }
+    if ($PSBoundParameters.ContainsKey('Pinned'))      { $params.pinned = "$([bool]$Pinned)".ToString().ToLower() }
+    if ($PSBoundParameters.ContainsKey('FolderId'))  { $params.folder_id = $(if ($null -eq $FolderId -or $folderID -lt 1){"null"} else {"$FolderId"} )}
+    if ($PSBoundParameters.ContainsKey('archived'))  { $params.archived = "$([bool]$Archived)".ToString().ToLower() }
 
-    $body = @{}
-    if ($PSBoundParameters.ContainsKey('Caption')) { $body.caption = $Caption }
-    if ($PSBoundParameters.ContainsKey('Pinned'))  { $body.pinned  = $Pinned }
-    if ($PSBoundParameters.ContainsKey('FolderId')){ $body.folder_id = $FolderId }
+    if ($PSBoundParameters.ContainsKey('Photoable_Type') -and $PSBoundParameters.ContainsKey('Photoable_Id')) { 
+        $params.photoable_type  = $Photoable_Type
+        $params.photoable_id    = $Photoable_Id
+    } elseif ($PSBoundParameters.ContainsKey('CompanyId')) { 
+        $params.photoable_type = "Company"
+        $params.photoable_id =$CompanyId
+    }
+    
+    $result = invoke-hudurequest -Method PUT -Resource "/api/v1/photos/$Id" -Body $(@{photo = $params} | ConvertTo-Json -Depth 99)
 
-    if ($body.Count -eq 0) { return }
-
+    return $result.photo ?? $result
 }
