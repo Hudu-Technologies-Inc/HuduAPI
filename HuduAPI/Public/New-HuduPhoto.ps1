@@ -16,7 +16,7 @@ function New-HuduPhoto {
         [Alias('folder_id')]
         [int]$FolderId,
 
-        [ValidateSet("Article", "AssetPassword", "Asset", "IpAddress", "Network", "RackStorage", "VlanZone", "Vlan", "Website",IgnoreCase = $true)]
+        [ValidateSet("Article", "Asset", "Website","Company",IgnoreCase = $true)]
         [Alias('uploadabletype','recordtype','photoabletype','uploadable_type','record_type')]
         [string]$Photoable_Type,
 
@@ -35,15 +35,13 @@ function New-HuduPhoto {
     if ([string]::IsNullOrWhiteSpace($Caption)) {
         throw "Caption is required."
     }
-    write-host "photoable type $photoable_type id $photoable_id company $companyId folder $folderId pinned $Pinned caption $Caption file $File"
-
     $params = @{file = $File; caption = $Caption;}
     if ($PSBoundParameters.ContainsKey('Photoable_Type') -and $PSBoundParameters.ContainsKey('Photoable_Id')) { 
         $params.photoable_type  = $Photoable_Type
         $params.photoable_id    = $Photoable_Id
     } elseif ($PSBoundParameters.ContainsKey('CompanyId')) { 
         $params.photoable_type = "Company"
-        $params.photoable_id =$CompanyId
+        $params.photoable_id = $CompanyId
     }
 
     if ($PSBoundParameters.ContainsKey('CompanyId')) { $params.company_id = $CompanyId }
@@ -52,7 +50,5 @@ function New-HuduPhoto {
     if ($PSBoundParameters.ContainsKey('Pinned'))      { $params.pinned = [bool]$Pinned }
     if ($PSBoundParameters.ContainsKey('archived'))  { $params.archived = [bool]$Archived }
 
-    write-host "$($($params | convertto-json).ToString())"
     Invoke-HuduRequest -Method POST -Resource '/api/v1/photos' -Form $params
-
 }
