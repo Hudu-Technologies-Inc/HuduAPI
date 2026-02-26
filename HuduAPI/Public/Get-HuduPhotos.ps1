@@ -51,8 +51,8 @@ function Get-HuduPhotos {
         [int]$Id,
 
         [int]$CompanyId,
-        [ValidateSet("Article", "AssetPassword", "Asset", "IpAddress", "Network", "RackStorage", "VlanZone", "Vlan", "Website",IgnoreCase = $true)]
-        [Alias('uploadabletype','recordtype','Photoable_Type','uploadable_type','record_type')]
+        [ValidateSet("Article", "Asset", "Website","Company",IgnoreCase = $true)]
+        [Alias('uploadabletype','recordtype','PhotoableType','uploadable_type','record_type')]
         [string]$Photoable_Type,
         
         [Alias('record_id','uploadable_id','recordid','PhotoableId','uploadableid')]
@@ -105,7 +105,6 @@ function Get-HuduPhotos {
         $Photos = Invoke-HuduRequestPaginated -hudurequest @{
             Method   = 'GET'
             Resource = '/api/v1/photos'
-            property = 'photos'
             params    = $params
         }
     }
@@ -116,7 +115,7 @@ function Get-HuduPhotos {
 
         $Headers = @{ 'x-api-key' = (New-Object PSCredential 'user', $(Get-HuduApiKey)).GetNetworkCredential().Password }
 
-        foreach ($p in @($Photos)) {
+        foreach ($p in @($($Photos.photos ?? $photos.photo ?? $Photos))) {
             $label = $p.caption
             if ([string]::IsNullOrWhiteSpace($label)) { $label = "photo-$($p.id)" }
             $safe = ($label -replace '[<>:"/\\|?*\x00-\x1F]', '_').Trim()
@@ -124,7 +123,8 @@ function Get-HuduPhotos {
 
             $destinationPath = Join-Path -Path $OutDir -ChildPath "$safe-$($p.id).bin"
 
-            $fileUrl = "$($script:HuduBaseUrl)/api/v1/photos/$($p.id)?download=true"
+            $fileUrl = "$($script:HuduBaseUrl ?? $(get-hudubaseurl))/api/v1/photos/$($p.id)?download=true"
+            write-host "$($($p | convertto-json -depth 99).ToString()) - $fileUrl"
 
             try {
                 Invoke-WebRequest -Uri $fileUrl -OutFile $destinationPath -Headers $Headers -MaximumRedirection 5 -ErrorAction Stop | Out-Null
@@ -139,5 +139,7 @@ function Get-HuduPhotos {
         }
     }
 
-    return ($Id ? ($Photos[0]) : $Photos)
+    $photosOut = $(($Id ? ($Photos[0]) : $Photos))
+
+    return $photosOut.photos ?? $photosOut.photo ?? $photosOut
 }
