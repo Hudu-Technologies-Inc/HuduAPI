@@ -15,6 +15,9 @@ function Get-HuduFolders {
     .PARAMETER CompanyId
     Filter by company_id
 
+    .PARAMETER folder_type
+
+
     .EXAMPLE
     Get-HuduFolders
 
@@ -24,7 +27,10 @@ function Get-HuduFolders {
         [Int]$Id = '',
         [String]$Name = '',
         [Alias('company_id')]
-        [Int]$CompanyId = ''
+        [Int]$CompanyId = '',
+        [Alias('foldertype','type')]
+        [ValidateSet("Article", "Photo",IgnoreCase = $true)]
+        [string]$folder_type = $null
     )
 
     if ($id) {
@@ -35,6 +41,10 @@ function Get-HuduFolders {
 
         if ($CompanyId) { $Params.company_id = $CompanyId }
         if ($Name) { $Params.name = $Name }
+
+        if (-not ([string]::isnullorwhitespace($folder_type)) -and [version]$($script:Version ?? (Get-HuduAppInfo).version) -gt [version]'2.39.0'){
+            $Params.folder_type = "$folderType".ToLower()
+        }
 
         $HuduRequest = @{
             Method   = 'GET'
