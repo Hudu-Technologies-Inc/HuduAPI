@@ -31,7 +31,7 @@ function Get-HuduUploads {
         if ($script:Version -lt [version]'2.39.0') {
             $Upload = Invoke-HuduRequest -Method Get -Resource "/api/v1/uploads"
         } else {
-            $Upload = Invoke-HuduRequestPaginated -hudurequest @{ Method = 'Get'; Resource = '/api/v1/uploads'}
+            $Upload = Invoke-HuduRequestPaginated -hudurequest @{ Method = 'Get'; Resource = '/api/v1/uploads'; params = @{}}
         }
     }
 
@@ -43,8 +43,7 @@ function Get-HuduUploads {
             $OutDir = (New-Item -ItemType Directory -Path $OutDir -Force).FullName
 
             $Headers = @{ 'x-api-key' = (New-Object PSCredential 'user', $(Get-HuduApiKey)).GetNetworkCredential().Password }
-
-            foreach ($u in @($Upload.uploads ?? $Upload.upload ?? $Upload)) {
+            foreach ($u in @($Upload)) {
                 if (-not $u.id -or $u.id -lt 1){continue}
                 $safeName = ($u.name -replace '[<>:"/\\|?*\x00-\x1F]', '_')
                 if ([string]::IsNullOrWhiteSpace($safeName)) { $safeName = "upload-$($u.id)" }
