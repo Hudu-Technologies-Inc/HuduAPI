@@ -77,9 +77,6 @@ function Get-HuduPhotos {
         write-warning "Get-HuduPhotos: Hudu version $($script:Version) is below 2.39.6; Skipping."
         if ($id){ return $null } else { return @() }
     }
-    if (($Photoable_Type -and -not $Photoable_Id) -or ($Photoable_Id -and -not $Photoable_Type)) {
-        throw "PhotoableType and PhotoableId must be provided together."
-    }
 
     $params = @{}
     if ($PSBoundParameters.ContainsKey('CompanyId')) { $params.company_id = $CompanyId }
