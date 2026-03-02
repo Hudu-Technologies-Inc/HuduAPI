@@ -19,6 +19,11 @@ function Set-HuduPhoto {
         [Nullable[bool]]$Pinned,
         [string]$Caption
     )
+    [version]$script:Version = $script:Version ?? [version]((Get-HuduAppInfo).version)
+    if ($script:Version -lt [version]'2.39.6') {
+        write-warning "Set-HuduPhoto: Hudu version $($script:Version) is below 2.39.6; Skipping."
+        return $null
+    }
     $params = @{}
     if ($PSBoundParameters.ContainsKey('CompanyId')) { $params.company_id = $CompanyId }
     if ($PSBoundParameters.ContainsKey('Caption'))   { $params.caption = $Caption }

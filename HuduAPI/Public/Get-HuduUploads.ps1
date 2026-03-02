@@ -7,10 +7,10 @@ function Get-HuduUploads {
     Calls Hudu API to retrieve uploads
 
     .PARAMETER Id
-    ID of the Upload to retrieve or Download (Hudu 2.41.0+)
+    ID of the Upload to retrieve or Download (Hudu 2.39.6+)
 
     .PARAMETER OutDir
-    Directory to download uploads to. Used only with -Download (Hudu 2.41.0+). Defaults to current directory.
+    Directory to download uploads to. Used only with -Download (Hudu 2.39.6+). Defaults to current directory.
 
     .EXAMPLE
     Get-HuduUploads
@@ -23,12 +23,13 @@ function Get-HuduUploads {
         [string]$OutDir = '.'
     )
 
-    [version]$script:Version = $script:Version ?? (Get-HuduAppInfo).version
+    [version]$script:Version = $script:Version ?? [version]((Get-HuduAppInfo).version)
+
     $Upload = @()
     if ($Id) {
         $Upload = Invoke-HuduRequest -Method Get -Resource "/api/v1/uploads/$Id"
     } else {
-        if ($script:Version -lt [version]'2.41.0') {
+        if ($script:Version -lt [version]'2.39.6') {
             $Upload = Invoke-HuduRequest -Method Get -Resource "/api/v1/uploads"
         } else {
             $Upload = Invoke-HuduRequestPaginated -hudurequest @{ Method = 'Get'; Resource = '/api/v1/uploads'; params = @{}}
@@ -36,8 +37,8 @@ function Get-HuduUploads {
     }
 
     if ($Download) {
-        if ($script:Version -lt [version]'2.41.0') {
-            Write-Warning "Download of uploads is only supported in Hudu v2.41.0 and above; skipping download."
+        if ($script:Version -lt [version]'2.39.6') {
+            Write-Warning "Download of uploads is only supported in Hudu v2.39.6 and above; skipping download."
         } else {
             $OutDir = if ([string]::IsNullOrWhiteSpace($OutDir)) { (Get-Location).Path } else { $OutDir }
             $OutDir = (New-Item -ItemType Directory -Path $OutDir -Force).FullName

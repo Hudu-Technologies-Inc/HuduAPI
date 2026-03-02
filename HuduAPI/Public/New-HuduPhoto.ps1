@@ -26,8 +26,18 @@ function New-HuduPhoto {
         [Nullable[bool]]$Pinned
     )
 
+    [version]$script:Version = $script:Version ?? [version]((Get-HuduAppInfo).version)
+    if ($script:Version -lt [version]'2.39.6') {
+        write-warning "Set-HuduPhoto: Hudu version $($script:Version) is below 2.39.6; Skipping."
+        return $null
+    }
+
     $File = Get-Item -LiteralPath $Path
     if (-not $File) { throw "File not found!" }
+    if (-not $($File.Extension.ToLowerInvariant() -in '.jpeg','.jpg','.png','.gif','.webp','.heic')){
+        write-error "file extension '$($File.Extension)' is not a supported photo format."
+        throw "Unsupported file format."
+    }
 
     if (($Photoable_Type -and -not ($Photoable_Id ?? $companyId)) -or ($($Photoable_Id ?? $companyId) -and -not $Photoable_Type)) {
         throw "PhotoableType and PhotoableId must be provided together."
