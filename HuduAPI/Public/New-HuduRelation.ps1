@@ -35,16 +35,19 @@ function New-HuduRelation {
         [String]$Description,
 
         [Parameter(Mandatory = $true)]
+        [Alias('fromable_type')]
         [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
                 "VlanZone", "Vlan", "Procedure", "Website", "RackStorage", "Network", "IpAddress", "Article", "Company", "Asset", "AssetPassword"
         )})]
-        [Alias('fromable_type')]
         [String]$FromableType,
 
         [Alias('fromable_id')]
         [int]$FromableID,
 
         [Alias('toable_type')]
+        [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
+                "VlanZone", "Vlan", "Procedure", "Website", "RackStorage", "Network", "IpAddress", "Article", "Company", "Asset", "AssetPassword"
+        )})]        
         [String]$ToableType,
 
         [Alias('toable_id')]
