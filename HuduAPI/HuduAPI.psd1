@@ -159,6 +159,7 @@
     'Remove-HuduNetwork',
     'Remove-HuduPassword',
     'Remove-HuduPasswordFolder',
+    'Remove-HuduPhoto',
     'Remove-HuduProcedure',
     'Remove-HuduProcedureTask',
     'Remove-HuduRackStorageItem',

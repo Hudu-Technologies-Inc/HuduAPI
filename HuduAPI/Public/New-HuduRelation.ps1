@@ -35,7 +35,7 @@ function New-HuduRelation {
         [String]$Description,
 
         [Parameter(Mandatory = $true)]
-        [ValidateSet('Asset', 'Website', 'Procedure', 'AssetPassword', 'Company', 'Article')]
+        [ValidateSet('Asset', 'Website', 'Procedure', 'AssetPassword', 'Company', 'Article', 'Network', 'IpAddress', IgnoreCase = $true)]
         [Alias('fromable_type')]
         [String]$FromableType,
 
