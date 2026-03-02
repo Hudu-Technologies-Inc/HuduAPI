@@ -61,7 +61,7 @@ function Set-HuduFlag {
     }
 
     if ($flagable_type) {
-        $Flag.flag.flagable_type = $(Set-FlagableFromCanonical -inputData $flagable_type)
+        $Flag.flag.flagable_type = $(Get-ObjectTypeFromCononical -inputData $flagable_type)
     }
 
     if ($PSBoundParameters.ContainsKey('flagable_id')) {

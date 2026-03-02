@@ -35,7 +35,7 @@ function New-HuduRelation {
         [String]$Description,
 
         [Parameter(Mandatory = $true)]
-        [ValidateSet('Asset', 'Website', 'Procedure', 'AssetPassword', 'Company', 'Article', 'Network', 'IpAddress', IgnoreCase = $true)]
+        [ValidateSet('asset', 'assets', 'anlage', 'objekt', 'actif', 'bene', 'activo', 'website', 'webseite', 'site', 'sito', 'sitio', 'article', 'articles', 'kb', 'knowledgebase', 'artikel', 'articolo', 'artículo', 'assetpassword', 'asset_password', 'password', 'passwort', 'motdepasse', 'contraseña', 'company', 'companies', 'firma', 'entreprise', 'azienda', 'empresa', 'procedure', 'process', 'verfahren', 'procédure', 'procedura', 'procedimiento', 'rackstorage', 'rack_storage', 'rack', 'rackstorages', 'armoire', 'network', 'netzwerk', 'réseau', 'rete', 'red', 'ipaddress', 'ip_address', 'ip', 'ipadresse', 'adresseip', 'indirizzoip', 'direccionip', 'vlan', 'vlans', 'vlanzone', 'vlan_zone', 'zone', 'zonevlan', 'photo', 'photos', 'foto', 'photograph', 'photographie', 'fotografía', 'publicphoto', 'public_photo', 'publicfoto', 'publicphotograph', 'publicphotographie', 'publicfotografía', IgnoreCase = $true)]
         [Alias('fromable_type')]
         [String]$FromableType,
 
@@ -54,9 +54,9 @@ function New-HuduRelation {
 
     $Relation = [ordered]@{relation = [ordered]@{} }
 
-    $Relation.relation.add('fromable_type', $FromableType)
+    $Relation.relation.add('fromable_type', "$(Get-ObjectTypeFromCononical -inputData $FromableType)")
     $Relation.relation.add('fromable_id', $FromableID)
-    $Relation.relation.add('toable_type', $ToableType)
+    $Relation.relation.add('toable_type', "$(Get-ObjectTypeFromCononical -inputData $ToableType)")
     $Relation.relation.add('toable_id', $ToableID)
 
     if ($Description) {

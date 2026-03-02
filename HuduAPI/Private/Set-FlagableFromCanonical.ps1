@@ -1,22 +1,24 @@
-function Set-FlagableFromCanonical {
+function Get-ObjectTypeFromCononical {
     param ([string]$inputData)
     if ([string]::IsNullOrWhiteSpace($inputData)) { return $null }
 
-        if (-not $(get-variable -name 'script:FlaggableTypeLookup' -scope 'script' -erroraction silentlycontinue)) {
+        if (-not $(get-variable -name 'script:ObjectTypeLookup' -scope 'script' -erroraction silentlycontinue)) {
             $script:FlaggableTypeMap = [ordered]@{ # German, French, Italian, Spanish
-                Asset         = @('asset','assets', 'anlage','objekt', 'actif', 'bene', 'activo')
-                Website       = @('website', 'webseite', 'site', 'sito', 'sitio')
                 Article       = @('article','articles','kb','knowledgebase', 'artikel', 'article', 'articolo', 'artículo')
+                Asset         = @('asset','assets', 'anlage','objekt', 'actif', 'bene', 'activo')
                 AssetPassword = @('assetpassword','asset_password','password', 'passwort', 'motdepasse', 'password', 'contraseña')
                 Company       = @('company','companies', 'firma', 'entreprise', 'azienda', 'empresa')
+                IpAddress     = @('ipaddress','ip_address','ip', 'ipadresse', 'adresseip', 'indirizzoip', 'direccionip')
+                Network       = @('network', 'netzwerk', 'réseau', 'rete', 'red')
+                Photo         = @('photo', 'photos', 'foto', 'photograph', 'photographie', 'fotografía')
+                PublicPhoto   = @('publicphoto', 'public_photo', 'publicfoto', 'publicphotograph', 'publicphotographie', 'publicfotografía')
                 Procedure     = @('procedure','process', 'verfahren', 'procédure', 'procedura', 'procedimiento')
                 RackStorage   = @('rackstorage','rack_storage','rack','rackstorages', 'rack', 'armoire')
-                Network       = @('network', 'netzwerk', 'réseau', 'rete', 'red')
-                IpAddress     = @('ipaddress','ip_address','ip', 'ipadresse', 'adresseip', 'indirizzoip', 'direccionip')
                 Vlan          = @('vlan','vlans', 'vlan')
                 VlanZone      = @('vlanzone','vlan_zone','zone', 'zonevlan')
+                Website       = @('website', 'webseite', 'site', 'sito', 'sitio')
             }
-            $script:FlaggableTypeLookup = @{}
+            $script:ObjectTypeLookup = @{}
             foreach ($canonical in $script:FlaggableTypeMap.Keys) {
                 # include canonical itself as accepted input
                 $all = @($canonical) + $script:FlaggableTypeMap[$canonical]
@@ -25,7 +27,7 @@ function Set-FlagableFromCanonical {
                     if ([string]::IsNullOrWhiteSpace($v)) { continue }
                     $k = ($v -as [string]).Trim().ToLowerInvariant()
                     $k = $k -replace '[-\s]+','_'      # treat dashes/spaces like underscores
-                    $script:FlaggableTypeLookup[$k] = $canonical
+                    $script:ObjectTypeLookup[$k] = $canonical
                 }
             }            
         }               
@@ -35,7 +37,7 @@ function Set-FlagableFromCanonical {
 
         $k = $raw.ToLowerInvariant() -replace '[-\s]+','_'
 
-        $lookup = $script:FlaggableTypeLookup
+        $lookup = $script:ObjectTypeLookup
         if ($lookup.ContainsKey($k)) {
             return $lookup[$k]
         }

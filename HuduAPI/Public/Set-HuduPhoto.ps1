@@ -5,8 +5,8 @@ function Set-HuduPhoto {
 
 
         [int]$CompanyId,
-        [ValidateSet("Article", "Asset", "Website","Company",IgnoreCase = $true)]
         [Alias('uploadabletype','recordtype','PhotoableType','uploadable_type','record_type')]
+        [ValidateSet('article','articles','kb','knowledgebase', 'artikel', 'article', 'articolo', 'artículo', 'asset','assets', 'anlage','objekt', 'actif', 'bene', 'activo','website', 'webseite', 'site', 'sito', 'sitio', 'company','companies', 'firma', 'entreprise', 'azienda', 'empresa', IgnoreCase = $true)]
         [string]$Photoable_Type,
         
         [Alias('record_id','uploadable_id','recordid','PhotoableId','uploadableid')]
@@ -25,13 +25,7 @@ function Set-HuduPhoto {
         return $null
     }
     $params = @{}
-    # proper casing for hudu API
-    $Photoable_Type = @{
-        article = 'Article'
-        asset   = 'Asset'
-        website = 'Website'
-        company = 'Company'
-    }[$Photoable_Type.ToLowerInvariant()]    
+    # proper casing for hudu API 
 
     if ($PSBoundParameters.ContainsKey('CompanyId')) { $params.company_id = $CompanyId }
     if ($PSBoundParameters.ContainsKey('Caption'))   { $params.caption = $Caption }
@@ -40,7 +34,7 @@ function Set-HuduPhoto {
     if ($PSBoundParameters.ContainsKey('archived'))  { $params.archived = "$([bool]$Archived)".ToString().ToLower() }
 
     if ($PSBoundParameters.ContainsKey('Photoable_Type') -and $PSBoundParameters.ContainsKey('Photoable_Id')) { 
-        $params.photoable_type  = $Photoable_Type
+        $params.photoable_type  = $(Get-ObjectTypeFromCononical -inputData $Photoable_Type)
         $params.photoable_id    = $Photoable_Id
     } elseif ($PSBoundParameters.ContainsKey('CompanyId')) { 
         $params.photoable_type = "Company"

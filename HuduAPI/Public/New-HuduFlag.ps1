@@ -55,7 +55,7 @@ Requires Hudu API access configured for Invoke-HuduRequest.
         flag = @{
             flag_type_id  = $FlagTypeId
             description   = $Description
-            flagable_type = $(Set-FlagableFromCanonical -inputData $Flagable_Type)
+            flagable_type = $(Get-ObjectTypeFromCononical -inputData $Flagable_Type)
             flagable_id   = $flagable_id
         }
     }

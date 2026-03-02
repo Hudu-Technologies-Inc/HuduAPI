@@ -51,7 +51,7 @@ function Get-HuduPhotos {
         [int]$Id,
 
         [int]$CompanyId,
-        [ValidateSet("Article", "Asset", "Website","Company",IgnoreCase = $true)]
+        [ValidateSet('article','articles','kb','knowledgebase', 'artikel', 'article', 'articolo', 'artículo', 'asset','assets', 'anlage','objekt', 'actif', 'bene', 'activo','website', 'webseite', 'site', 'sito', 'sitio', 'company','companies', 'firma', 'entreprise', 'azienda', 'empresa', IgnoreCase = $true)]
         [Alias('uploadabletype','recordtype','PhotoableType','uploadable_type','record_type')]
         [string]$Photoable_Type,
         
@@ -90,13 +90,7 @@ function Get-HuduPhotos {
  
 
     if ($PSBoundParameters.ContainsKey('Photoable_Type')) { 
-        $Photoable_Type = @{
-            article = 'Article'
-            asset   = 'Asset'
-            website = 'Website'
-            company = 'Company'
-        }[$Photoable_Type.ToLowerInvariant()]
-        $params.photoable_type = $Photoable_Type 
+        $params.photoable_type = $(Get-ObjectTypeFromCononical -inputData $Photoable_Type) 
     }
     if ($PSBoundParameters.ContainsKey('Photoable_Id')) { $params.photoable_id = $Photoable_Id }
 

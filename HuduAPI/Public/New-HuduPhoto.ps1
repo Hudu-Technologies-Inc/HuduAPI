@@ -16,8 +16,8 @@ function New-HuduPhoto {
         [Alias('folder_id')]
         [int]$FolderId,
 
-        [ValidateSet("Article", "Asset", "Website","Company",IgnoreCase = $true)]
         [Alias('uploadabletype','recordtype','photoabletype','uploadable_type','record_type')]
+        [ValidateSet('article','articles','kb','knowledgebase', 'artikel', 'article', 'articolo', 'artículo', 'asset','assets', 'anlage','objekt', 'actif', 'bene', 'activo','website', 'webseite', 'site', 'sito', 'sitio', 'company','companies', 'firma', 'entreprise', 'azienda', 'empresa', IgnoreCase = $true)]
         [string]$Photoable_Type,
 
         [Alias('record_id','uploadable_id','recordid','PhotoableId','uploadableid')]
@@ -46,14 +46,8 @@ function New-HuduPhoto {
         throw "Caption is required."
     }
     $params = @{file = $File; caption = $Caption;}
-    if ($PSBoundParameters.ContainsKey('Photoable_Type') -and $PSBoundParameters.ContainsKey('Photoable_Id')) { 
-        $Photoable_Type = @{
-            article = 'Article'
-            asset   = 'Asset'
-            website = 'Website'
-            company = 'Company'
-        }[$Photoable_Type.ToLowerInvariant()]            
-        $params.photoable_type  = $Photoable_Type
+    if ($PSBoundParameters.ContainsKey('Photoable_Type') -and $PSBoundParameters.ContainsKey('Photoable_Id')) {         
+        $params.photoable_type  = $(Get-ObjectTypeFromCononical -inputData $Photoable_Type)
         $params.photoable_id    = $Photoable_Id
     } elseif ($PSBoundParameters.ContainsKey('CompanyId')) { 
         $params.photoable_type = "Company"
