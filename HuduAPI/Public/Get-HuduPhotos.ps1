@@ -87,8 +87,17 @@ function Get-HuduPhotos {
     if ($PSBoundParameters.ContainsKey('Pinned'))      { $params.pinned = [bool]$Pinned }
     if ($PSBoundParameters.ContainsKey('FolderId'))  { $params.folder_id = $FolderId }
     if ($PSBoundParameters.ContainsKey('archived'))  { $params.archived = [bool]$Archived }
+ 
 
-    if ($PSBoundParameters.ContainsKey('Photoable_Type')) { $params.photoable_type = $Photoable_Type }
+    if ($PSBoundParameters.ContainsKey('Photoable_Type')) { 
+        $Photoable_Type = @{
+            article = 'Article'
+            asset   = 'Asset'
+            website = 'Website'
+            company = 'Company'
+        }[$Photoable_Type.ToLowerInvariant()]
+        $params.photoable_type = $Photoable_Type 
+    }
     if ($PSBoundParameters.ContainsKey('Photoable_Id')) { $params.photoable_id = $Photoable_Id }
 
     $updatedRange = Convert-ToHuduDateRange -Start $UpdatedAfter -End $UpdatedBefore

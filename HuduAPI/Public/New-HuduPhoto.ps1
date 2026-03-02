@@ -47,6 +47,12 @@ function New-HuduPhoto {
     }
     $params = @{file = $File; caption = $Caption;}
     if ($PSBoundParameters.ContainsKey('Photoable_Type') -and $PSBoundParameters.ContainsKey('Photoable_Id')) { 
+        $Photoable_Type = @{
+            article = 'Article'
+            asset   = 'Asset'
+            website = 'Website'
+            company = 'Company'
+        }[$Photoable_Type.ToLowerInvariant()]            
         $params.photoable_type  = $Photoable_Type
         $params.photoable_id    = $Photoable_Id
     } elseif ($PSBoundParameters.ContainsKey('CompanyId')) { 
