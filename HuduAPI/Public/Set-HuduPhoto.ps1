@@ -25,6 +25,14 @@ function Set-HuduPhoto {
         return $null
     }
     $params = @{}
+    # proper casing for hudu API
+    $Photoable_Type = @{
+        article = 'Article'
+        asset   = 'Asset'
+        website = 'Website'
+        company = 'Company'
+    }[$Photoable_Type.ToLowerInvariant()]    
+
     if ($PSBoundParameters.ContainsKey('CompanyId')) { $params.company_id = $CompanyId }
     if ($PSBoundParameters.ContainsKey('Caption'))   { $params.caption = $Caption }
     if ($PSBoundParameters.ContainsKey('Pinned'))      { $params.pinned = "$([bool]$Pinned)".ToString().ToLower() }
