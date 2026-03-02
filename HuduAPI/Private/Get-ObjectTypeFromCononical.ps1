@@ -3,7 +3,7 @@ function Get-ObjectTypeFromCononical {
     if ([string]::IsNullOrWhiteSpace($inputData)) { return $null }
 
         if (-not $(get-variable -name 'script:ObjectTypeLookup' -scope 'script' -erroraction silentlycontinue)) {
-            $script:FlaggableTypeMap = [ordered]@{ # German, French, Italian, Spanish
+            $script:ObjectTypeMap = [ordered]@{ # German, French, Italian, Spanish
                 Article       = @('article','articles','kb','knowledgebase', 'artikel', 'article', 'articolo', 'artículo')
                 Asset         = @('asset','assets', 'anlage','objekt', 'actif', 'bene', 'activo')
                 AssetPassword = @('assetpassword','asset_password','password', 'passwort', 'motdepasse', 'password', 'contraseña')
@@ -19,9 +19,9 @@ function Get-ObjectTypeFromCononical {
                 Website       = @('website', 'webseite', 'site', 'sito', 'sitio')
             }
             $script:ObjectTypeLookup = @{}
-            foreach ($canonical in $script:FlaggableTypeMap.Keys) {
+            foreach ($canonical in $script:ObjectTypeMap.Keys) {
                 # include canonical itself as accepted input
-                $all = @($canonical) + $script:FlaggableTypeMap[$canonical]
+                $all = @($canonical) + $script:ObjectTypeMap[$canonical]
 
                 foreach ($v in $all) {
                     if ([string]::IsNullOrWhiteSpace($v)) { continue }
@@ -41,7 +41,7 @@ function Get-ObjectTypeFromCononical {
         if ($lookup.ContainsKey($k)) {
             return $lookup[$k]
         }
-        $allowed = ($script:FlaggableTypeMap.Keys -join ', ')
+        $allowed = ($script:ObjectTypeMap.Keys -join ', ')
         throw "Invalid flaggable type '$raw'. Allowed: $allowed"
 }
 
