@@ -16,10 +16,10 @@ function Set-HuduPassword {
     Id of requested company
 
     .PARAMETER PasswordableType
-    Type of asset to associate with the password
+    associated Object type, most commonly asset, for the password ["Asset", "VlanZone", "Vlan"]
 
     .PARAMETER PasswordableId
-    Id of the asset to associate with the password
+    Associated object id for the password
 
     .PARAMETER InPortal
     Display password in portal

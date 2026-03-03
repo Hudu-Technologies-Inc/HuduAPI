@@ -15,8 +15,7 @@ Get a list of companies
 ```
 Get-HuduCompanies [[-Name] <String>] [[-PhoneNumber] <String>] [[-Website] <String>] [[-City] <String>]
  [[-State] <String>] [[-IdInIntegration] <Int32>] [[-Id] <Int32>] [[-Search] <String>] [[-Slug] <String>]
- [[-UpdatedAfter] <DateTime>] [[-UpdatedBefore] <DateTime>] [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -27,7 +26,6 @@ Call Hudu API to retrieve company list
 ### EXAMPLE 1
 ```
 Get-HuduCompanies -Search 'Vendor'
-Get-HuduCompanies -Updatedafter $(get-date).Addyears(-1)
 ```
 
 ## PARAMETERS
@@ -162,36 +160,6 @@ Aliases:
 
 Required: False
 Position: 9
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -UpdatedAfter
-Get Companies Updated After X datetime
-
-```yaml
-Type: DateTime
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 10
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -UpdatedBefore
-Get Companies Updated Before Y datetime
-
-```yaml
-Type: DateTime
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 11
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

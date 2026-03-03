@@ -14,8 +14,7 @@ Get Knowledge Base Articles
 
 ```
 Get-HuduArticles [[-Id] <Int32>] [[-CompanyId] <Int32>] [[-Name] <String>] [[-Slug] <String>]
- [[-UpdatedAfter] <DateTime>] [[-UpdatedBefore] <DateTime>] [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -26,7 +25,6 @@ Calls Hudu API to retrieve KB articles by Id or a list
 ### EXAMPLE 1
 ```
 Get-HuduArticles -Name 'Article name'
-get-huduarticles -UpdatedAfter $(get-date).AddDays(-3)
 ```
 
 ## PARAMETERS
@@ -86,36 +84,6 @@ Aliases:
 
 Required: False
 Position: 4
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -UpdatedAfter
-Get articles Updated After X datetime
-
-```yaml
-Type: DateTime
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 5
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -UpdatedBefore
-Get articles Updated Before Y datetime
-
-```yaml
-Type: DateTime
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 6
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

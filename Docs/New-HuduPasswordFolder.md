@@ -13,7 +13,7 @@ Create a new password folder.
 ## SYNTAX
 
 ```
-New-HuduPasswordFolder [-Name] <String> [[-CompanyId] <Int32>] [[-Description] <String>] [[-Security] <String>]
+New-HuduPasswordFolder [-Name] <String> [-CompanyId] <Int32> [[-Description] <String>] [[-Security] <String>]
  [[-AllowedGroups] <Array>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -61,7 +61,7 @@ Type: Int32
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 2
 Default value: 0
 Accept pipeline input: False
