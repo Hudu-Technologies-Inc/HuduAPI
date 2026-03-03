@@ -51,16 +51,16 @@ function Get-HuduPhotos {
         [int]$Id,
 
         [int]$CompanyId,
-        [ValidateSet('article','articles','kb','knowledgebase', 'artikel', 'article', 'articolo', 'artículo', 'asset','assets', 'anlage','objekt', 'actif', 'bene', 'activo','website', 'webseite', 'site', 'sito', 'sitio', 'company','companies', 'firma', 'entreprise', 'azienda', 'empresa', IgnoreCase = $true)]
         [Alias('uploadabletype','recordtype','PhotoableType','uploadable_type','record_type')]
+        [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
+                "Website", "RackStorage", "IpAddress", "Article", "Company", "Asset", "AssetPassword"
+        )})]    
         [string]$Photoable_Type,
-        
         [Alias('record_id','uploadable_id','recordid','PhotoableId','uploadableid')]
         [int]$Photoable_Id,
         [int]$FolderId,
 
         [Nullable[bool]]$Archived,
-
         [datetime]$createdBefore,
         [datetime]$createdAfter,
         [datetime]$UpdatedBefore,
