@@ -28,6 +28,9 @@ function New-HuduPublicPhoto {
         [int]$RecordId,
 
         [Alias('record_type')]
+        [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
+                "Asset", "Article"
+        )})]        
         [string]$RecordType
     )
 

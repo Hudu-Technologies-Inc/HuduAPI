@@ -40,7 +40,9 @@ function Set-HuduFlag {
         [string]$Description = '',
 
         [Alias('flaggabletype','flaggable_type','flagabletype','Flag_type','FlagType')]
-        [ValidateSet('asset', 'assets', 'anlage', 'objekt', 'actif', 'bene', 'activo', 'website', 'webseite', 'site', 'sito', 'sitio', 'article', 'articles', 'kb', 'knowledgebase', 'artikel', 'articolo', 'artículo', 'assetpassword', 'asset_password', 'password', 'passwort', 'motdepasse', 'contraseña', 'company', 'companies', 'firma', 'entreprise', 'azienda', 'empresa', 'procedure', 'process', 'verfahren', 'procédure', 'procedura', 'procedimiento', 'rackstorage', 'rack_storage', 'rack', 'rackstorages', 'armoire', 'network', 'netzwerk', 'réseau', 'rete', 'red', 'ipaddress', 'ip_address', 'ip', 'ipadresse', 'adresseip', 'indirizzoip', 'direccionip', 'vlan', 'vlans', 'vlanzone', 'vlan_zone', 'zone', 'zonevlan',IgnoreCase = $true)]
+        [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
+                "Vlan", "Procedure", "Website", "RackStorage", "Network", "IpAddress", "Article", "Company", "AssetPassword", "Asset","VlanZone"
+        )})]
         [string]$Flagable_Type,
 
         [Alias("FlaggableId","flaggable_id","flagableid")]
@@ -61,7 +63,7 @@ function Set-HuduFlag {
     }
 
     if ($flagable_type) {
-        $Flag.flag.flagable_type = $(Set-FlagableFromCanonical -inputData $flagable_type)
+        $Flag.flag.flagable_type = $(Get-ObjectTypeFromCononical -inputData $flagable_type)
     }
 
     if ($PSBoundParameters.ContainsKey('flagable_id')) {

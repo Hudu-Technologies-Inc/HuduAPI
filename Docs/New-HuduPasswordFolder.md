@@ -54,7 +54,7 @@ Accept wildcard characters: False
 ```
 
 ### -CompanyId
-The company ID that owns the folder (required).
+The company ID that owns the folder (only required if not creating a global folder).
 
 ```yaml
 Type: Int32

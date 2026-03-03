@@ -5,33 +5,35 @@ online version:
 schema: 2.0.0
 ---
 
-# New-HuduUpload
+# New-HuduPhoto
 
 ## SYNOPSIS
-Create a Upload
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
 ```
-New-HuduUpload [-FilePath] <String> [-uploadable_id] <Int32> [-uploadable_type] <String>
- [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
+New-HuduPhoto [-Path] <String> [-Caption] <String> [[-CompanyId] <Int32>] [[-FolderId] <Int32>]
+ [[-Photoable_Type] <String>] [[-Photoable_Id] <Int32>] [[-Pinned] <Boolean>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses Hudu API to upload a file for use in an asset.
-RecordType can be of 'asset','website','procedure','assetpassword','comapny','article'.
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
-New-HuduUpload -FilePath 'c:\path\to\file.png' -RecordId 1 -RecordType 'asset'
-```
+
+{{ Add example description here }}
 
 ## PARAMETERS
 
-### -FilePath
-Path to the file
+### -Caption
+{{ Fill Caption Description }}
 
 ```yaml
 Type: String
@@ -45,62 +47,91 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -uploadable_id
-{{ Fill uploadable_id Description }}
+### -CompanyId
+{{ Fill CompanyId Description }}
 
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases: record_id, recordid, uploadableid
+Aliases: company_id
 
-Required: True
+Required: False
 Position: 2
-Default value: 0
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -uploadable_type
-{{ Fill uploadable_type Description }}
+### -FolderId
+{{ Fill FolderId Description }}
 
 ```yaml
-Type: String
+Type: Int32
 Parameter Sets: (All)
-Aliases: record_type, recordtype, uploadabletype
+Aliases: folder_id
 
-Required: True
+Required: False
 Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
+### -Path
+{{ Fill Path Description }}
 
 ```yaml
-Type: SwitchParameter
+Type: String
 Parameter Sets: (All)
-Aliases: wi
+Aliases: File, FullName
 
-Required: False
-Position: Named
+Required: True
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Confirm
-Prompts you for confirmation before running the cmdlet.
+### -Photoable_Id
+{{ Fill Photoable_Id Description }}
 
 ```yaml
-Type: SwitchParameter
+Type: Int32
 Parameter Sets: (All)
-Aliases: cf
+Aliases: record_id, uploadable_id, recordid, PhotoableId, uploadableid
 
 Required: False
-Position: Named
+Position: 5
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Photoable_Type
+{{ Fill Photoable_Type Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: uploadabletype, recordtype, photoabletype, uploadable_type, record_type
+
+Required: False
+Position: 4
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Pinned
+{{ Fill Pinned Description }}
+
+```yaml
+Type: Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 6
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -126,8 +157,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### None
+
 ## OUTPUTS
 
+### System.Object
 ## NOTES
 
 ## RELATED LINKS

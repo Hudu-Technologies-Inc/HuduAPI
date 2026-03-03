@@ -76,7 +76,7 @@ API Endpoints:
         $params = @{}
         if ($PSBoundParameters.ContainsKey('FlagTypeId'))   { $params.flag_type_id  = $FlagTypeId }
         if ($PSBoundParameters.ContainsKey('flagable_type')) {
-            $params.flagable_type = $(Set-FlagableFromCanonical -inputData $flagable_type)
+            $params.flagable_type = $(Get-ObjectTypeFromCononical -inputData $flagable_type)
         }
         if ($PSBoundParameters.ContainsKey('flagable_id'))   { $params.flagable_id   = $flagable_id }
         if ($PSBoundParameters.ContainsKey('Description'))  { $params.description   = $Description }

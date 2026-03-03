@@ -5,73 +5,58 @@ online version:
 schema: 2.0.0
 ---
 
-# New-HuduUpload
+# Remove-HuduPhoto
 
 ## SYNOPSIS
-Create a Upload
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
 ```
-New-HuduUpload [-FilePath] <String> [-uploadable_id] <Int32> [-uploadable_type] <String>
- [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Remove-HuduPhoto [-Id] <Int32> [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses Hudu API to upload a file for use in an asset.
-RecordType can be of 'asset','website','procedure','assetpassword','comapny','article'.
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
-New-HuduUpload -FilePath 'c:\path\to\file.png' -RecordId 1 -RecordType 'asset'
-```
+
+{{ Add example description here }}
 
 ## PARAMETERS
 
-### -FilePath
-Path to the file
+### -Confirm
+Prompts you for confirmation before running the cmdlet.
 
 ```yaml
-Type: String
+Type: SwitchParameter
 Parameter Sets: (All)
-Aliases:
+Aliases: cf
 
-Required: True
-Position: 1
+Required: False
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -uploadable_id
-{{ Fill uploadable_id Description }}
+### -Id
+{{ Fill Id Description }}
 
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases: record_id, recordid, uploadableid
+Aliases: PhotoId
 
 Required: True
-Position: 2
-Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -uploadable_type
-{{ Fill uploadable_type Description }}
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: record_type, recordtype, uploadabletype
-
-Required: True
-Position: 3
+Position: 0
 Default value: None
-Accept pipeline input: False
+Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
@@ -83,21 +68,6 @@ The cmdlet is not run.
 Type: SwitchParameter
 Parameter Sets: (All)
 Aliases: wi
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
 
 Required: False
 Position: Named
@@ -126,8 +96,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### System.Int32
+
 ## OUTPUTS
 
+### System.Object
 ## NOTES
 
 ## RELATED LINKS

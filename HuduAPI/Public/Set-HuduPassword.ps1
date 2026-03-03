@@ -16,10 +16,10 @@ function Set-HuduPassword {
     Id of requested company
 
     .PARAMETER PasswordableType
-    Type of asset to associate with the password
+    associated Object type, most commonly asset, for the password ["Asset", "VlanZone", "Vlan"]
 
     .PARAMETER PasswordableId
-    Id of the asset to associate with the password
+    Associated object id for the password
 
     .PARAMETER InPortal
     Display password in portal
@@ -66,26 +66,29 @@ function Set-HuduPassword {
         [Int]$CompanyId,
 
         [Alias('passwordable_type')]
-        [String]$PasswordableType = '',
+        [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
+                "Asset", "VlanZone", "Vlan"
+        )})]         
+        [String]$PasswordableType,
 
         [Alias('passwordable_id')]
-        [int]$PasswordableId = '',
+        [int]$PasswordableId,
 
         [Alias('in_portal')]
         [Bool]$InPortal = $false,
-        [String]$Password = '',
+        [String]$Password,
 
         [Alias('otp_secret')]
-        [string]$OTPSecret = '',
+        [string]$OTPSecret,
 
-        [String]$URL = '',
+        [String]$URL,
 
-        [String]$Username = '',
+        [String]$Username,
 
-        [String]$Description = '',
+        [String]$Description,
 
         [Alias('password_type')]
-        [String]$PasswordType = '',
+        [String]$PasswordType,
 
         [Alias('password_folder_id')]
         [int]$PasswordFolderId,
@@ -96,51 +99,45 @@ function Set-HuduPassword {
     $Object = Get-HuduPasswords -Id $Id 
     $AssetPassword = [ordered]@{asset_password = $Object }
 
-    if ($Name) {
+    if ($PSBoundParameters.ContainsKey('Name'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name name -Force -Value $Name   
     }
-    
-    if ($CompanyId) {
+    if ($PSBoundParameters.ContainsKey('CompanyId'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name company_id -Force -Value $CompanyId
     }
-    
-    if ($Password) {
+    if ($PSBoundParameters.ContainsKey('Password'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name password -Force -Value $Password
     }
-    
-    if ($InPortal) {
+    if ($PSBoundParameters.ContainsKey('InPortal'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name in_portal -Force -Value $InPortal
     }
-    
-    if ($OTPSecret) {
+    if ($PSBoundParameters.ContainsKey('OTPSecret'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name otp_secret -Force -Value $OTPSecret
     }
-    if ($URL) {
+    if ($PSBoundParameters.ContainsKey('URL'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name url -Force -Value $URL
     }
-    if ($Username) {
+    if ($PSBoundParameters.ContainsKey('Username'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name username -Force -Value $Username
     }
-    if ($Description) {
+    if ($PSBoundParameters.ContainsKey('Description'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name description -Force -Value $Description
     }
-    if ($PasswordType) {
+    if ($PSBoundParameters.ContainsKey('PasswordType'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name password_type -Force -Value $PasswordType
+    }
+    if ($PSBoundParameters.ContainsKey('PasswordableType')) {
+        $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name passwordable_type -Force -Value $(Get-ObjectTypeFromCononical -inputData $PasswordableType)
+    }
+    if ($PSBoundParameters.ContainsKey('PasswordFolderId') -and ($PasswordFolderId -gt 0 -or $null -eq $PasswordFolderId)) {
+        $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name password_folder_id -Force -Value $PasswordFolderId
+    }    
+    if ($PSBoundParameters.ContainsKey('PasswordableId') -and ($PasswordableId -gt 0 -or $null -eq $PasswordableId)) {
+        $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name passwordable_id -Force -Value $PasswordableId
     }
     if ($Slug) {
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name slug -Force -Value $Slug
     }
-    # Can remove these by setting null
-    if ($PSBoundParameters.ContainsKey('PasswordFolderId')) {
-        $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name password_folder_id -Force -Value $PasswordFolderId
-    }
-    if ($PSBoundParameters.ContainsKey('PasswordableType')) {
-        $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name passwordable_type -Force -Value $PasswordableType
-    }
-    if ($PSBoundParameters.ContainsKey('PasswordableId')) {
-        $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name passwordable_id -Force -Value $PasswordableId
-    }
-
     $JSON = $AssetPassword | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Id)) {

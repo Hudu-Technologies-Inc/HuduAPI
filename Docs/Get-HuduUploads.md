@@ -13,7 +13,8 @@ Get a list of uploads
 ## SYNTAX
 
 ```
-Get-HuduUploads [[-Id] <Int32>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Get-HuduUploads [[-Id] <Int32>] [-Download] [[-OutDir] <String>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -29,7 +30,7 @@ Get-HuduUploads
 ## PARAMETERS
 
 ### -Id
-{{ Fill Id Description }}
+ID of the Upload to retrieve or Download (Hudu 2.41.0+)
 
 ```yaml
 Type: Int32
@@ -39,6 +40,38 @@ Aliases:
 Required: False
 Position: 1
 Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Download
+{{ Fill Download Description }}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -OutDir
+Directory to download uploads to.
+Used only with -Download (Hudu 2.41.0+).
+Defaults to current directory.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 2
+Default value: .
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

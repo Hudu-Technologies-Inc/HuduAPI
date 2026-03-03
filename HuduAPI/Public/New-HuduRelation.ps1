@@ -35,14 +35,19 @@ function New-HuduRelation {
         [String]$Description,
 
         [Parameter(Mandatory = $true)]
-        [ValidateSet('Asset', 'Website', 'Procedure', 'AssetPassword', 'Company', 'Article')]
         [Alias('fromable_type')]
+        [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
+                "VlanZone", "Vlan", "Procedure", "Website", "RackStorage", "Network", "IpAddress", "Article", "Company", "Asset", "AssetPassword"
+        )})]
         [String]$FromableType,
 
         [Alias('fromable_id')]
         [int]$FromableID,
 
         [Alias('toable_type')]
+        [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
+                "VlanZone", "Vlan", "Procedure", "Website", "RackStorage", "Network", "IpAddress", "Article", "Company", "Asset", "AssetPassword"
+        )})]        
         [String]$ToableType,
 
         [Alias('toable_id')]
@@ -54,9 +59,9 @@ function New-HuduRelation {
 
     $Relation = [ordered]@{relation = [ordered]@{} }
 
-    $Relation.relation.add('fromable_type', $FromableType)
+    $Relation.relation.add('fromable_type', "$(Get-ObjectTypeFromCononical -inputData $FromableType)")
     $Relation.relation.add('fromable_id', $FromableID)
-    $Relation.relation.add('toable_type', $ToableType)
+    $Relation.relation.add('toable_type', "$(Get-ObjectTypeFromCononical -inputData $ToableType)")
     $Relation.relation.add('toable_id', $ToableID)
 
     if ($Description) {

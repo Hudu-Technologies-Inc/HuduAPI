@@ -5,107 +5,38 @@ online version:
 schema: 2.0.0
 ---
 
-# Set-HuduPasswordFolder
+# Set-HuduPhoto
 
 ## SYNOPSIS
-Update an existing password folder.
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
 ```
-Set-HuduPasswordFolder [-Id] <Int32> [[-Name] <String>] [[-Description] <String>] [[-Security] <String>]
- [[-AllowedGroups] <Array>] [[-CompanyID] <Int32>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Set-HuduPhoto [-Id] <Int32> [[-CompanyId] <Int32>] [[-Photoable_Type] <String>] [[-Photoable_Id] <Int32>]
+ [[-FolderId] <Int32>] [[-Archived] <Boolean>] [[-Pinned] <Boolean>] [[-Caption] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Calls the Hudu API to update details of an existing password folder.
- 
-You can change the name, description, security mode, or allowed groups.
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
-### EXAMPLE 1
-```
-Set-HuduPasswordFolder -Id 5 -Name "Updated Folder"
-Renames folder ID 5 to "Updated Folder".
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
 
-### EXAMPLE 2
-```
-Set-HuduPasswordFolder -Id 7 -Security specific -AllowedGroups @(3,4)
-Restricts folder ID 7 access to groups 3 and 4.
-```
+{{ Add example description here }}
 
 ## PARAMETERS
 
-### -Id
-The numeric ID of the folder to update (required).
+### -Archived
+{{ Fill Archived Description }}
 
 ```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 1
-Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Name
-New folder name.
-If omitted, the existing name is retained.
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Description
-New description.
-If omitted, the existing description is retained.
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Security
-Security mode.
-Accepts "all_users" or "specific".
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 4
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -AllowedGroups
-Array of group IDs that should have access (if Security is "specific").
-
-```yaml
-Type: Array
+Type: Boolean
 Parameter Sets: (All)
 Aliases:
 
@@ -116,17 +47,107 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -CompanyID
-{{ Fill CompanyID Description }}
+### -Caption
+{{ Fill Caption Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 7
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -CompanyId
+{{ Fill CompanyId Description }}
 
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases: company_id
+Aliases:
+
+Required: False
+Position: 1
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -FolderId
+{{ Fill FolderId Description }}
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases: folder_id
+
+Required: False
+Position: 4
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Id
+{{ Fill Id Description }}
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 0
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Photoable_Id
+{{ Fill Photoable_Id Description }}
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases: record_id, uploadable_id, recordid, PhotoableId, uploadableid
+
+Required: False
+Position: 3
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Photoable_Type
+{{ Fill Photoable_Type Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases: uploadabletype, recordtype, PhotoableType, uploadable_type, record_type
+
+Required: False
+Position: 2
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Pinned
+{{ Fill Pinned Description }}
+
+```yaml
+Type: Boolean
+Parameter Sets: (All)
+Aliases:
 
 Required: False
 Position: 6
-Default value: 0
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -151,8 +172,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### None
+
 ## OUTPUTS
 
+### System.Object
 ## NOTES
 
 ## RELATED LINKS

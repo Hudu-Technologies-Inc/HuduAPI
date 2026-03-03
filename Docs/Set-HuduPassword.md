@@ -78,7 +78,7 @@ Accept wildcard characters: False
 ```
 
 ### -PasswordableType
-Type of asset to associate with the password
+associated Object type, most commonly asset, for the password \["Asset", "VlanZone", "Vlan"\]
 
 ```yaml
 Type: String
@@ -93,7 +93,7 @@ Accept wildcard characters: False
 ```
 
 ### -PasswordableId
-Id of the asset to associate with the password
+Associated object id for the password
 
 ```yaml
 Type: Int32
@@ -102,7 +102,7 @@ Aliases: passwordable_id
 
 Required: False
 Position: 5
-Default value: None
+Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

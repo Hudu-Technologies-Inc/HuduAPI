@@ -5,70 +5,81 @@ online version:
 schema: 2.0.0
 ---
 
-# New-HuduPassword
+# Get-HuduPhotos
 
 ## SYNOPSIS
-Create a Password
+Get a list of photos or a single photo, optionally downloading files.
 
 ## SYNTAX
 
 ```
-New-HuduPassword [-Name] <String> [-CompanyId] <Int32> [[-PasswordableType] <String>]
- [[-PasswordableId] <Int32>] [[-InPortal] <Boolean>] [-Password] <String> [[-OTPSecret] <String>]
- [[-URL] <String>] [[-Username] <String>] [[-Description] <String>] [[-PasswordTypeq] <String>]
- [[-PasswordFolderId] <Int32>] [[-Slug] <String>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Get-HuduPhotos [[-Id] <Int32>] [[-CompanyId] <Int32>] [[-Photoable_Type] <String>] [[-Photoable_Id] <Int32>]
+ [[-FolderId] <Int32>] [[-Archived] <Boolean>] [[-createdBefore] <DateTime>] [[-createdAfter] <DateTime>]
+ [[-UpdatedBefore] <DateTime>] [[-UpdatedAfter] <DateTime>] [-Download] [[-OutDir] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses Hudu API to create a new password
+Calls Hudu API to retrieve photos.
+Supports filtering
+If -Download is specified with -Id (single) or without (list), downloads photo files using /photos/{id}?download=true.
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-New-HuduPassword -Name 'Some website password' -Username 'user@domain.com' -Password '12345'
+Get-HuduPhotos -CompanyId 123
+```
+
+### EXAMPLE 2
+```
+Get-HuduPhotos -Photoable_Type Asset -Photoable_Id 456 -Download -OutDir "$env:TEMP\photos"
+```
+
+### EXAMPLE 3
+```
+Get-HuduPhotos -Id 999 -Download
 ```
 
 ## PARAMETERS
 
-### -Name
-Name of the password
+### -Id
+ID of the Photo to retrieve (or download if -Download is specified).
 
 ```yaml
-Type: String
+Type: Int32
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: 1
-Default value: None
+Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -CompanyId
-Company id
+Filter by company ID.
 
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases: company_id
+Aliases:
 
-Required: True
+Required: False
 Position: 2
 Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PasswordableType
-associated Object type, most commonly asset, for the password \["Asset", "VlanZone", "Vlan"\]
+### -Photoable_Type
+Filter by photoable type (Company, Asset, Article, etc).
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases: passwordable_type
+Aliases: uploadabletype, recordtype, PhotoableType, uploadable_type, record_type
 
 Required: False
 Position: 3
@@ -77,13 +88,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PasswordableId
-Associated object id for the password
+### -Photoable_Id
+Filter by photoable record ID.
 
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases: passwordable_id
+Aliases: record_id, uploadable_id, recordid, PhotoableId, uploadableid
 
 Required: False
 Position: 4
@@ -92,43 +103,43 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -InPortal
-Boolean for in portal
+### -FolderId
+Filter by folder ID.
 
 ```yaml
-Type: Boolean
+Type: Int32
 Parameter Sets: (All)
-Aliases: in_portal
+Aliases:
 
 Required: False
 Position: 5
-Default value: False
+Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Password
-Password
+### -Archived
+$true = only archived, $false = only non-archived, $null = omit param (API defaults to non-archived only).
 
 ```yaml
-Type: String
+Type: Boolean
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: 6
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -OTPSecret
-OTP secret
+### -createdBefore
+{{ Fill createdBefore Description }}
 
 ```yaml
-Type: String
+Type: DateTime
 Parameter Sets: (All)
-Aliases: otp_secret
+Aliases:
 
 Required: False
 Position: 7
@@ -137,11 +148,11 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -URL
-Password URL
+### -createdAfter
+{{ Fill createdAfter Description }}
 
 ```yaml
-Type: String
+Type: DateTime
 Parameter Sets: (All)
 Aliases:
 
@@ -152,11 +163,11 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Username
-Username
+### -UpdatedBefore
+{{ Fill UpdatedBefore Description }}
 
 ```yaml
-Type: String
+Type: DateTime
 Parameter Sets: (All)
 Aliases:
 
@@ -167,11 +178,11 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Description
-Password description
+### -UpdatedAfter
+{{ Fill UpdatedAfter Description }}
 
 ```yaml
-Type: String
+Type: DateTime
 Parameter Sets: (All)
 Aliases:
 
@@ -182,38 +193,24 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PasswordTypeq
-{{ Fill PasswordTypeq Description }}
+### -Download
+If specified, downloads photo file(s) to OutDir.
 
 ```yaml
-Type: String
+Type: SwitchParameter
 Parameter Sets: (All)
-Aliases: password_type
+Aliases:
 
 Required: False
-Position: 11
-Default value: None
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PasswordFolderId
-Password folder id
-
-```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases: password_folder_id
-
-Required: False
-Position: 12
-Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Slug
-Url identifier
+### -OutDir
+Directory to download photos into.
+Default current directory.
 
 ```yaml
 Type: String
@@ -221,39 +218,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 13
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
+Position: 11
+Default value: .
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

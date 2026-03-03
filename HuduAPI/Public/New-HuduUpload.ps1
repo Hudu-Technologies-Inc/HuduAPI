@@ -25,12 +25,14 @@ function New-HuduUpload {
         [string]$FilePath,
 
         [Parameter(Mandatory)]
-        [Alias('record_id','recordid')]
+        [Alias('record_id','recordid','uploadableid')]
         [int]$uploadable_id,
 
         [Parameter(Mandatory)]
-        [Alias('record_type','recordtype')]
-        [ValidateSet("Article", "AssetPassword", "Asset", "IpAddress", "Network", "RackStorage", "VlanZone", "Vlan", "Website",IgnoreCase = $true)]
+        [Alias('record_type','recordtype','uploadabletype')]
+        [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
+                "VlanZone", "Vlan", "Procedure", "Website", "RackStorage", "Network", "IpAddress", "Article", "Company", "Asset", "AssetPassword","IpAddress"
+        )})]
         [string]$uploadable_type
     )
 
