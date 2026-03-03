@@ -73,8 +73,8 @@ function Get-HuduPhotos {
     [version]$script:Version = $script:Version ?? [version]((Get-HuduAppInfo).version)
 
 
-    if ($script:Version -lt [version]'2.39.6') {
-        write-warning "Get-HuduPhotos: Hudu version $($script:Version) is below 2.39.6; Skipping."
+    if ($script:Version -lt [version]'2.41.0') {
+        write-warning "Get-HuduPhotos: Hudu version $($script:Version) is below 2.41.0; Skipping."
         if ($id){ return $null } else { return @() }
     }
 

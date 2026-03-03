@@ -65,28 +65,28 @@ function New-HuduPassword {
         [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
                 "Vlan", "Procedure", "Website", "RackStorage", "Network", "IpAddress", "Article", "Company", "Asset","VlanZone"
         )})]        
-        [String]$PasswordableType = '',
+        [String]$PasswordableType,
 
         [Alias('passwordable_id')]
-        [int]$PasswordableId = '',
+        [int]$PasswordableId,
 
         [Alias('in_portal')]
         [Bool]$InPortal = $false,
 
         [Parameter(Mandatory = $true)]
-        [String]$Password = '',
+        [String]$Password,
 
         [Alias('otp_secret')]
-        [string]$OTPSecret = '',
+        [string]$OTPSecret,
 
-        [String]$URL = '',
+        [String]$URL,
 
-        [String]$Username = '',
+        [String]$Username,
 
-        [String]$Description = '',
+        [String]$Description,
 
         [Alias('password_type')]
-        [String]$PasswordType = '',
+        [String]$PasswordTypeq,
 
         [Alias('password_folder_id')]
         [int]$PasswordFolderId,
@@ -103,9 +103,6 @@ function New-HuduPassword {
 
     if ($PSBoundParameters.ContainsKey('PasswordableType'))   { 
             $AssetPassword.asset_password.add('passwordable_type', $PasswordableType)
-    }
-    if ($PSBoundParameters.ContainsKey('PasswordableId'))   { 
-        $AssetPassword.asset_password.add('passwordable_id', $PasswordableId)
     }
 
     if ($PSBoundParameters.ContainsKey('OTPSecret'))   { 
@@ -128,9 +125,12 @@ function New-HuduPassword {
         $AssetPassword.asset_password.add('password_type', $PasswordType)
     }
 
-    if ($PSBoundParameters.ContainsKey('PasswordFolderId'))   { 
+    if ($PSBoundParameters.ContainsKey('PasswordFolderId') -and $PasswordFolderId -gt 0)   { 
         $AssetPassword.asset_password.add('password_folder_id', $PasswordFolderId)
     }
+    if ($PSBoundParameters.ContainsKey('PasswordableId') -and $PasswordableId -gt 0) {
+        $AssetPassword.asset_password.add('passwordable_id', $PasswordableId)
+    }    
 
     if ($Slug) {
         $AssetPassword.asset_password.add('slug', $Slug)

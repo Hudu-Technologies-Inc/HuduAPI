@@ -29,8 +29,8 @@ function New-HuduPhoto {
     )
 
     [version]$script:Version = $script:Version ?? [version]((Get-HuduAppInfo).version)
-    if ($script:Version -lt [version]'2.39.6') {
-        write-warning "Set-HuduPhoto: Hudu version $($script:Version) is below 2.39.6; Skipping."
+    if ($script:Version -lt [version]'2.41.0') {
+        write-warning "Set-HuduPhoto: Hudu version $($script:Version) is below 2.41.0; Skipping."
         return $null
     }
 

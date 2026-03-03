@@ -8,8 +8,8 @@ function Remove-HuduPhoto {
     process {
         [version]$script:Version = $script:Version ?? [version]((Get-HuduAppInfo).version)
 
-        if ($script:Version -lt [version]'2.39.6') {
-            write-warning "Remove-HuduPhoto: Hudu version $($script:Version) is below 2.39.6; Skipping."
+        if ($script:Version -lt [version]'2.41.0') {
+            write-warning "Remove-HuduPhoto: Hudu version $($script:Version) is below 2.41.0; Skipping."
             return $false
         }
         if ($PSCmdlet.ShouldProcess("Photo $Id", "Delete permanently")) {
