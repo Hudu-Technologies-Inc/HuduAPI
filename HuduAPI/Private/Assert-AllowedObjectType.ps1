@@ -4,7 +4,7 @@ function Assert-AllowedObjectType {
         [Parameter(Mandatory)][string[]]$AllowedCanonicals
     )
 
-    $canonical = Get-ObjectTypeFromCononical $InputType  # throws if unknown
+    $canonical = Get-ObjectTypeFromCononical $InputType
     if ($canonical -notin $AllowedCanonicals) {
         throw "Invalid type '$InputType' (canonical: '$canonical'). Allowed: $($AllowedCanonicals -join ', ')"
     }
