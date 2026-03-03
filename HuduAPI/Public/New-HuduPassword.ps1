@@ -63,7 +63,7 @@ function New-HuduPassword {
 
         [Alias('passwordable_type')]
         [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
-                "Vlan", "Procedure", "Website", "RackStorage", "Network", "IpAddress", "Article", "Company", "Asset","VlanZone"
+                "Vlan", "Procedure", "RackStorage", "Network", "IpAddress", "Article", "Company", "Asset","VlanZone"
         )})]        
         [String]$PasswordableType,
 
