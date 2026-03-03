@@ -14,7 +14,7 @@ Update an existing password folder.
 
 ```
 Set-HuduPasswordFolder [-Id] <Int32> [[-Name] <String>] [[-Description] <String>] [[-Security] <String>]
- [[-AllowedGroups] <Array>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [[-AllowedGroups] <Array>] [[-CompanyID] <Int32>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -112,6 +112,21 @@ Aliases:
 Required: False
 Position: 5
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -CompanyID
+{{ Fill CompanyID Description }}
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases: company_id
+
+Required: False
+Position: 6
+Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

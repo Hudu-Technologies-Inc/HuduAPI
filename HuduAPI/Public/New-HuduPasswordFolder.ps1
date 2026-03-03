@@ -11,7 +11,7 @@ function New-HuduPasswordFolder {
     Name of the new folder (required).
 
     .PARAMETER CompanyId
-    The company ID that owns the folder (required).
+    The company ID that owns the folder (only required if not creating a global folder).
 
     .PARAMETER Description
     Description of the folder.
@@ -32,10 +32,16 @@ function New-HuduPasswordFolder {
     #>
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)] [string]$Name,
+        [Parameter(Mandatory)]
+        [string]$Name,
+        
         [int]$CompanyId,
+        
         [string]$Description,
-        [ValidateSet("all_users","specific")][String]$Security,
+        
+        [ValidateSet("all_users","specific")]
+        [String]$Security,
+        
         [array]$AllowedGroups)
 
     $password_folder=@{

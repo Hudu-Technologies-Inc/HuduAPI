@@ -13,7 +13,7 @@ Create a new password folder.
 ## SYNTAX
 
 ```
-New-HuduPasswordFolder [-Name] <String> [-CompanyId] <Int32> [[-Description] <String>] [[-Security] <String>]
+New-HuduPasswordFolder [-Name] <String> [[-CompanyId] <Int32>] [[-Description] <String>] [[-Security] <String>]
  [[-AllowedGroups] <Array>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -54,14 +54,14 @@ Accept wildcard characters: False
 ```
 
 ### -CompanyId
-The company ID that owns the folder (required).
+The company ID that owns the folder (only required if not creating a global folder).
 
 ```yaml
 Type: Int32
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: 2
 Default value: 0
 Accept pipeline input: False

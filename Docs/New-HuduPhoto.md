@@ -5,49 +5,50 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-HuduPasswords
+# New-HuduPhoto
 
 ## SYNOPSIS
-Get a list of Passwords
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
 ```
-Get-HuduPasswords [[-Id] <Int32>] [[-CompanyId] <Int32>] [[-Name] <String>] [[-Slug] <String>]
- [[-Search] <String>] [[-UpdatedAfter] <DateTime>] [[-UpdatedBefore] <DateTime>]
+New-HuduPhoto [-Path] <String> [-Caption] <String> [[-CompanyId] <Int32>] [[-FolderId] <Int32>]
+ [[-Photoable_Type] <String>] [[-Photoable_Id] <Int32>] [[-Pinned] <Boolean>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Calls Hudu API to list password assets
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
-Get-HuduPasswords -CompanyId 1
-Get-HuduPasswords -UpdatedAfter $(get-date).AddDays(-3)
-```
+
+{{ Add example description here }}
 
 ## PARAMETERS
 
-### -Id
-Id of the password
+### -Caption
+{{ Fill Caption Description }}
 
 ```yaml
-Type: Int32
+Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: 1
-Default value: 0
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -CompanyId
-Filter by company id
+{{ Fill CompanyId Description }}
 
 ```yaml
 Type: Int32
@@ -56,18 +57,18 @@ Aliases: company_id
 
 Required: False
 Position: 2
-Default value: 0
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Name
-Filter by password name
+### -FolderId
+{{ Fill FolderId Description }}
 
 ```yaml
-Type: String
+Type: Int32
 Parameter Sets: (All)
-Aliases:
+Aliases: folder_id
 
 Required: False
 Position: 3
@@ -76,28 +77,28 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Slug
-Filter by url slug
+### -Path
+{{ Fill Path Description }}
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: File, FullName
 
-Required: False
-Position: 4
+Required: True
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Search
-Filter by search query
+### -Photoable_Id
+{{ Fill Photoable_Id Description }}
 
 ```yaml
-Type: String
+Type: Int32
 Parameter Sets: (All)
-Aliases:
+Aliases: record_id, uploadable_id, recordid, PhotoableId, uploadableid
 
 Required: False
 Position: 5
@@ -106,31 +107,31 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -UpdatedAfter
-Get passwords Updated After X datetime
+### -Photoable_Type
+{{ Fill Photoable_Type Description }}
 
 ```yaml
-Type: DateTime
+Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: uploadabletype, recordtype, photoabletype, uploadable_type, record_type
 
 Required: False
-Position: 6
+Position: 4
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -UpdatedBefore
-Get passwords Updated Before Y datetime
+### -Pinned
+{{ Fill Pinned Description }}
 
 ```yaml
-Type: DateTime
+Type: Boolean
 Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 6
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -156,8 +157,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### None
+
 ## OUTPUTS
 
+### System.Object
 ## NOTES
 
 ## RELATED LINKS
