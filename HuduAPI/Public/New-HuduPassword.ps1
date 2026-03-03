@@ -102,7 +102,7 @@ function New-HuduPassword {
     $AssetPassword.asset_password.add('in_portal', $InPortal)
 
     if ($PSBoundParameters.ContainsKey('PasswordableType'))   { 
-            $AssetPassword.asset_password.add('passwordable_type', $PasswordableType)
+            $AssetPassword.asset_password.add('passwordable_type', $(Get-ObjectTypeFromCononical -inputData $PasswordableType))
     }
 
     if ($PSBoundParameters.ContainsKey('OTPSecret'))   { 

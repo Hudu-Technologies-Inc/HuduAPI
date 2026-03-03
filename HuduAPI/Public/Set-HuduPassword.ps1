@@ -127,7 +127,7 @@ function Set-HuduPassword {
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name password_type -Force -Value $PasswordType
     }
     if ($PSBoundParameters.ContainsKey('PasswordableType')) {
-        $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name passwordable_type -Force -Value $PasswordableType
+        $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name passwordable_type -Force -Value $(Get-ObjectTypeFromCononical -inputData $PasswordableType)
     }
     if ($PSBoundParameters.ContainsKey('PasswordFolderId') -and ($PasswordFolderId -gt 0 -or $null -eq $PasswordFolderId)) {
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name password_folder_id -Force -Value $PasswordFolderId
