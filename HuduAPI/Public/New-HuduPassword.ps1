@@ -62,6 +62,9 @@ function New-HuduPassword {
         [Int]$CompanyId,
 
         [Alias('passwordable_type')]
+        [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
+                "Vlan", "Procedure", "Website", "RackStorage", "Network", "IpAddress", "Article", "Company", "Asset","VlanZone"
+        )})]        
         [String]$PasswordableType = '',
 
         [Alias('passwordable_id')]
@@ -98,34 +101,34 @@ function New-HuduPassword {
     $AssetPassword.asset_password.add('password', $Password)
     $AssetPassword.asset_password.add('in_portal', $InPortal)
 
-    if ($PasswordableType) {
-        $AssetPassword.asset_password.add('passwordable_type', $PasswordableType)
+    if ($PSBoundParameters.ContainsKey('PasswordableType'))   { 
+            $AssetPassword.asset_password.add('passwordable_type', $PasswordableType)
     }
-    if ($PasswordableId) {
+    if ($PSBoundParameters.ContainsKey('PasswordableId'))   { 
         $AssetPassword.asset_password.add('passwordable_id', $PasswordableId)
     }
 
-    if ($OTPSecret) {
+    if ($PSBoundParameters.ContainsKey('OTPSecret'))   { 
         $AssetPassword.asset_password.add('otp_secret', $OTPSecret)
     }
 
-    if ($URL) {
+    if ($PSBoundParameters.ContainsKey('URL'))   { 
         $AssetPassword.asset_password.add('url', $URL)
     }
 
-    if ($Username) {
+    if ($PSBoundParameters.ContainsKey('Username'))   { 
         $AssetPassword.asset_password.add('username', $Username)
     }
 
-    if ($Description) {
+    if ($PSBoundParameters.ContainsKey('Description'))   { 
         $AssetPassword.asset_password.add('description', $Description)
     }
 
-    if ($PasswordType) {
+    if ($PSBoundParameters.ContainsKey('PasswordType'))   { 
         $AssetPassword.asset_password.add('password_type', $PasswordType)
     }
 
-    if ($PasswordFolderId) {
+    if ($PSBoundParameters.ContainsKey('PasswordFolderId'))   { 
         $AssetPassword.asset_password.add('password_folder_id', $PasswordFolderId)
     }
 

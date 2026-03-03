@@ -6,7 +6,9 @@ function Set-HuduPhoto {
 
         [int]$CompanyId,
         [Alias('uploadabletype','recordtype','PhotoableType','uploadable_type','record_type')]
-        [ValidateSet('article','articles','kb','knowledgebase', 'artikel', 'article', 'articolo', 'artículo', 'asset','assets', 'anlage','objekt', 'actif', 'bene', 'activo','website', 'webseite', 'site', 'sito', 'sitio', 'company','companies', 'firma', 'entreprise', 'azienda', 'empresa', IgnoreCase = $true)]
+        [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
+                "Website", "RackStorage", "IpAddress", "Article", "Company", "Asset", "AssetPassword"
+        )})]
         [string]$Photoable_Type,
         
         [Alias('record_id','uploadable_id','recordid','PhotoableId','uploadableid')]

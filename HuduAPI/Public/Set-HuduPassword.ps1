@@ -66,6 +66,9 @@ function Set-HuduPassword {
         [Int]$CompanyId,
 
         [Alias('passwordable_type')]
+        [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
+                "Vlan", "Procedure", "Website", "RackStorage", "Network", "IpAddress", "Article", "Company", "Asset","VlanZone"
+        )})]         
         [String]$PasswordableType = '',
 
         [Alias('passwordable_id')]
@@ -96,41 +99,33 @@ function Set-HuduPassword {
     $Object = Get-HuduPasswords -Id $Id 
     $AssetPassword = [ordered]@{asset_password = $Object }
 
-    if ($Name) {
+    if ($PSBoundParameters.ContainsKey('Name'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name name -Force -Value $Name   
     }
-    
-    if ($CompanyId) {
+    if ($PSBoundParameters.ContainsKey('CompanyId'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name company_id -Force -Value $CompanyId
     }
-    
-    if ($Password) {
+    if ($PSBoundParameters.ContainsKey('Password'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name password -Force -Value $Password
     }
-    
-    if ($InPortal) {
+    if ($PSBoundParameters.ContainsKey('InPortal'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name in_portal -Force -Value $InPortal
     }
-    
-    if ($OTPSecret) {
+    if ($PSBoundParameters.ContainsKey('OTPSecret'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name otp_secret -Force -Value $OTPSecret
     }
-    if ($URL) {
+    if ($PSBoundParameters.ContainsKey('URL'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name url -Force -Value $URL
     }
-    if ($Username) {
+    if ($PSBoundParameters.ContainsKey('Username'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name username -Force -Value $Username
     }
-    if ($Description) {
+    if ($PSBoundParameters.ContainsKey('Description'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name description -Force -Value $Description
     }
-    if ($PasswordType) {
+    if ($PSBoundParameters.ContainsKey('PasswordType'))   { 
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name password_type -Force -Value $PasswordType
     }
-    if ($Slug) {
-        $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name slug -Force -Value $Slug
-    }
-    # Can remove these by setting null
     if ($PSBoundParameters.ContainsKey('PasswordFolderId')) {
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name password_folder_id -Force -Value $PasswordFolderId
     }
@@ -140,7 +135,9 @@ function Set-HuduPassword {
     if ($PSBoundParameters.ContainsKey('PasswordableId')) {
         $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name passwordable_id -Force -Value $PasswordableId
     }
-
+    if ($Slug) {
+        $AssetPassword.asset_password | Add-Member -MemberType NoteProperty -Name slug -Force -Value $Slug
+    }
     $JSON = $AssetPassword | ConvertTo-Json -Depth 10
 
     if ($PSCmdlet.ShouldProcess($Id)) {

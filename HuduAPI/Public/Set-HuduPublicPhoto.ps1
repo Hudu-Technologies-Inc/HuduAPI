@@ -32,7 +32,11 @@ function Set-HuduPublicPhoto {
 
         [Parameter(Mandatory)]
         [Alias('record_type')]
+        [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
+                "Asset", "Article"
+        )})]
         [string]$RecordType
+        
     )
     $photo = get-hudupublicphotos | Where-Object { $_.numeric_id -eq $id -or $_.id -eq $id } | Select-Object -first 1
     $photo = $photo.public_photo ?? $photo
