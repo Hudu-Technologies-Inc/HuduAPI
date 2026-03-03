@@ -6,17 +6,17 @@ function Get-ObjectTypeFromCononical {
             $script:ObjectTypeMap = [ordered]@{ # German, French, Italian, Spanish
                 Article       = @('article','articles','kb','knowledgebase', 'artikel', 'article', 'articolo', 'artículo')
                 Asset         = @('asset','assets', 'anlage','objekt', 'actif', 'bene', 'activo')
-                AssetPassword = @('assetpassword','asset_password','password', 'passwort', 'motdepasse', 'password', 'contraseña')
+                AssetPassword = @('assetpassword','asset_password','password', 'passwort', 'motdepasse', 'passwords', 'contraseña')
                 Company       = @('company','companies', 'firma', 'entreprise', 'azienda', 'empresa')
-                IpAddress     = @('ipaddress','ip_address','ip', 'ipadresse', 'adresseip', 'indirizzoip', 'direccionip')
-                Network       = @('network', 'netzwerk', 'réseau', 'rete', 'red')
-                Photo         = @('photo', 'photos', 'foto', 'photograph', 'photographie', 'fotografía')
+                IpAddress     = @('ipaddress', 'ipaddresses','ip_address','ip', 'ipadresse', 'adresseip', 'indirizzoip', 'direccionip')
+                Network       = @('network', 'networks', 'netzwerk', 'réseau', 'rete', 'red')
+                Photo         = @('photo', 'photos', 'foto', 'fotos', 'photograph', 'photographie', 'fotografía')
                 PublicPhoto   = @('publicphoto', 'public_photo', 'publicfoto', 'publicphotograph', 'publicphotographie', 'publicfotografía')
                 Procedure     = @('procedure','process', 'verfahren', 'procédure', 'procedura', 'procedimiento')
                 RackStorage   = @('rackstorage','rack_storage','rack','rackstorages', 'rack', 'armoire')
                 Vlan          = @('vlan','vlans', 'vlan')
-                VlanZone      = @('vlanzone','vlan_zone','zone', 'zonevlan')
-                Website       = @('website', 'webseite', 'site', 'sito', 'sitio')
+                VlanZone      = @('vlanzone','vlan_zone','zone', 'zonevlan', 'zonen', 'zonevlan','zone_vlan','zone','zones', 'zonalan','zona_vlan','zona','zonas')
+                Website       = @('website', 'webseite', 'site', 'sito','siti','sito_web','sitio', 'webseiten','internetseite','internetseiten','sitios','pagina_web','página_web' )
             }
             $script:ObjectTypeLookup = @{}
             foreach ($canonical in $script:ObjectTypeMap.Keys) {
