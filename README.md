@@ -8,7 +8,7 @@ https://github.com/lwhitelock/HuduAPI/releases
 
 ## Implemented Commands
 	Get-HuduActivityLogs
-	Get-HuduApiKey
+	Get-HuduAPIKey
 	Get-HuduAppInfo
 	Get-HuduArticles
 	Get-HuduAssetLayoutFieldID
@@ -17,32 +17,41 @@ https://github.com/lwhitelock/HuduAPI/releases
 	Get-HuduBaseURL
 	Get-HuduCard
 	Get-HuduCompanies
+	Get-HuduCompanyFolders
+	Get-HuduFolderCleanName
 	Get-HuduExpirations
+	Get-HuduFlags
+	Get-HuduFlagTypes
+	Get-HuduExports
 	Get-HuduFolderMap
 	Get-HuduFolders
 	Get-HuduGroups
-	Get-HuduIntegrationMatchers
 	Get-HuduIPAddresses
+	Get-HuduIntegrationMatchers
 	Get-HuduLists
+	Get-HuduNetworks
 	Get-HuduMagicDashes
 	Get-HuduNetworks
-	Get-HuduObjectByUrl
-	Get-HuduPasswordFolders
 	Get-HuduPasswords
+	Get-HuduPasswordFolders
 	Get-HuduProcedures
 	Get-HuduProcedureTasks
+	Get-HuduPhotos
 	Get-HuduPublicPhotos
 	Get-HuduRackStorageItems
 	Get-HuduRackStorages
 	Get-HuduRelations
+	Get-HuduSubFolders
 	Get-HuduUploads
-	Get-HuduUsers
 	Get-HuduVLANs
 	Get-HuduVLANZones
+	Get-HuduUsers
+	Get-HuduUsers
+	Get-HuduVLANs
+	Get-HuduVLANZones    
 	Get-HuduWebsites
 	Initialize-HuduFolder
-	Move-HuduAssetsToNewLayout
-	Move-HuduAssetsToNewLayoutDeprecated
+	Invoke-HuduRequest
 	New-HuduAPIKey
 	New-HuduArticle
 	New-HuduAsset
@@ -50,18 +59,24 @@ https://github.com/lwhitelock/HuduAPI/releases
 	New-HuduBaseURL
 	New-HuduCompany
 	New-HuduCustomHeaders
+	New-HuduFlag
+	New-HuduFlagType    
 	New-HuduFolder
 	New-HuduIPAddress
 	New-HuduList
 	New-HuduNetwork
 	New-HuduPassword
 	New-HuduPasswordFolder
-	New-HuduProcedure
-	New-HuduProcedureFromTemplate
-	New-HuduProcedureTask
 	New-HuduPublicPhoto
-	New-HuduRackStorage
+	New-HuduPhoto
+	New-HuduProcedure
+	New-HuduProcedureTask
+	New-HuduProcedureFromTemplate
 	New-HuduRackStorageItem
+	New-HuduRackStorage    
+	New-HuduProcedure
+	New-HuduProcedureTask
+	New-HuduProcedureFromTemplate
 	New-HuduRelation
 	New-HuduUpload
 	New-HuduVLAN
@@ -73,22 +88,27 @@ https://github.com/lwhitelock/HuduAPI/releases
 	Remove-HuduBaseURL
 	Remove-HuduCompany
 	Remove-HuduCustomHeaders
+	Remove-HuduFlag
+	Remove-HuduFlagType
 	Remove-HuduIPAddress
 	Remove-HuduList
 	Remove-HuduMagicDash
 	Remove-HuduNetwork
 	Remove-HuduPassword
 	Remove-HuduPasswordFolder
+	Remove-HuduPhoto
 	Remove-HuduProcedure
 	Remove-HuduProcedureTask
-	Remove-HuduRackStorage
 	Remove-HuduRackStorageItem
+	Remove-HuduRackStorage    
+	Remove-HuduProcedure
+	Remove-HuduProcedureTask 
 	Remove-HuduRelation
 	Remove-HuduUpload
 	Remove-HuduVLAN
 	Remove-HuduVLANZone
 	Remove-HuduWebsite
-	Set-HapiErrorsDirectory
+	Save-HuduExports
 	Set-HuduArticle
 	Set-HuduArticleArchive
 	Set-HuduAsset
@@ -97,25 +117,32 @@ https://github.com/lwhitelock/HuduAPI/releases
 	Set-HuduAssetLayoutField
 	Set-HuduCompany
 	Set-HuduCompanyArchive
+	Set-HuduFlag
+	Set-HuduFlagType    
 	Set-HuduFolder
 	Set-HuduIntegrationMatcher
 	Set-HuduIPAddress
 	Set-HuduList
 	Set-HuduMagicDash
 	Set-HuduNetwork
-	Set-HuduPassword
-	Set-HuduPasswordArchive
-	Set-HuduPasswordFolder
 	Set-HuduProcedure
 	Set-HuduProcedureTask
-	Set-HuduRackStorage
-	Set-HuduRackStorageItem
+	Set-HuduPassword
+	Set-HuduPasswordFolder
+	Set-HuduPasswordArchive
+	Set-HuduPublicPhoto
+	Set-HuduPhoto
 	Set-HuduVLAN
 	Set-HuduVLANZone
+	Set-HuduRackStorageItem
+	Set-HuduRackStorage
+	Set-HuduVLAN
+	Set-HuduVLANZone    
 	Set-HuduWebsite
-	Start-HuduExport
 	Start-HuduProcedure
+	Start-HuduExport
 	Start-HuduS3Export
+	Set-HapiErrorsDirectory
 
 ## Usage
 For examples please see my blog: https://mspp.io/category/hudu/ or this repository https://github.com/lwhitelock/HuduAutomation
