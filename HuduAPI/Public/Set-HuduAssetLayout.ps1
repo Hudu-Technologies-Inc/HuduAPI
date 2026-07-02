@@ -38,9 +38,6 @@ function Set-HuduAssetLayout {
     .PARAMETER PasswordTypes
     List of password types, separated with new line characters
 
-    .PARAMETER SidebarFolderID
-    ID of the sidebar folder where the Asset Layout should appear.
-
     .PARAMETER Slug
     Url identifier
 
@@ -94,9 +91,6 @@ function Set-HuduAssetLayout {
         [Alias('password_types')]
         [String]$PasswordTypes = '',
         
-        [Alias('sidebar_folder_id')]
-        [nullable[int]]$SidebarFolderID,
-
         [bool]$Active,
 
         [string]$Slug,
