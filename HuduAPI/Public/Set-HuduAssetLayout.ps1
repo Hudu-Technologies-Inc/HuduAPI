@@ -16,10 +16,12 @@ function Set-HuduAssetLayout {
     Icon class name, example: "fas fa-home"
 
     .PARAMETER Color
-    Hex code for background color, example: #000000
+    Background color as a hex value, such as #000000, or a human-readable color
+    name in a supported language. Alpha values are trimmed off.
 
     .PARAMETER IconColor
-    Hex code for background color, example: #000000
+    Icon color as a hex value, such as #000000, or a human-readable color
+    name in a supported language. Alpha values are trimmed off.
 
     .PARAMETER IncludePasswords
     Boolean to include passwords
@@ -36,6 +38,9 @@ function Set-HuduAssetLayout {
     .PARAMETER PasswordTypes
     List of password types, separated with new line characters
 
+    .PARAMETER SidebarFolderID
+    ID of the sidebar folder where the Asset Layout should appear.
+
     .PARAMETER Slug
     Url identifier
 
@@ -46,6 +51,12 @@ function Set-HuduAssetLayout {
 
     .EXAMPLE
     Set-HuduAssetLayout -Id 12 -Name 'Test asset layout' -Icon 'fas fa-home' -IncludePassword $true
+
+    .EXAMPLE
+    Set-HuduAssetLayout -Id 12 -Color 'naranja' -IconColor '#ffffff'
+
+    .EXAMPLE
+    Set-HuduAssetLayout -Id 12 -SidebarFolderID 3
 
     .EXAMPLE
     Set-HuduAssetLayout -Id 12 -Fields @(
@@ -82,12 +93,16 @@ function Set-HuduAssetLayout {
 
         [Alias('password_types')]
         [String]$PasswordTypes = '',
+        
+        [Alias('sidebar_folder_id')]
+        [nullable[int]]$SidebarFolderID,
 
         [bool]$Active,
 
         [string]$Slug,
 
-        [array]$Fields
+        [array]$Fields,
+        [bool]$isLocation = $false
     )
 
     foreach ($field in $fields) {
@@ -133,11 +148,11 @@ function Set-HuduAssetLayout {
     }
 
     if ($Color) {
-        $AssetLayout.asset_layout.color = $Color
+        $AssetLayout.asset_layout.color = ConvertTo-HuduLabelColor -Color $Color
     }
 
     if ($IconColor) {
-        $AssetLayout.asset_layout.icon_color = $IconColor
+        $AssetLayout.asset_layout.icon_color = ConvertTo-HuduLabelColor -Color $IconColor
     }
 
     if ($Fields) {
@@ -164,15 +179,18 @@ function Set-HuduAssetLayout {
         $AssetLayout.asset_layout.password_types = $PasswordTypes
     }
 
-    if ($SidebarFolderID) {
-        $AssetLayout.asset_layout.sidebar_folder_id = $SidebarFolderID
+    if ($PSBoundParameters.ContainsKey('SidebarFolderID')) {
+        $AssetLayout.asset_layout | Add-Member -MemberType NoteProperty -Name sidebar_folder_id -Force -Value $SidebarFolderID
     }
 
     if ($Slug) {
         $AssetLayout.asset_layout.slug = $Slug
     }
+    if ($PSBoundParameters.ContainsKey('isLocation')){
+        $AssetLayout.asset_layout.location = [System.Convert]::ToBoolean($isLocation)
+    }
 
-    if ($Active) {
+    if ($PSBoundParameters.ContainsKey('Active')){
         $AssetLayout.asset_layout.active = [System.Convert]::ToBoolean($Active)
     }
 
