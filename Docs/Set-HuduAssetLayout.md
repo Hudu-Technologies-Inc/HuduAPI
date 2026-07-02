@@ -16,8 +16,8 @@ Update an Asset Layout
 Set-HuduAssetLayout [-Id] <Int32> [[-Name] <String>] [[-Icon] <String>] [[-Color] <String>]
  [[-IconColor] <String>] [[-IncludePasswords] <Boolean>] [[-IncludePhotos] <Boolean>]
  [[-IncludeComments] <Boolean>] [[-IncludeFiles] <Boolean>] [[-PasswordTypes] <String>] [[-Active] <Boolean>]
- [[-Slug] <String>] [[-Fields] <Array>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [[-Slug] <String>] [[-Fields] <Array>] [[-isLocation] <Boolean>] [-ProgressAction <ActionPreference>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -31,6 +31,16 @@ Set-HuduAssetLayout -Id 12 -Name 'Test asset layout' -Icon 'fas fa-home' -Includ
 ```
 
 ### EXAMPLE 2
+```
+Set-HuduAssetLayout -Id 12 -Color 'naranja' -IconColor '#ffffff'
+```
+
+### EXAMPLE 3
+```
+Set-HuduAssetLayout -Id 12 -SidebarFolderID 3
+```
+
+### EXAMPLE 4
 ```
 Set-HuduAssetLayout -Id 12 -Fields @(
     @{label = 'Test field'; 'field_type' = 'Text'}
@@ -85,7 +95,9 @@ Accept wildcard characters: False
 ```
 
 ### -Color
-Hex code for background color, example: #000000
+Background color as a hex value, such as #000000, or a human-readable color
+name in a supported language.
+Alpha values are trimmed off.
 
 ```yaml
 Type: String
@@ -100,7 +112,9 @@ Accept wildcard characters: False
 ```
 
 ### -IconColor
-Hex code for background color, example: #000000
+Icon color as a hex value, such as #000000, or a human-readable color
+name in a supported language.
+Alpha values are trimmed off.
 
 ```yaml
 Type: String
@@ -233,6 +247,21 @@ Aliases:
 Required: False
 Position: 13
 Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -isLocation
+{{ Fill isLocation Description }}
+
+```yaml
+Type: Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 14
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
