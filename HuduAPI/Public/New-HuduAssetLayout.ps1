@@ -13,10 +13,12 @@ function New-HuduAssetLayout {
     FontAwesome Icon class name, example: "fas fa-home"
 
     .PARAMETER Color
-    Background color hex code
+    Background color as a hex value, such as #ff0000, or a human-readable color
+    name in a supported language. Alpha values are trimmed off.
 
     .PARAMETER IconColor
-    Icon color hex code
+    Icon color as a hex value, such as #ff0000, or a human-readable color
+    name in a supported language. Alpha values are trimmed off.
 
     .PARAMETER IncludePasswords
     Boolean for including passwords
@@ -45,6 +47,16 @@ function New-HuduAssetLayout {
     New-HuduAssetLayout -Name 'Test asset layout' -Icon 'fas fa-home' -IncludePassword $true
 
     .EXAMPLE
+    New-HuduAssetLayout -Name 'Routers' -Icon 'fas fa-network-wired' -Color 'azul' -IconColor '#ffffff' -Fields @(
+        @{label = 'Hostname'; 'field_type' = 'Text'}
+    )
+
+    .EXAMPLE
+    New-HuduAssetLayout -Name 'Routers' -Icon 'fas fa-network-wired' -Color 'azul' -IconColor '#ffffff' -SidebarFolderID 3 -Fields @(
+        @{label = 'Hostname'; 'field_type' = 'Text'}
+    )
+
+    .EXAMPLE
     New-HuduAssetLayout -Name 'Test asset layout' -Icon 'fas fa-home' -IncludePassword $true -Fields @(
         @{label = 'Test field'; 'field_type' = 'Text'}
     )
@@ -67,16 +79,16 @@ function New-HuduAssetLayout {
         [String]$IconColor,
 
         [Alias('include_passwords')]
-        [bool]$IncludePasswords = '',
+        [bool]$IncludePasswords = $false,
 
         [Alias('include_photos')]
-        [bool]$IncludePhotos = '',
+        [bool]$IncludePhotos = $false,
 
         [Alias('include_comments')]
-        [bool]$IncludeComments = '',
+        [bool]$IncludeComments = $false,
 
         [Alias('include_files')]
-        [bool]$IncludeFiles = '',
+        [bool]$IncludeFiles = $false,
 
         [Alias('password_types')]
         [String]$PasswordTypes = '',
@@ -119,8 +131,8 @@ function New-HuduAssetLayout {
 
     $AssetLayout.asset_layout.add('name', $Name)
     $AssetLayout.asset_layout.add('icon', $Icon)
-    $AssetLayout.asset_layout.add('color', $Color)
-    $AssetLayout.asset_layout.add('icon_color', $IconColor)
+    $AssetLayout.asset_layout.add('color', (ConvertTo-HuduLabelColor -Color $Color))
+    $AssetLayout.asset_layout.add('icon_color', (ConvertTo-HuduLabelColor -Color $IconColor))
     $AssetLayout.asset_layout.add('fields', $Fields)
     #$AssetLayout.asset_layout.add('active', $Active)
 
@@ -142,6 +154,10 @@ function New-HuduAssetLayout {
 
     if ($PasswordTypes) {
         $AssetLayout.asset_layout.add('password_types', $PasswordTypes)
+    }
+
+    if ($PSBoundParameters.ContainsKey('SidebarFolderID')) {
+        $AssetLayout.asset_layout.add('sidebar_folder_id', $SidebarFolderID)
     }
 
     if ($Slug) {
