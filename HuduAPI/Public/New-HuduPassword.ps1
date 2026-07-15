@@ -13,7 +13,7 @@ function New-HuduPassword {
     Company id
 
     .PARAMETER PasswordableType
-    associated Object type, most commonly asset, for the password ["Asset", "VlanZone", "Vlan"]
+    associated Object type, most commonly asset, for the password ["Asset"]
 
     .PARAMETER PasswordableId
     Associated object id for the password
