@@ -32,20 +32,6 @@ New-HuduAssetLayout -Name 'Test asset layout' -Icon 'fas fa-home' -IncludePasswo
 
 ### EXAMPLE 2
 ```
-New-HuduAssetLayout -Name 'Routers' -Icon 'fas fa-network-wired' -Color 'azul' -IconColor '#ffffff' -Fields @(
-    @{label = 'Hostname'; 'field_type' = 'Text'}
-)
-```
-
-### EXAMPLE 3
-```
-New-HuduAssetLayout -Name 'Routers' -Icon 'fas fa-network-wired' -Color 'azul' -IconColor '#ffffff' -SidebarFolderID 3 -Fields @(
-    @{label = 'Hostname'; 'field_type' = 'Text'}
-)
-```
-
-### EXAMPLE 4
-```
 New-HuduAssetLayout -Name 'Test asset layout' -Icon 'fas fa-home' -IncludePassword $true -Fields @(
     @{label = 'Test field'; 'field_type' = 'Text'}
 )
@@ -84,9 +70,7 @@ Accept wildcard characters: False
 ```
 
 ### -Color
-Background color as a hex value, such as #ff0000, or a human-readable color
-name in a supported language.
-Alpha values are trimmed off.
+Background color hex code
 
 ```yaml
 Type: String
@@ -101,9 +85,7 @@ Accept wildcard characters: False
 ```
 
 ### -IconColor
-Icon color as a hex value, such as #ff0000, or a human-readable color
-name in a supported language.
-Alpha values are trimmed off.
+Icon color hex code
 
 ```yaml
 Type: String
@@ -127,7 +109,7 @@ Aliases: include_passwords
 
 Required: False
 Position: 5
-Default value: False
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -142,7 +124,7 @@ Aliases: include_photos
 
 Required: False
 Position: 6
-Default value: False
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -157,7 +139,7 @@ Aliases: include_comments
 
 Required: False
 Position: 7
-Default value: False
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -172,7 +154,7 @@ Aliases: include_files
 
 Required: False
 Position: 8
-Default value: False
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

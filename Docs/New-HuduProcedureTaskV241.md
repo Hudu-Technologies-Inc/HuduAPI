@@ -5,48 +5,48 @@ online version:
 schema: 2.0.0
 ---
 
-# Set-HuduFolder
+# New-HuduProcedureTaskV241
 
 ## SYNOPSIS
-Update a Folder
+Create a procedure task (Hudu 2.41.0+ behavior).
 
 ## SYNTAX
 
 ```
-Set-HuduFolder [-Id] <Int32> [-Name] <String> [[-Icon] <String>] [[-Description] <String>]
- [[-ParentFolderId] <Int32>] [[-CompanyId] <Int32>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+New-HuduProcedureTaskV241 [-Name] <String> [-ProcedureId] <Int32> [[-Description] <String>]
+ [[-Position] <Int32>] [[-Priority] <String>] [[-UserId] <Int32>] [[-AssignedUsers] <Int32[]>]
+ [[-DueDate] <DateTime>] [-RunTask] [-AutoKickoff] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses Hudu API to update a folder
+Creates a task for either a procedure template or a run.
+
+Run-only fields (Priority, UserId, AssignedUsers, DueDate) are only applied
+when the target is a run.
+
+If run-only fields are provided for a template:
+  - They are ignored
+  - A warning is emitted
+
+If -AutoKickoff is specified and the procedure is runnable:
+  - A run is created automatically
+  - The task is created on the run instead
+
+This implementation is intentionally forgiving and will proceed whenever possible.
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
-Set-HuduFolder -Id 1 -Name 'New folder name'
-```
+
+{{ Add example description here }}
 
 ## PARAMETERS
 
-### -Id
-Id of the requested folder
-
-```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 1
-Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Name
-Name of the folder
+{{ Fill Name Description }}
 
 ```yaml
 Type: String
@@ -54,14 +54,29 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 2
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Icon
-Folder icon
+### -ProcedureId
+{{ Fill ProcedureId Description }}
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 2
+Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Description
+{{ Fill Description Description }}
 
 ```yaml
 Type: String
@@ -75,28 +90,28 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Description
-Folder description
+### -Position
+{{ Fill Position Description }}
 
 ```yaml
-Type: String
+Type: Int32
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 4
-Default value: None
+Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ParentFolderId
-Folder parent id
+### -Priority
+{{ Fill Priority Description }}
 
 ```yaml
-Type: Int32
+Type: String
 Parameter Sets: (All)
-Aliases: parent_folder_id
+Aliases:
 
 Required: False
 Position: 5
@@ -105,48 +120,77 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -CompanyId
-Folder company id
+### -UserId
+{{ Fill UserId Description }}
 
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases: company_id
+Aliases:
 
 Required: False
 Position: 6
+Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AssignedUsers
+{{ Fill AssignedUsers Description }}
+
+```yaml
+Type: Int32[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 7
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
+### -DueDate
+{{ Fill DueDate Description }}
 
 ```yaml
-Type: SwitchParameter
+Type: DateTime
 Parameter Sets: (All)
-Aliases: wi
+Aliases:
 
 Required: False
-Position: Named
+Position: 8
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Confirm
-Prompts you for confirmation before running the cmdlet.
+### -RunTask
+{{ Fill RunTask Description }}
 
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
-Aliases: cf
+Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AutoKickoff
+{{ Fill AutoKickoff Description }}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

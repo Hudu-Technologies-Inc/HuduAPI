@@ -5,70 +5,78 @@ online version:
 schema: 2.0.0
 ---
 
-# New-HuduPassword
+# Set-HuduProcedureTaskV241
 
 ## SYNOPSIS
-Create a Password
+Update a procedure task (Hudu 2.41.0+ behavior).
 
 ## SYNTAX
 
 ```
-New-HuduPassword [-Name] <String> [-CompanyId] <Int32> [[-PasswordableType] <String>]
- [[-PasswordableId] <Int32>] [[-InPortal] <Boolean>] [-Password] <String> [[-OTPSecret] <String>]
- [[-URL] <String>] [[-Username] <String>] [[-Description] <String>] [[-PasswordTypeq] <String>]
- [[-PasswordFolderId] <Int32>] [[-Slug] <String>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm]
+Set-HuduProcedureTaskV241 [-Id] <Int32> [[-Name] <String>] [[-Description] <String>] [[-Completed] <Boolean>]
+ [[-ProcedureId] <Int32>] [[-Position] <Int32>] [[-UserId] <Int32>] [[-DueDate] <DateTime>]
+ [[-Priority] <String>] [[-AssignedUsers] <Int32[]>] [-RunTask] [-ProgressAction <ActionPreference>]
  [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses Hudu API to create a new password
+Updates a task belonging to either a procedure template or a run.
+
+Run-only fields (Priority, UserId, AssignedUsers, DueDate) are:
+  - Applied only when the task belongs to a run
+  - Ignored with a warning when applied to a template task
+
+This implementation favors compatibility and will update all valid fields
+while ignoring incompatible ones.
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
-New-HuduPassword -Name 'Some website password' -Username 'user@domain.com' -Password '12345'
-```
+
+{{ Add example description here }}
 
 ## PARAMETERS
 
+### -Id
+{{ Fill Id Description }}
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 1
+Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Name
-Name of the password
+{{ Fill Name Description }}
 
 ```yaml
 Type: String
 Parameter Sets: (All)
 Aliases:
 
-Required: True
-Position: 1
+Required: False
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -CompanyId
-Company id
-
-```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases: company_id
-
-Required: True
-Position: 2
-Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -PasswordableType
-associated Object type, most commonly asset, for the password \["Asset", "VlanZone", "Vlan"\]
+### -Description
+{{ Fill Description Description }}
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases: passwordable_type
+Aliases:
 
 Required: False
 Position: 3
@@ -77,71 +85,71 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PasswordableId
-Associated object id for the password
-
-```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases: passwordable_id
-
-Required: False
-Position: 4
-Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -InPortal
-Boolean for in portal
+### -Completed
+{{ Fill Completed Description }}
 
 ```yaml
 Type: Boolean
 Parameter Sets: (All)
-Aliases: in_portal
+Aliases:
 
 Required: False
-Position: 5
+Position: 4
 Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Password
-Password
+### -ProcedureId
+{{ Fill ProcedureId Description }}
 
 ```yaml
-Type: String
+Type: Int32
 Parameter Sets: (All)
 Aliases:
 
-Required: True
-Position: 6
-Default value: None
+Required: False
+Position: 5
+Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -OTPSecret
-OTP secret
+### -Position
+{{ Fill Position Description }}
 
 ```yaml
-Type: String
+Type: Int32
 Parameter Sets: (All)
-Aliases: otp_secret
+Aliases:
+
+Required: False
+Position: 6
+Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -UserId
+{{ Fill UserId Description }}
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases:
 
 Required: False
 Position: 7
-Default value: None
+Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -URL
-Password URL
+### -DueDate
+{{ Fill DueDate Description }}
 
 ```yaml
-Type: String
+Type: DateTime
 Parameter Sets: (All)
 Aliases:
 
@@ -152,8 +160,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Username
-Username
+### -Priority
+{{ Fill Priority Description }}
 
 ```yaml
 Type: String
@@ -167,11 +175,11 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Description
-Password description
+### -AssignedUsers
+{{ Fill AssignedUsers Description }}
 
 ```yaml
-Type: String
+Type: Int32[]
 Parameter Sets: (All)
 Aliases:
 
@@ -182,78 +190,17 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PasswordTypeq
-{{ Fill PasswordTypeq Description }}
+### -RunTask
+{{ Fill RunTask Description }}
 
 ```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: password_type
-
-Required: False
-Position: 11
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -PasswordFolderId
-Password folder id
-
-```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases: password_folder_id
-
-Required: False
-Position: 12
-Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Slug
-Url identifier
-
-```yaml
-Type: String
+Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 13
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
-
-Required: False
 Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

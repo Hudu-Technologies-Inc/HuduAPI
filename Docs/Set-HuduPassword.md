@@ -78,7 +78,7 @@ Accept wildcard characters: False
 ```
 
 ### -PasswordableType
-associated Object type, most commonly asset, for the password \["Asset"\]
+associated Object type, most commonly asset, for the password \["Asset", "VlanZone", "Vlan"\]
 
 ```yaml
 Type: String

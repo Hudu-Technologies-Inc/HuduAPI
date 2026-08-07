@@ -14,8 +14,7 @@ Create a Folder
 
 ```
 New-HuduFolder [-Name] <String> [[-Icon] <String>] [[-Description] <String>] [[-ParentFolderId] <Int32>]
- [[-CompanyId] <Int32>] [[-folderType] <String>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [[-CompanyId] <Int32>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -101,23 +100,6 @@ Aliases: company_id
 Required: False
 Position: 5
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -folderType
-Folder type.
-Accepts "article" or "photo".
-Default is "article".
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: folder_type
-
-Required: False
-Position: 6
-Default value: Article
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

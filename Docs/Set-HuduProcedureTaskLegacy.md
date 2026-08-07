@@ -5,158 +5,39 @@ online version:
 schema: 2.0.0
 ---
 
-# New-HuduPassword
+# Set-HuduProcedureTaskLegacy
 
 ## SYNOPSIS
-Create a Password
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
 ```
-New-HuduPassword [-Name] <String> [-CompanyId] <Int32> [[-PasswordableType] <String>]
- [[-PasswordableId] <Int32>] [[-InPortal] <Boolean>] [-Password] <String> [[-OTPSecret] <String>]
- [[-URL] <String>] [[-Username] <String>] [[-Description] <String>] [[-PasswordTypeq] <String>]
- [[-PasswordFolderId] <Int32>] [[-Slug] <String>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+Set-HuduProcedureTaskLegacy [-Id] <Int32> [[-Name] <String>] [[-Description] <String>] [[-Completed] <Boolean>]
+ [[-ProcedureId] <Int32>] [[-Position] <Int32>] [[-UserId] <Int32>] [[-DueDate] <String>]
+ [[-Priority] <String>] [[-AssignedUsers] <Int32[]>] [-RunTask] [-AutoKickoff]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Uses Hudu API to create a new password
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
-### EXAMPLE 1
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
 ```
-New-HuduPassword -Name 'Some website password' -Username 'user@domain.com' -Password '12345'
-```
+
+{{ Add example description here }}
 
 ## PARAMETERS
 
-### -Name
-Name of the password
+### -AssignedUsers
+{{ Fill AssignedUsers Description }}
 
 ```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 1
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -CompanyId
-Company id
-
-```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases: company_id
-
-Required: True
-Position: 2
-Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -PasswordableType
-associated Object type, most commonly asset, for the password \["Asset", "VlanZone", "Vlan"\]
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: passwordable_type
-
-Required: False
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -PasswordableId
-Associated object id for the password
-
-```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases: passwordable_id
-
-Required: False
-Position: 4
-Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -InPortal
-Boolean for in portal
-
-```yaml
-Type: Boolean
-Parameter Sets: (All)
-Aliases: in_portal
-
-Required: False
-Position: 5
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Password
-Password
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 6
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -OTPSecret
-OTP secret
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: otp_secret
-
-Required: False
-Position: 7
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -URL
-Password URL
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 8
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Username
-Username
-
-```yaml
-Type: String
+Type: Int32[]
 Parameter Sets: (All)
 Aliases:
 
@@ -167,8 +48,38 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -AutoKickoff
+{{ Fill AutoKickoff Description }}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Completed
+{{ Fill Completed Description }}
+
+```yaml
+Type: Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Description
-Password description
+{{ Fill Description Description }}
 
 ```yaml
 Type: String
@@ -176,44 +87,44 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 10
+Position: 2
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PasswordTypeq
-{{ Fill PasswordTypeq Description }}
+### -DueDate
+{{ Fill DueDate Description }}
 
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases: password_type
+Aliases:
 
 Required: False
-Position: 11
+Position: 7
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PasswordFolderId
-Password folder id
+### -Id
+{{ Fill Id Description }}
 
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases: password_folder_id
+Aliases:
 
-Required: False
-Position: 12
-Default value: 0
+Required: True
+Position: 0
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Slug
-Url identifier
+### -Name
+{{ Fill Name Description }}
 
 ```yaml
 Type: String
@@ -221,20 +132,65 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 13
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
+### -Position
+{{ Fill Position Description }}
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 5
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Priority
+{{ Fill Priority Description }}
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+Accepted values: unsure, low, normal, high, urgent
+
+Required: False
+Position: 8
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProcedureId
+{{ Fill ProcedureId Description }}
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 4
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -RunTask
+{{ Fill RunTask Description }}
 
 ```yaml
 Type: SwitchParameter
 Parameter Sets: (All)
-Aliases: wi
+Aliases:
 
 Required: False
 Position: Named
@@ -243,16 +199,16 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Confirm
-Prompts you for confirmation before running the cmdlet.
+### -UserId
+{{ Fill UserId Description }}
 
 ```yaml
-Type: SwitchParameter
+Type: Int32
 Parameter Sets: (All)
-Aliases: cf
+Aliases:
 
 Required: False
-Position: Named
+Position: 6
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -278,8 +234,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### None
+
 ## OUTPUTS
 
+### System.Object
 ## NOTES
 
 ## RELATED LINKS
