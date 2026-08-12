@@ -36,6 +36,8 @@ function Get-HuduUploads {
         }
     }
 
+    $Upload = $Upload | ConvertTo-HuduRelativeFileUrl
+
     if ($Download) {
         if ($script:Version -lt [version]'2.41.0') {
             Write-Warning "Download of uploads is only supported in Hudu v2.41.0 and above; skipping download."

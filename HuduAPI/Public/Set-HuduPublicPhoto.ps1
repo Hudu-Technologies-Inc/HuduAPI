@@ -48,11 +48,12 @@ function Set-HuduPublicPhoto {
         Write-Verbose "Photo already associated with Record ID $RecordId and Record Type $RecordType. No changes made."
         return
     }
-    if ($PSCmdlet.ShouldProcess($File.FullName)) {
+    if ($PSCmdlet.ShouldProcess("Public photo $($photo.id ?? $photo.numeric_id)")) {
         Invoke-HuduRequest -Method PUT -Resource "/api/v1/public_photos/$($photo.numeric_id)" `
             -Form @{
                 'record_id'   = $RecordId
                 'record_type' = $RecordType
-            }
+            } |
+            ConvertTo-HuduRelativeFileUrl
     }
 }
