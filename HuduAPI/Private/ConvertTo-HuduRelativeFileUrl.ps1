@@ -9,6 +9,7 @@ function ConvertTo-HuduRelativeFileUrl {
     begin {
         $baseUrl = (Get-HuduBaseURL).TrimEnd('/')
         $escapedBaseUrl = [regex]::Escape($baseUrl)
+        $wrapperPropertyNames = @('public_photo', 'public_photos', 'upload', 'uploads')
 
         function Convert-HuduFileUrlString {
             param([string]$Url)
@@ -24,40 +25,43 @@ function ConvertTo-HuduRelativeFileUrl {
             return $Url
         }
 
-        function Convert-HuduFileUrlObject {
+        function Convert-HuduUrlProperty {
             param([AllowNull()][object]$Object)
 
-            if ($null -eq $Object) {
-                return $null
+            if ($null -eq $Object -or $Object -is [string]) {
+                return $Object
             }
 
-            if ($Object -is [string]) {
-                return Convert-HuduFileUrlString -Url $Object
+            if ($Object -is [System.Collections.IEnumerable] -and $Object -isnot [string] -and $Object -isnot [pscustomobject] -and $Object -isnot [System.Collections.IDictionary]) {
+                foreach ($item in @($Object)) {
+                    Convert-HuduUrlProperty -Object $item | Out-Null
+                }
+                return $Object
             }
 
             if ($Object -is [System.Collections.IDictionary]) {
-                foreach ($key in @($Object.Keys)) {
-                    $Object[$key] = Convert-HuduFileUrlObject -Object $Object[$key]
+                if ($Object.Contains('url') -and $Object['url'] -is [string]) {
+                    $Object['url'] = Convert-HuduFileUrlString -Url $Object['url']
                 }
+
+                foreach ($wrapperPropertyName in $wrapperPropertyNames) {
+                    if ($Object.Contains($wrapperPropertyName)) {
+                        Convert-HuduUrlProperty -Object $Object[$wrapperPropertyName] | Out-Null
+                    }
+                }
+
                 return $Object
             }
 
-            if ($Object -is [System.Collections.IEnumerable] -and $Object -isnot [string] -and $Object -isnot [pscustomobject]) {
-                foreach ($item in @($Object)) {
-                    Convert-HuduFileUrlObject -Object $item | Out-Null
-                }
-                return $Object
+            $urlProperty = $Object.PSObject.Properties['url']
+            if ($urlProperty -and $urlProperty.IsSettable -and $urlProperty.Value -is [string]) {
+                $urlProperty.Value = Convert-HuduFileUrlString -Url $urlProperty.Value
             }
 
-            foreach ($property in @($Object.PSObject.Properties)) {
-                if (-not $property.IsSettable) {
-                    continue
-                }
-
-                if ($property.Value -is [string]) {
-                    $property.Value = Convert-HuduFileUrlString -Url $property.Value
-                } elseif ($null -ne $property.Value) {
-                    Convert-HuduFileUrlObject -Object $property.Value | Out-Null
+            foreach ($wrapperPropertyName in $wrapperPropertyNames) {
+                $wrapperProperty = $Object.PSObject.Properties[$wrapperPropertyName]
+                if ($wrapperProperty) {
+                    Convert-HuduUrlProperty -Object $wrapperProperty.Value | Out-Null
                 }
             }
 
@@ -66,6 +70,6 @@ function ConvertTo-HuduRelativeFileUrl {
     }
 
     process {
-        Convert-HuduFileUrlObject -Object $InputObject
+        Convert-HuduUrlProperty -Object $InputObject
     }
 }
