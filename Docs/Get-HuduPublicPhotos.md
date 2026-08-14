@@ -13,14 +13,14 @@ Get a list of public photos or a single public photo, optionally downloading fil
 ## SYNTAX
 
 ```
-Get-HuduPublicPhotos [[-Id] <Int64>] [-Download] [[-OutDir] <String>] [-ProgressAction <ActionPreference>]
- [<CommonParameters>]
+Get-HuduPublicPhotos [[-Id] <String>] [[-Numeric_Id] <Nullable`1>] [-Download] [[-OutDir] <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Calls Hudu API to retrieve public photos.
 
-If -Download is specified with -Id (single) or without (list), downloads public photo files using /public_photos/{id}?download=true.
+If -Download is specified with -Numeric_Id or -Id (single) or without either identifier (list), downloads public photo files using /public_photos/{numeric_id}?download=true.
 
 ## EXAMPLES
 
@@ -31,15 +31,20 @@ Get-HuduPublicPhotos
 
 ### EXAMPLE 2
 ```
-Get-HuduPublicPhotos -Id 4
+Get-HuduPublicPhotos -Numeric_Id 4
 ```
 
 ### EXAMPLE 3
 ```
-Get-HuduPublicPhotos -Id 4 -Download
+Get-HuduPublicPhotos -Slug 'public-photo-slug'
 ```
 
 ### EXAMPLE 4
+```
+Get-HuduPublicPhotos -Id 4 -Download
+```
+
+### EXAMPLE 5
 ```
 Get-HuduPublicPhotos -Download -OutDir "$env:TEMP\public-photos"
 ```
@@ -47,16 +52,32 @@ Get-HuduPublicPhotos -Download -OutDir "$env:TEMP\public-photos"
 ## PARAMETERS
 
 ### -Id
-Numeric ID of the public photo to retrieve or download.
+Slug-based ID of the public photo to retrieve or download.
+Numeric values are coerced to Numeric_Id unless they are 12 digits.
 
 ```yaml
-Type: Int64
+Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: Slug
 
 Required: False
 Position: 1
-Default value: 0
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Numeric_Id
+Numeric ID of the public photo to retrieve or download.
+
+```yaml
+Type: Nullable`1
+Parameter Sets: (All)
+Aliases: NumericId
+
+Required: False
+Position: 2
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -86,7 +107,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: 3
 Default value: .
 Accept pipeline input: False
 Accept wildcard characters: False

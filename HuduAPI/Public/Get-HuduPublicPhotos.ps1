@@ -6,9 +6,12 @@ function Get-HuduPublicPhotos {
     .DESCRIPTION
     Calls Hudu API to retrieve public photos.
 
-    If -Download is specified with -Id (single) or without (list), downloads public photo files using /public_photos/{id}?download=true.
+    If -Download is specified with -Numeric_Id or -Id (single) or without either identifier (list), downloads public photo files using /public_photos/{numeric_id}?download=true.
 
     .PARAMETER Id
+    Slug-based ID of the public photo to retrieve or download. Numeric values are coerced to Numeric_Id unless they are 12 digits.
+
+    .PARAMETER Numeric_Id
     Numeric ID of the public photo to retrieve or download.
 
     .PARAMETER Download
@@ -24,6 +27,9 @@ function Get-HuduPublicPhotos {
     Get-HuduPublicPhotos -Id 4
 
     .EXAMPLE
+    Get-HuduPublicPhotos -Slug 'public-photo-slug'
+
+    .EXAMPLE
     Get-HuduPublicPhotos -Id 4 -Download
 
     .EXAMPLE
@@ -32,21 +38,54 @@ function Get-HuduPublicPhotos {
     #>
     [CmdletBinding()]
     param(
-        [long]$Id,
+        [Alias('Slug')]
+        [string]$Id,
+        [Alias('NumericId')]
+        [Nullable[int]]$Numeric_Id,
         [switch]$Download,
         [string]$OutDir = '.'
     )
 
-    if ($Id) {
-        $result = Invoke-HuduRequest -Method Get -Resource "/api/v1/public_photos/$Id"
+    $hasId = $PSBoundParameters.ContainsKey('Id') -and -not [string]::IsNullOrWhiteSpace($Id)
+    $hasNumericId = $PSBoundParameters.ContainsKey('Numeric_Id') -and $null -ne $Numeric_Id
+
+    if (-not $hasId -and -not $hasNumericId) {
+        $HuduRequest = @{
+            Method   = 'GET'
+            Resource = '/api/v1/public_photos'
+            Params   = @{}
+        }
+
+        $PublicPhotos = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'public_photos'
+        if (-not $Download) {
+            return $PublicPhotos
+        }
+    }
+
+    $numericId = $Numeric_Id
+    $idText = "$Id".Trim()
+    $parsedNumericId = 0
+    if (
+        -not $hasNumericId -and
+        -not [string]::IsNullOrWhiteSpace($idText) -and
+        $idText -notmatch '^\d{12}$' -and
+        [int]::TryParse($idText, [ref]$parsedNumericId)
+    ) {
+        $numericId = $parsedNumericId
+    }
+
+    if ($null -ne $numericId) {
+        $result = Invoke-HuduRequest -Method Get -Resource "/api/v1/public_photos/$numericId"
         $PublicPhotos = @($result.public_photo ?? $result)
-    } else {
+    } elseif ($hasId) {
         $HuduRequest = @{
             Method   = 'GET'
             Resource = '/api/v1/public_photos'
             Params   = @{}
         }
         $PublicPhotos = Invoke-HuduRequestPaginated -HuduRequest $HuduRequest -Property 'public_photos'
+
+        $PublicPhotos = @($PublicPhotos | Where-Object { $_.id -eq $Id })
     }
 
     if ($Download) {
@@ -54,7 +93,7 @@ function Get-HuduPublicPhotos {
         $OutDir = (New-Item -ItemType Directory -Path $OutDir -Force).FullName
 
         $Headers = @{ 'x-api-key' = (New-Object PSCredential 'user', $(Get-HuduApiKey)).GetNetworkCredential().Password }
-        foreach ($p in @($PublicPhotos.public_photos ?? $PublicPhotos.public_photo ?? $PublicPhotos)) {
+        foreach ($p in @($PublicPhotos)) {
             $publicPhotoId = $p.numeric_id ?? $p.id
             if (-not $publicPhotoId) { continue }
 
@@ -76,7 +115,8 @@ function Get-HuduPublicPhotos {
         }
     }
 
-    $publicPhotosOut = $(($Id ? ($PublicPhotos[0]) : $PublicPhotos))
+    $singlePublicPhoto = ($null -ne $numericId) -or $hasId
+    $publicPhotosOut = $(($singlePublicPhoto ? ($PublicPhotos[0]) : $PublicPhotos))
 
-    return $publicPhotosOut.public_photos ?? $publicPhotosOut.public_photo ?? $publicPhotosOut
+    return $publicPhotosOut
 }
