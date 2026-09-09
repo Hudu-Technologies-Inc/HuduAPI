@@ -10,7 +10,9 @@ function Set-HuduArticlePinned {
     )
     process {
         if ($PSCmdlet.ShouldProcess($Id)) {
-            Invoke-HuduRequest -Method put -Resource "/api/v1/articles/$Id/pin"
+            $result = Invoke-HuduRequest -Method put -Resource "/api/v1/articles/$Id/pin"
+            $result = $result.article ?? $result
+            return $result
         }
     }
 }

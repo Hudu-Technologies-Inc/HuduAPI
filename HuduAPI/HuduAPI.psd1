@@ -46,7 +46,7 @@
 
     # Minimum version of the common language runtime (CLR) required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
     # CLRVersion = ''
-h./
+
     # Processor architecture (None, X86, Amd64) required by this module
     # ProcessorArchitecture = ''
 
@@ -182,7 +182,7 @@ h./
     'Set-HuduArticle',
     'Set-HuduArticleArchive',
     'Set-HuduArticlePinned',
-    'Set-HuduArticleUnPinned',    
+    'Set-HuduArticleUnPinned',
     'Set-HuduAsset',
     'Set-HuduAssetArchive',
     'Set-HuduAssetLayout',
@@ -260,15 +260,12 @@ h./
 
             # ReleaseNotes of this module
             # ReleaseNotes = ''
-
-        } # End of PSData hashtable
-
-    } # End of PrivateData hashtable
-
+        }
+         # End of PSData hashtable
+    } 
+    # End of PrivateData hashtable
     # HelpInfo URI of this module
     # HelpInfoURI = ''
-
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
-
 }
