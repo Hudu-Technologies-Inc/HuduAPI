@@ -118,6 +118,8 @@ https://github.com/lwhitelock/HuduAPI/releases
     Save-HuduExports
     Set-HuduArticle
     Set-HuduArticleArchive
+    Set-HuduArticlePinned
+    Set-HuduArticleUnPinned
     Set-HuduAsset
     Set-HuduAssetArchive
     Set-HuduAssetLayout
