@@ -12,7 +12,7 @@
     RootModule        = '.\HuduAPI.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '3.20.98'
+    ModuleVersion     = '3.20.99'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -46,7 +46,7 @@
 
     # Minimum version of the common language runtime (CLR) required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
     # CLRVersion = ''
-
+h./
     # Processor architecture (None, X86, Amd64) required by this module
     # ProcessorArchitecture = ''
 
@@ -181,6 +181,8 @@
     'Save-HuduExports',
     'Set-HuduArticle',
     'Set-HuduArticleArchive',
+    'Set-HuduArticlePinned',
+    'Set-HuduArticleUnPinned',    
     'Set-HuduAsset',
     'Set-HuduAssetArchive',
     'Set-HuduAssetLayout',
