@@ -12,7 +12,7 @@
     RootModule        = '.\HuduAPI.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '3.20.98'
+    ModuleVersion     = '3.20.99'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -181,6 +181,8 @@
     'Save-HuduExports',
     'Set-HuduArticle',
     'Set-HuduArticleArchive',
+    'Set-HuduArticlePinned',
+    'Set-HuduArticleUnPinned',
     'Set-HuduAsset',
     'Set-HuduAssetArchive',
     'Set-HuduAssetLayout',
@@ -258,15 +260,12 @@
 
             # ReleaseNotes of this module
             # ReleaseNotes = ''
-
-        } # End of PSData hashtable
-
-    } # End of PrivateData hashtable
-
+        }
+         # End of PSData hashtable
+    } 
+    # End of PrivateData hashtable
     # HelpInfo URI of this module
     # HelpInfoURI = ''
-
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
-
 }

@@ -1,3 +1,12 @@
+---
+external help file: HuduAPI-help.xml
+Module Name: HuduAPI
+online version:
+schema: 2.0.0
+---
+
+# Get-HuduRelations
+
 ## SYNOPSIS
 Get a list of relations.
 
@@ -36,10 +45,6 @@ Get-HuduRelations -CreatedAfter ([datetime]'2026-08-01') -UpdatedBefore ([dateti
 ### -FromableType
 Filter by the FROM record type.
 
-Supported values are Asset, Website, Procedure, AssetPassword, Company, Article,
-Network, IpAddress, Vlan, VlanZone, and RackStorage. Common aliases for these
-object types are accepted.
-
 ```yaml
 Type: String
 Parameter Sets: (All)
@@ -69,10 +74,6 @@ Accept wildcard characters: False
 
 ### -ToableType
 Filter by the TO record type.
-
-Supported values are Asset, Website, Procedure, AssetPassword, Company, Article,
-Network, IpAddress, Vlan, VlanZone, and RackStorage. Common aliases for these
-object types are accepted.
 
 ```yaml
 Type: String
@@ -122,7 +123,7 @@ Filter by description.
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases: None
+Aliases:
 
 Required: False
 Position: 6
@@ -132,10 +133,7 @@ Accept wildcard characters: False
 ```
 
 ### -CreatedAt
-Filter by creation date using the raw API value.
-
-Accepts YYYY-MM-DD, an ISO datetime, or another API-supported created_at string.
-Use -CreatedAfter and/or -CreatedBefore for range filtering.
+Filter by creation date using the raw API value (YYYY-MM-DD, ISO datetime, or API-supported range string).
 
 ```yaml
 Type: String
@@ -155,7 +153,7 @@ Start datetime for the created_at range.
 ```yaml
 Type: DateTime
 Parameter Sets: (All)
-Aliases: None
+Aliases:
 
 Required: False
 Position: 8
@@ -170,7 +168,7 @@ End datetime for the created_at range.
 ```yaml
 Type: DateTime
 Parameter Sets: (All)
-Aliases: None
+Aliases:
 
 Required: False
 Position: 9
@@ -180,10 +178,7 @@ Accept wildcard characters: False
 ```
 
 ### -UpdatedAt
-Filter by update date using the raw API value.
-
-Accepts YYYY-MM-DD, an ISO datetime, or another API-supported updated_at string.
-Use -UpdatedAfter and/or -UpdatedBefore for range filtering.
+Filter by update date using the raw API value (YYYY-MM-DD, ISO datetime, or API-supported range string).
 
 ```yaml
 Type: String
@@ -203,7 +198,7 @@ Start datetime for the updated_at range.
 ```yaml
 Type: DateTime
 Parameter Sets: (All)
-Aliases: None
+Aliases:
 
 Required: False
 Position: 11
@@ -218,7 +213,7 @@ End datetime for the updated_at range.
 ```yaml
 Type: DateTime
 Parameter Sets: (All)
-Aliases: None
+Aliases:
 
 Required: False
 Position: 12
@@ -233,7 +228,7 @@ Return a specific page instead of auto-paginating all results.
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases: None
+Aliases:
 
 Required: False
 Position: 13
@@ -243,7 +238,8 @@ Accept wildcard characters: False
 ```
 
 ### -PageSize
-Number of results per page. Defaults to 1000 when auto-paginating.
+Number of results per page.
+Defaults to 1000 when auto-paginating.
 
 ```yaml
 Type: Int32
@@ -257,3 +253,28 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### CommonParameters
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
+
+## INPUTS
+
+## OUTPUTS
+
+## NOTES
+
+## RELATED LINKS

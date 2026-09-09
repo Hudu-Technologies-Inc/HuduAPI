@@ -13,7 +13,7 @@ Get a list of public photos or a single public photo, optionally downloading fil
 ## SYNTAX
 
 ```
-Get-HuduPublicPhotos [[-Id] <String>] [[-Numeric_Id] <Nullable`1>] [-Download] [[-OutDir] <String>]
+Get-HuduPublicPhotos [[-Id] <String>] [[-Numeric_Id] <Int32>] [-Download] [[-OutDir] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -31,7 +31,7 @@ Get-HuduPublicPhotos
 
 ### EXAMPLE 2
 ```
-Get-HuduPublicPhotos -Numeric_Id 4
+Get-HuduPublicPhotos -Id 4
 ```
 
 ### EXAMPLE 3
@@ -71,7 +71,7 @@ Accept wildcard characters: False
 Numeric ID of the public photo to retrieve or download.
 
 ```yaml
-Type: Nullable`1
+Type: Int32
 Parameter Sets: (All)
 Aliases: NumericId
 
