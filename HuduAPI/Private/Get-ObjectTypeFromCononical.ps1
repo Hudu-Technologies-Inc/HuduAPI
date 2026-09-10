@@ -3,20 +3,138 @@ function Get-ObjectTypeFromCononical {
     if ([string]::IsNullOrWhiteSpace($inputData)) { return $null }
 
         if (-not $(get-variable -name 'script:ObjectTypeLookup' -scope 'script' -erroraction silentlycontinue)) {
-            $script:ObjectTypeMap = [ordered]@{ # German, French, Italian, Spanish
-                Article       = @('article','articles','kb','knowledgebase', 'artikel', 'article', 'articolo', 'artículo')
-                Asset         = @('asset','assets', 'anlage','objekt', 'actif', 'bene', 'activo')
-                AssetPassword = @('assetpassword','asset_password','password', 'passwort', 'motdepasse', 'passwords', 'contraseña')
-                Company       = @('company','companies', 'firma', 'entreprise', 'azienda', 'empresa')
-                IpAddress     = @('ipaddress', 'ipaddresses','ip_address','ip', 'ipadresse', 'adresseip', 'indirizzoip', 'direccionip')
-                Network       = @('network', 'networks', 'netzwerk', 'réseau', 'rete', 'red')
-                Photo         = @('photo', 'photos', 'foto', 'fotos', 'photograph', 'photographie', 'fotografía')
-                PublicPhoto   = @('publicphoto', 'public_photo', 'publicfoto', 'publicphotograph', 'publicphotographie', 'publicfotografía')
-                Procedure     = @('procedure', 'procedures', 'process', 'verfahren', 'procédure', 'procedura', 'procedimiento')
-                RackStorage   = @('rackstorage','rack_storage','rack','rackstorages', 'rack', 'armoire')
-                Vlan          = @('vlan','vlans', 'vlan')
-                VlanZone      = @('vlanzone','vlan_zone','zone', 'zonevlan', 'zonen', 'zonevlan','zone_vlan','zone','zones', 'zonalan','zona_vlan','zona','zonas')
-                Website       = @('website', 'webseite', 'site', 'sito','siti','sito_web','sitio', 'webseiten','internetseite','internetseiten','sitios','pagina_web','página_web' )
+            $script:ObjectTypeMap = [ordered]@{
+                # English, German, French, Italian, Spanish, Portuguese, Dutch, Polish
+
+                Article = @('article','articles', 'kb','kbs', 'knowledgebase','knowledgebases', 'knowledge_base','knowledge_bases', 'knowledgearticle','knowledgearticles', 'knowledge_article','knowledge_articles', 
+                    'artikel', 'wissensartikel', 'wissensdatenbank','wissensdatenbanken',
+                    'article','articles', 'base_de_connaissances','bases_de_connaissances', 'article_de_connaissance','articles_de_connaissance',
+                    'articolo','articoli', 'base_di_conoscenza','basi_di_conoscenza', 'articolo_di_conoscenza','articoli_di_conoscenza',
+                    'artículo','artículos', 'articulo','articulos', 'base_de_conocimiento','bases_de_conocimiento', 'artículo_de_conocimiento','artículos_de_conocimiento', 'articulo_de_conocimiento','articulos_de_conocimiento',
+                    'artigo','artigos', 'base_de_conhecimento','bases_de_conhecimento', 'artigo_de_conhecimento','artigos_de_conhecimento',
+                    'artikel','artikelen', 'kennisbank','kennisbanken', 'kennisartikel','kennisartikelen',
+                    'artykuł','artykuły', 'artykul','artykuly', 'baza_wiedzy','bazy_wiedzy', 'artykuł_bazy_wiedzy','artykuły_bazy_wiedzy', 'artykul_bazy_wiedzy','artykuly_bazy_wiedzy',
+                )
+
+                Asset = @('asset','assets', 'device','devices', 'equipment', 'hardware',
+                    'anlage','anlagen', 'objekt','objekte', 'gerät','geräte', 'geraet','geraete', 'ausrüstung','ausruestung',
+                    'actif','actifs', 'équipement','équipements', 'equipement','equipements', 'matériel','matériels', 'materiel','materiels',
+                    'bene','beni', 'risorsa','risorse', 'dispositivo','dispositivi', 'apparecchiatura','apparecchiature',
+                    'activo','activos', 'recurso','recursos', 'dispositivo','dispositivos', 'equipo','equipos',
+                    'ativo','ativos', 'recurso','recursos', 'dispositivo','dispositivos', 'equipamento','equipamentos',
+                    'asset','assets', 'bedrijfsmiddel','bedrijfsmiddelen', 'apparaat','apparaten', 'toestel','toestellen', 'apparatuur',
+                    'zasób','zasoby', 'zasob', 'urządzenie','urządzenia', 'urzadzenie','urzadzenia', 'sprzęt','sprzet'
+                )
+
+                AssetPassword = @('assetpassword','assetpasswords', 'asset_password','asset_passwords', 'password','passwords', 'credential','credentials', 'assetcredential','assetcredentials', 'asset_credential','asset_credentials',
+                    'assetpasswort','assetpasswörter','assetpasswoerter', 'passwort','passwörter','passwoerter', 'kennwort','kennwörter','kennwoerter', 'zugangsdaten',
+                    'motdepasse','motsdepasse', 'mot_de_passe','mots_de_passe', 'mot_de_passe_actif','mots_de_passe_actif',
+                    'password', 'password_asset', 'password_risorsa', 'credenziale','credenziali',
+                    'contraseña','contraseñas', 'contrasena','contrasenas', 'clave','claves', 'credencial','credenciales', 'contraseña_de_activo','contraseñas_de_activo', 'contrasena_de_activo','contrasenas_de_activo',
+                    'senha','senhas', 'palavra_passe','palavras_passe', 'credencial','credenciais', 'senha_de_ativo','senhas_de_ativo',
+                    'wachtwoord','wachtwoorden', 'assetwachtwoord','assetwachtwoorden', 'inloggegevens',
+                    'hasło','hasła', 'haslo','hasla', 'hasło_zasobu','hasła_zasobu', 'haslo_zasobu','hasla_zasobu', 'dane_logowania'
+                )
+
+                Company = @('company','companies', 'organization','organizations', 'organisation','organisations', 'org','orgs', 'business','businesses', 'client','clients', 'customer','customers',
+                    'firma','firmen', 'unternehmen', 'organisation','organisationen', 'gesellschaft','gesellschaften', 'kunde','kunden',
+                    'entreprise','entreprises', 'société','sociétés', 'societe','societes', 'compagnie','compagnies', 'organisation','organisations', 'client','clients',
+                    'azienda','aziende', 'impresa','imprese', 'società','societa', 'organizzazione','organizzazioni', 'cliente','clienti',
+                    'empresa','empresas', 'compañía','compañías', 'compania','companias', 'organización','organizaciones', 'organizacion','organizaciones', 'sociedad','sociedades', 'cliente','clientes',
+                    'empresa','empresas', 'companhia','companhias', 'organização','organizações', 'organizacao','organizacoes', 'sociedade','sociedades', 'cliente','clientes',
+                    'bedrijf','bedrijven', 'onderneming','ondernemingen', 'organisatie','organisaties', 'firma',"firma's", 'klant','klanten',
+                    'firma','firmy', 'przedsiębiorstwo','przedsiębiorstwa', 'przedsiebiorstwo','przedsiebiorstwa', 'organizacja','organizacje', 'spółka','spółki', 'spolka','spolki', 'klient','klienci'
+                )
+
+                IpAddress = @('ipaddress','ipaddresses', 'ip_address','ip_addresses', 'ip','ips', 'ipaddr','ipaddrs', 'ipam',
+                    'ipadresse','ipadressen', 'ip_adresse','ip_adressen',
+                    'adresseip','adressesip', 'adresse_ip','adresses_ip',
+                    'indirizzoip','indirizziip', 'indirizzo_ip','indirizzi_ip',
+                    'direccionip','direccionesip', 'direccion_ip','direcciones_ip', 'dirección_ip','direcciones_ip',
+                    'enderecoip','enderecosip', 'endereco_ip','enderecos_ip', 'endereço_ip','endereços_ip',
+                    'ipadres','ipadressen', 'ip_adres','ip_adressen',
+                    'adres_ip','adresy_ip', 'adresip','adresyip'
+                )
+
+                Network = @('network','networks', 'lan','lans',
+                    'netzwerk','netzwerke', 'netz','netze',
+                    'réseau','réseaux', 'reseau','reseaux',
+                    'rete','reti',
+                    'red','redes',
+                    'rede','redes',
+                    'netwerk','netwerken'
+                )
+
+                Photo = @('photo','photos', 'photograph','photographs', 'image','images', 'picture','pictures',
+                    'foto','fotos', 'photo','photos', 'fotografie','fotografien', 'bild','bilder',
+                    'photo','photos', 'photographie','photographies', 'image','images',
+                    'foto', 'fotografia','fotografie', 'immagine','immagini',
+                    'foto','fotos', 'fotografía','fotografías', 'fotografia','fotografias', 'imagen','imágenes','imagenes',
+                    'foto','fotos', 'fotografia','fotografias', 'imagem','imagens',
+                    'foto',"foto's", 'afbeelding','afbeeldingen', 'beeld','beelden',
+                    'zdjęcie','zdjęcia', 'zdjecie','zdjecia', 'fotografia','fotografie', 'obraz','obrazy'
+                )
+
+                PublicPhoto = @('publicphoto','publicphotos', 'public_photo','public_photos', 'publicphotograph','publicphotographs', 'public_photograph','public_photographs', 'publicimage','publicimages', 'public_image','public_images', 'publicpicture','publicpictures',
+                    'publicfoto', 'öffentliches_foto','öffentliche_fotos', 'oeffentliches_foto','oeffentliche_fotos', 'öffentliches_bild','öffentliche_bilder', 'oeffentliches_bild','oeffentliche_bilder',
+                    'publicphotographie', 'photo_publique','photos_publiques', 'photographie_publique','photographies_publiques', 'image_publique','images_publiques',
+                    'foto_pubblica','foto_pubbliche', 'fotografia_pubblica','fotografie_pubbliche', 'immagine_pubblica','immagini_pubbliche',
+                    'publicfotografía', 'publicfotografia', 'foto_pública','fotos_públicas', 'foto_publica','fotos_publicas', 'fotografía_pública','fotografías_públicas', 'fotografia_publica','fotografias_publicas', 'imagen_pública','imágenes_públicas', 'imagen_publica','imagenes_publicas',
+                    'foto_pública','fotos_públicas', 'foto_publica','fotos_publicas', 'imagem_pública','imagens_públicas', 'imagem_publica','imagens_publicas',
+                    'openbare_foto',"openbare_foto's", 'publieke_foto',"publieke_foto's", 'openbare_afbeelding','openbare_afbeeldingen',
+                    'publiczne_zdjęcie','publiczne_zdjęcia', 'publiczne_zdjecie','publiczne_zdjecia', 'publiczna_fotografia','publiczne_fotografie'
+                )
+
+                Procedure = @('procedure','procedures', 'process','processes', 'checklist','checklists', 'tasklist','tasklists', 'task_list','task_lists', 'workflow','workflows', 'runbook','runbooks', 'sop','sops', 'standard_operating_procedure','standard_operating_procedures',
+                    'verfahren', 'prozedur','prozeduren', 'prozess','prozesse', 'checkliste','checklisten', 'arbeitsanweisung','arbeitsanweisungen', 'ablauf','abläufe','ablaeufe',
+                    'procédure','procédures', 'procedure','procedures', 'processus', 'liste_de_contrôle','listes_de_contrôle', 'liste_de_controle','listes_de_controle', 'mode_opératoire','modes_opératoires', 'mode_operatoire','modes_operatoires', 'flux_de_travail',
+                    'procedura','procedure', 'processo','processi', 'lista_di_controllo','liste_di_controllo', 'flusso_di_lavoro','flussi_di_lavoro', 'istruzione','istruzioni',
+                    'procedimiento','procedimientos', 'proceso','procesos', 'lista_de_verificación','listas_de_verificación', 'lista_de_verificacion','listas_de_verificacion', 'lista_de_comprobación','listas_de_comprobación', 'lista_de_comprobacion','listas_de_comprobacion', 'flujo_de_trabajo','flujos_de_trabajo',
+                    'procedimento','procedimentos', 'processo','processos', 'lista_de_verificação','listas_de_verificação', 'lista_de_verificacao','listas_de_verificacao', 'fluxo_de_trabalho','fluxos_de_trabalho', 'instrução','instruções', 'instrucao','instrucoes',
+                    'procedure','procedures', 'proces','processen', 'checklist','checklists', 'werkinstructie','werkinstructies', 'werkproces','werkprocessen',
+                    'procedura','procedury', 'proces','procesy', 'lista_kontrolna','listy_kontrolne', 'instrukcja','instrukcje', 'przepływ_pracy','przeplyw_pracy'
+                )
+
+                RackStorage = @('rackstorage','rackstorages', 'rack_storage','rack_storages', 'rack','racks', 'serverrack','serverracks', 'server_rack','server_racks', 'cabinet','cabinets', 'servercabinet','servercabinets', 'server_cabinet','server_cabinets',
+                    'rack','racks', 'serverrack','serverracks', 'serverschrank','serverschränke','serverschraenke', 'schrank','schränke','schraenke',
+                    'rack','racks', 'baie','baies', 'baie_informatique','baies_informatiques', 'armoire','armoires', 'armoire_informatique','armoires_informatiques',
+                    'rack','racks', 'armadio','armadi', 'armadio_rack','armadi_rack', 'armadio_server','armadi_server',
+                    'rack','racks', 'gabinete','gabinetes', 'armario','armarios', 'rack_de_servidor','racks_de_servidor', 'rack_de_servidores','racks_de_servidores',
+                    'rack','racks', 'gabinete','gabinetes', 'armário','armários', 'armario','armarios', 'rack_de_servidor','racks_de_servidor',
+                    'rack','racks', 'serverrack','serverracks', 'kast','kasten', 'serverkast','serverkasten',
+                    'rack','racki', 'szafa','szafy', 'szafa_rackowa','szafy_rackowe', 'szafa_serwerowa','szafy_serwerowe'
+                )
+
+                Vlan = @(
+                    'vlan','vlans', 'virtual_lan','virtual_lans', 'virtual_local_area_network','virtual_local_area_networks',
+                    'virtuelles_lan','virtuelle_lans',
+                    'réseau_local_virtuel','réseaux_locaux_virtuels', 'reseau_local_virtuel','reseaux_locaux_virtuels',
+                    'rete_locale_virtuale','reti_locali_virtuali',
+                    'red_local_virtual','redes_locales_virtuales',
+                    'rede_local_virtual','redes_locais_virtuais',
+                    'virtueel_lan','virtuele_lans',
+                    'wirtualna_sieć_lokalna','wirtualne_sieci_lokalne', 'wirtualna_siec_lokalna'
+                )
+
+                VlanZone = @('vlanzone','vlanzones', 'vlan_zone','vlan_zones', 'zone','zones', 'network_zone','network_zones',
+                    'vlan_zone','vlan_zonen', 'zone','zonen', 'netzwerkzone','netzwerkzonen',
+                    'zone_vlan','zones_vlan', 'zone','zones', 'zone_réseau','zones_réseau', 'zone_reseau','zones_reseau',
+                    'zona_vlan','zone_vlan', 'zona','zone', 'zona_di_rete','zone_di_rete',
+                    'zona_vlan','zonas_vlan', 'zona','zonas', 'zona_de_red','zonas_de_red',
+                    'zona_vlan','zonas_vlan', 'zona','zonas', 'zona_de_rede','zonas_de_rede',
+                    'vlan_zone','vlan_zones', 'zone','zones', 'netwerkzone','netwerkzones',
+                    'strefa_vlan','strefy_vlan', 'strefa','strefy', 'strefa_sieci','strefy_sieci'
+                )
+
+                Website = @('website','websites', 'web_site','web_sites', 'site','sites', 'webpage','webpages', 'web_page','web_pages', 'internet_site','internet_sites',
+                    'webseite','webseiten', 'website','websites', 'internetseite','internetseiten', 'webauftritt','webauftritte',
+                    'site','sites', 'site_web','sites_web', 'site_internet','sites_internet', 'page_web','pages_web',
+                    'sito','siti', 'sito_web','siti_web', 'sito_internet','siti_internet', 'pagina_web','pagine_web',
+                    'sitio','sitios', 'sitio_web','sitios_web', 'sitio_internet','sitios_internet', 'página_web','páginas_web', 'pagina_web','paginas_web',
+                    'site','sites', 'sítio','sítios', 'sitio','sitios', 'site_web','sites_web', 'sítio_web','sítios_web', 'sitio_web','sitios_web', 'página_web','páginas_web', 'pagina_web','paginas_web',
+                    'website','websites', 'site','sites', 'webpagina',"webpagina's", 'internetsite','internetsites',
+                    'strona','strony', 'strona_internetowa','strony_internetowe', 'witryna','witryny', 'witryna_internetowa','witryny_internetowe'
+                )
             }
             $script:ObjectTypeLookup = @{}
             foreach ($canonical in $script:ObjectTypeMap.Keys) {

@@ -10,7 +10,8 @@ function Get-HuduFeatureAvailability {
         [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [Alias('corefeature')]
         [ValidateScript({Assert-AllowedObjectType -InputType $_ -AllowedCanonicals @(
-                "VlanZone", "Vlan", "Procedure", "Website", "RackStorage", "Network", "IpAddress", "Article", "Company", "Asset", "AssetPassword"
+                "VlanZone", "Vlan", "Procedure", "Website", "RackStorage", "Network", "IpAddress", "Article", "Company", "Asset", "AssetPassword",
+                "Photo","PublicPhoto","Racks"
         )})][String]$Core_Feature
     )
 
