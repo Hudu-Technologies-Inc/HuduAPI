@@ -42,6 +42,6 @@ function Get-ObjectTypeFromCononical {
             return $lookup[$k]
         }
         $allowed = ($script:ObjectTypeMap.Keys -join ', ')
-        throw "Invalid flaggable type '$raw'. Allowed: $allowed"
+        throw "Invalid core object type '$raw'. Allowed: $allowed"
 }
 
