@@ -23,15 +23,14 @@ function Get-ObjectTypeFromCononical {
             foreach ($canonical in $script:ObjectTypeMap.Keys) {
                 # include canonical itself as accepted input
                 $all = @($canonical) + $script:ObjectTypeMap[$canonical]
-
                 foreach ($v in $all) {
                     if ([string]::IsNullOrWhiteSpace($v)) { continue }
                     $k = ($v -as [string]).Trim().ToLowerInvariant()
                     $k = $k -replace '[-\s]+','_'      # treat dashes/spaces like underscores
                     $script:ObjectTypeLookup[$k] = $canonical
                 }
-            }            
-        }               
+            }
+        }
 
         $raw = ([string]$inputData).Trim()
         if ($raw.Length -eq 0) { return $raw }

@@ -6,6 +6,18 @@ https://github.com/lwhitelock/HuduAPI/releases
 
     install-module HuduAPI
 
+## Languages
+
+Colors and Object types can be referred to using common terms in the following languages
+    - English
+    - German
+    - French
+    - Italian
+    - Spanish
+    - Portuguese
+    - Dutch
+    - Polish
+
 ## Implemented Commands
     Copy-HuduProcedure
     Get-HuduActivityLogs
