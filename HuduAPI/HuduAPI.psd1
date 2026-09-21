@@ -84,6 +84,7 @@
     'Get-HuduCompanyFolders',
     'Get-HuduFolderCleanName',
     'Get-HuduExpirations',
+    'Get-HuduFeatureAvailability',
     'Get-HuduFlags',
     'Get-HuduFlagTypes',
     'Get-HuduExports',

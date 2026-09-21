@@ -6,7 +6,63 @@ https://github.com/lwhitelock/HuduAPI/releases
 
     install-module HuduAPI
 
+## Languages
+
+Colors and Object types can be referred to using common terms in the following languages
+    - English
+    - German
+    - French
+    - Italian
+    - Spanish
+    - Portuguese
+    - Dutch
+    - Polish
+
+## Checking if Core Feature is On/Off with Get-HuduFeatureAvailability
+
+Get-HuduFeatureAvailability returns a boolean for every object type except articles. (for articles, it returns a PSCustomObject Like Below).
+```
+Get-HuduFeatureAvailability -Core_Feature articles
+CompanyKB CentralKB
+--------- ---------
+     True     False
+Get-HuduFeatureAvailability -Core_Feature wissensartikel
+CompanyKB CentralKB
+--------- ---------
+    False      True
+Get-HuduFeatureAvailability -Core_Feature articoli
+CompanyKB CentralKB
+--------- ---------
+    False     False
+Get-HuduFeatureAvailability -Core_Feature artículo
+CompanyKB CentralKB
+--------- ---------
+     True      True
+```
+
+All other core object types return True/False
+
+```
+Get-HuduFeatureAvailability -Core_Feature photo
+False
+Get-HuduFeatureAvailability -Core_Feature photograph
+True
+Get-HuduFeatureAvailability -Core_Feature processes
+False
+Get-HuduFeatureAvailability -Core_Feature prozedur
+True
+Get-HuduFeatureAvailability -Core_Feature assets
+False
+Get-HuduFeatureAvailability -Core_Feature ausruestung
+True
+Get-HuduFeatureAvailability -Core_Feature passwords
+True
+Get-HuduFeatureAvailability -Core_Feature credenziali
+False
+```
+
 ## Implemented Commands
+	Get-HuduFeatureAvailability
     Copy-HuduProcedure
     Get-HuduActivityLogs
     Get-HuduAPIKey
