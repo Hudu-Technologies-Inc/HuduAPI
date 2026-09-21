@@ -45,6 +45,12 @@ function Get-HuduFeatureAvailability {
         if (Test-HuduFeatureDisabledMessage -InputObject $_) {
             return $false
         }
+
+        if ($ObjectType -eq 'AssetPassword' -and (Test-HuduFeatureAvailabilityBadCredentials -InputObject $_)) {
+            Write-Verbose 'Password feature availability probe returned Bad credentials. Treating passwords as unavailable for this API key/instance.'
+            return $false
+        }
+
         throw
     }
 }
@@ -56,13 +62,18 @@ function Invoke-HuduFeatureAvailabilityProbe {
         [ValidateNotNullOrEmpty()]
         [string]$Resource,
 
-        [hashtable]$Params = @{}
+        [hashtable]$Params = @{},
+
+        [ValidateSet('GET', 'POST', 'DELETE')]
+        [string]$Method = 'GET',
+
+        [string]$Body
     )
 
     $ParamCollection = [System.Web.HttpUtility]::ParseQueryString([String]::Empty)
     $QueryParams = @{}
     
-    if ($Resource -notlike '/api/v1/ip_addresses*') { # ip addresses / ipam not paginated
+    if ($Method -eq 'GET' -and $Resource -notlike '/api/v1/ip_addresses*') { # ip addresses / ipam not paginated
         $QueryParams.page = '1'
         $QueryParams.page_size = '1'
     }
@@ -78,7 +89,7 @@ function Invoke-HuduFeatureAvailabilityProbe {
     $UriBuilder = [System.UriBuilder]('{0}{1}' -f (Get-HuduBaseURL), $Resource)
     $UriBuilder.Query = $ParamCollection.ToString()
 
-    Invoke-HuduFeatureAvailabilityRequest -Method GET -Uri $UriBuilder.Uri
+    Invoke-HuduFeatureAvailabilityRequest -Method $Method -Uri $UriBuilder.Uri -Body $Body
 }
 
 function Invoke-HuduFeatureAvailabilityRequest {
@@ -124,14 +135,14 @@ function Test-HuduArticleFeatureAvailability {
     [CmdletBinding()]
     Param ()
 
-    $CentralAvailable = Test-HuduFeatureAvailabilityProbeResult -Resource '/api/v1/articles' -TreatServerErrorAsUnavailable
+    $CentralAvailable = Test-HuduArticleScopeFeatureAvailability -TreatServerErrorAsUnavailable
 
     $CompanyId = Get-HuduFeatureAvailabilityProbeCompanyId
     if (-not $CompanyId) {
         $ProbeCompany = $null
         try {
             $ProbeCompany = New-HuduFeatureAvailabilityProbeCompany
-            $companyArticleAvailable = Test-HuduFeatureAvailabilityProbeResult -Resource '/api/v1/articles' -Params @{ company_id = $ProbeCompany.id } -TreatServerErrorAsUnavailable
+            $companyArticleAvailable = Test-HuduArticleScopeFeatureAvailability -Params @{ company_id = $ProbeCompany.id } -TreatServerErrorAsUnavailable
         } catch {
             $companyArticleAvailable = $false
         } finally {
@@ -140,12 +151,91 @@ function Test-HuduArticleFeatureAvailability {
             }
         }
     } else {
-        $companyArticleAvailable = Test-HuduFeatureAvailabilityProbeResult -Resource '/api/v1/articles' -Params @{ company_id = $CompanyId } -TreatServerErrorAsUnavailable
+        $companyArticleAvailable = Test-HuduArticleScopeFeatureAvailability -Params @{ company_id = $CompanyId } -TreatServerErrorAsUnavailable
     }
 
     return [PSCustomObject]@{
         CompanyKB = $companyArticleAvailable
         CentralKB = $CentralAvailable
+    }
+}
+
+function Test-HuduArticleScopeFeatureAvailability {
+    [CmdletBinding()]
+    Param (
+        [hashtable]$Params = @{},
+
+        [switch]$TreatServerErrorAsUnavailable
+    )
+
+    Test-HuduArticleCreateProbeResult -Params $Params -TreatServerErrorAsUnavailable:$TreatServerErrorAsUnavailable
+}
+
+function Test-HuduArticleCreateProbeResult {
+    [CmdletBinding()]
+    Param (
+        [hashtable]$Params = @{},
+
+        [switch]$TreatServerErrorAsUnavailable
+    )
+
+    $Article = [ordered]@{
+        article = [ordered]@{
+            name      = 'hudu-feature-availability-probe'
+            content   = 'Temporary article probe created by Get-HuduFeatureAvailability.'
+            folder_id = -1
+        }
+    }
+
+    if ($Params.ContainsKey('company_id')) {
+        $Article.article.Add('company_id', $Params.company_id)
+    }
+
+    try {
+        $Result = Invoke-HuduFeatureAvailabilityProbe -Resource '/api/v1/articles' -Method POST -Body ($Article | ConvertTo-Json -Depth 10)
+        Remove-HuduFeatureAvailabilityProbeArticle -InputObject $Result
+        return -not (Test-HuduFeatureDisabledMessage -InputObject $Result)
+    } catch {
+        if (Test-HuduFeatureDisabledMessage -InputObject $_) {
+            Write-Verbose 'Article create probe returned a disabled-feature response.'
+            return $false
+        }
+
+        if (Test-HuduFeatureAvailabilityValidationError -InputObject $_) {
+            Write-Verbose 'Article create probe reached validation, so the article feature is available.'
+            return $true
+        }
+
+        if ($TreatServerErrorAsUnavailable.IsPresent -and (Test-HuduFeatureAvailabilityServerError -InputObject $_)) {
+            Write-Verbose ("Article create probe returned a server error response: {0}" -f (Get-HuduFeatureAvailabilityDetails -InputObject $_))
+            return $false
+        }
+
+        throw
+    }
+}
+
+function Remove-HuduFeatureAvailabilityProbeArticle {
+    [CmdletBinding()]
+    Param (
+        [AllowNull()]
+        [object]$InputObject
+    )
+
+    if ($null -eq $InputObject) {
+        return
+    }
+
+    $Article = $InputObject.article ?? $InputObject
+    if (-not $Article -or -not $Article.id) {
+        return
+    }
+
+    $Uri = [System.Uri]('{0}/api/v1/articles/{1}' -f (Get-HuduBaseURL).TrimEnd('/'), $Article.id)
+    try {
+        $null = Invoke-HuduFeatureAvailabilityRequest -Method DELETE -Uri $Uri
+    } catch {
+        Write-Warning "Failed to delete temporary Hudu feature availability probe article id $($Article.id). Delete it manually. $($_.Exception.Message)"
     }
 }
 
@@ -248,7 +338,9 @@ function Test-HuduFeatureDisabledMessage {
     return (
         $Details -ilike '*disabled for this instance*' -or
         $Details -imatch '(?m)"error"\s*:\s*"[^"]+\s+is disabled"' -or
-        $Details -imatch '(?m)\b[\w\s/-]+\s+is disabled\b'
+        $Details -imatch '(?m)\b[\w\s/-]+\s+is disabled\b' -or
+        $Details -imatch '(?m)\b[\w\s/-]+\s+(is\s+)?turned off\b' -or
+        $Details -imatch '(?m)\b[\w\s/-]+\s+is not enabled\b'
     )
 }
 
@@ -265,6 +357,39 @@ function Test-HuduFeatureAvailabilityServerError {
         $Details -ilike '*InternalServerError*' -or
         $Details -ilike '*Response status code does not indicate success: 500*'
     )
+}
+
+function Test-HuduFeatureAvailabilityValidationError {
+    [CmdletBinding()]
+    Param (
+        [AllowNull()]
+        [object]$InputObject
+    )
+
+    $Details = Get-HuduFeatureAvailabilityDetails -InputObject $InputObject
+    return (
+        $Details -ilike '*422*' -or
+        $Details -ilike '*Unprocessable Entity*' -or
+        $Details -ilike '*unprocessable_entity*' -or
+        $Details -ilike '*validation*' -or
+        $Details -ilike '*can''t be blank*' -or
+        $Details -ilike '*cannot be blank*' -or
+        $Details -ilike '*is too short*' -or
+        $Details -ilike '*param is missing*' -or
+        $Details -ilike '*value is empty*' -or
+        $Details -ilike '*required parameter*'
+    )
+}
+
+function Test-HuduFeatureAvailabilityBadCredentials {
+    [CmdletBinding()]
+    Param (
+        [AllowNull()]
+        [object]$InputObject
+    )
+
+    $Details = Get-HuduFeatureAvailabilityDetails -InputObject $InputObject
+    return ($Details -imatch '(?m)\bBad credentials\b')
 }
 
 function Get-HuduFeatureAvailabilityDetails {
