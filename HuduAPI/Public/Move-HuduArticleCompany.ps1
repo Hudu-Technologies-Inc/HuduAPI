@@ -6,14 +6,11 @@ function Move-HuduArticleCompany {
     .DESCRIPTION
     Uses Hudu API to update an article's company_id via PUT /api/v1/articles/{id}
 
-    .PARAMETER HuduBaseURL
-    Optional Hudu base URL. When provided, it is applied with New-HuduBaseURL before the request.
-
     .PARAMETER ArticleId
     Id of the article to move
 
     .PARAMETER CompanyId
-    Destination company id
+    Destination company id. Use $null to move the article to the central Knowledge Base.
 
     .PARAMETER FolderId
     Optional destination-company folder id. When omitted, the article is moved
@@ -23,35 +20,34 @@ function Move-HuduArticleCompany {
     Move-HuduArticleCompany -ArticleId 1 -CompanyId 20
 
     .EXAMPLE
-    Move-HuduArticleCompany -HuduBaseURL https://demo.huducloud.com -ArticleId 1 -CompanyId 20
+    Move-HuduArticleCompany -ArticleId 1 -CompanyId $null # moves to central kb
 
     .EXAMPLE
     Move-HuduArticleCompany -ArticleId 1 -CompanyId 20 -FolderId 5
     #>
     [CmdletBinding(SupportsShouldProcess)]
     Param (
-        [Parameter()]
-        [Alias('BaseURL')]
-        [String]$HuduBaseURL,
 
         [Alias('article_id', 'id')]
         [Parameter(Mandatory = $true)]
         [ValidateRange(1, [int]::MaxValue)]
         [Int]$ArticleId,
 
-        [Alias('company_id')]
+        [Alias('company_id','new_company_id','destination_company_id','target_company_id')]
         [Parameter(Mandatory = $true)]
-        [ValidateRange(1, [int]::MaxValue)]
-        [Int]$CompanyId,
+        [AllowNull()]
+        [Nullable[int]]$CompanyId,
 
         [Alias('folder_id')]
         [ValidateRange(1, [int]::MaxValue)]
         [Nullable[int]]$FolderId
     )
 
-    if ($HuduBaseURL) {
-        New-HuduBaseURL -BaseURL $HuduBaseURL
+    if ($null -ne $CompanyId -and $CompanyId -lt 1) {
+        throw "CompanyId must be a positive integer, or `$null for the central Knowledge Base."
     }
+
+    $DestinationDescription = if ($null -eq $CompanyId) { 'central Knowledge Base' } else { "company $CompanyId" }
 
     $DestinationFolderId = $null
     if ($PSBoundParameters.ContainsKey('FolderId')) {
@@ -59,8 +55,9 @@ function Move-HuduArticleCompany {
         if (-not $Folder) {
             throw "Destination folder $FolderId could not be found."
         }
-        if ([int]$Folder.company_id -ne $CompanyId) {
-            throw "Destination folder $FolderId does not belong to company $CompanyId."
+        $FolderCompanyId = if ($null -eq $Folder.company_id) { $null } else { [int]$Folder.company_id }
+        if ($FolderCompanyId -ne $CompanyId) {
+            throw "Destination folder $FolderId does not belong to $DestinationDescription."
         }
         $DestinationFolderId = $FolderId
     }
@@ -76,7 +73,7 @@ function Move-HuduArticleCompany {
     }
     $JSON = $Article | ConvertTo-Json -Depth 10
 
-    if ($PSCmdlet.ShouldProcess("Article ID: $ArticleId", "Move to company $CompanyId")) {
+    if ($PSCmdlet.ShouldProcess("Article ID: $ArticleId", "Move to $DestinationDescription")) {
         $Result = Invoke-HuduRequest -Method put -Resource "/api/v1/articles/$ArticleId" -Body $JSON
 
         # Invoke-HuduRequest returns $null after a failed retry, so verify the
@@ -87,15 +84,16 @@ function Move-HuduArticleCompany {
             $MovedArticle = $VerificationResponse
         }
 
-        if (-not $MovedArticle -or [int]$MovedArticle.company_id -ne $CompanyId) {
-            throw "Article $ArticleId did not move to company $CompanyId."
+        $MovedCompanyId = if ($MovedArticle -and $null -eq $MovedArticle.company_id) { $null } elseif ($MovedArticle) { [int]$MovedArticle.company_id }
+        if (-not $MovedArticle -or $MovedCompanyId -ne $CompanyId) {
+            throw "Article $ArticleId did not move to $DestinationDescription."
         }
         if ($null -eq $DestinationFolderId) {
             if ($null -ne $MovedArticle.folder_id) {
-                throw "Article $ArticleId moved to company $CompanyId but folder_id was not cleared."
+                throw "Article $ArticleId moved to $DestinationDescription but folder_id was not cleared."
             }
         } elseif ([int]$MovedArticle.folder_id -ne $DestinationFolderId) {
-            throw "Article $ArticleId moved to company $CompanyId but not to folder $DestinationFolderId."
+            throw "Article $ArticleId moved to $DestinationDescription but not to folder $DestinationFolderId."
         }
 
         if ($null -ne $Result) {

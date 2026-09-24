@@ -10,9 +10,6 @@ function Move-HuduAssetCompany {
     currently owns it. That id is looked up from the asset itself; CompanyId is
     the destination and is sent in the body.
 
-    .PARAMETER HuduBaseURL
-    Optional Hudu base URL. When provided, it is applied with New-HuduBaseURL before the request.
-
     .PARAMETER AssetId
     Id of the asset to move
 
@@ -23,31 +20,22 @@ function Move-HuduAssetCompany {
     Move-HuduAssetCompany -AssetId 1 -CompanyId 20
 
     .EXAMPLE
-    Move-HuduAssetCompany -HuduBaseURL https://demo.huducloud.com -AssetId 1 -CompanyId 20
+    Move-HuduAssetCompany -AssetId 1 -CompanyId 44
     #>
     [CmdletBinding(SupportsShouldProcess)]
     Param (
-        [Parameter()]
-        [Alias('BaseURL')]
-        [String]$HuduBaseURL,
-
         [Alias('asset_id', 'id')]
         [Parameter(Mandatory = $true)]
         [ValidateRange(1, [int]::MaxValue)]
         [Int]$AssetId,
 
-        [Alias('company_id')]
+        [Alias('company_id','new_company_id','destination_company_id','target_company_id')]
         [Parameter(Mandatory = $true)]
         [ValidateRange(1, [int]::MaxValue)]
         [Int]$CompanyId
     )
 
-    if ($HuduBaseURL) {
-        New-HuduBaseURL -BaseURL $HuduBaseURL
-    }
-
-    # Get-HuduAssets -Id alone queries the collection endpoint, so take the
-    # single match rather than letting an array land in the request URL.
+    # Get-HuduAssets -Id alone queries the collection endpoint, so take the single match rather than letting an array land in the request URL.
     $Object = Get-HuduAssets -Id $AssetId | Select-Object -First 1
     if (-not $Object) {
         throw "A valid asset could not be found to move, please double check the ID and try again"

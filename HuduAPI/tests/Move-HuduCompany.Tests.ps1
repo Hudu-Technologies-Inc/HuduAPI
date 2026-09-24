@@ -90,6 +90,33 @@ Describe 'Move-HuduArticleCompany' {
     }
 }
 
+Describe 'Move-HuduArticleCompany to the central Knowledge Base' {
+
+    BeforeAll {
+        Mock -CommandName Invoke-HuduRequest -ModuleName HuduAPI -MockWith { }
+        Mock -CommandName Get-HuduArticles -ModuleName HuduAPI -MockWith {
+            [pscustomobject]@{
+                article = [pscustomobject]@{
+                    id         = 42
+                    company_id = $null
+                    folder_id  = $null
+                }
+            }
+        }
+    }
+
+    It 'accepts a null company id and sends it as the destination company' {
+        Move-HuduArticleCompany -ArticleId 42 -CompanyId $null -Confirm:$false
+
+        Should -Invoke -CommandName Invoke-HuduRequest -ModuleName HuduAPI -Times 1 -Exactly -ParameterFilter {
+            $RequestArticle = ($Body | ConvertFrom-Json).article
+            $Resource -eq '/api/v1/articles/42' -and
+            $null -eq $RequestArticle.company_id -and
+            $null -eq $RequestArticle.folder_id
+        }
+    }
+}
+
 Describe 'Move-HuduArticleCompany with a destination folder' {
 
     BeforeAll {
