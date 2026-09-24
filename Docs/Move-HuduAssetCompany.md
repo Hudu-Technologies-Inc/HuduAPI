@@ -13,15 +13,17 @@ Move an Asset to a different company
 ## SYNTAX
 
 ```
-Move-HuduAssetCompany [[-HuduBaseURL] <String>] [-AssetId] <Int32> [-CompanyId] <Int32>
- [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
+Move-HuduAssetCompany [-AssetId] <Int32> [-CompanyId] <Int32> [-ProgressAction <ActionPreference>] [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Uses Hudu API to update an asset's company_id via PUT /api/v1/companies/{company_id}/assets/{id}
 
-The company in the URL identifies the asset, so it must be the company that currently owns it.
-That id is looked up from the asset itself; CompanyId is the destination and is sent in the body.
+The company in the URL identifies the asset, so it must be the company that
+currently owns it.
+That id is looked up from the asset itself; CompanyId is
+the destination and is sent in the body.
 
 ## EXAMPLES
 
@@ -32,26 +34,10 @@ Move-HuduAssetCompany -AssetId 1 -CompanyId 20
 
 ### EXAMPLE 2
 ```
-Move-HuduAssetCompany -HuduBaseURL https://demo.huducloud.com -AssetId 1 -CompanyId 20
+Move-HuduAssetCompany -AssetId 1 -CompanyId 44
 ```
 
 ## PARAMETERS
-
-### -HuduBaseURL
-Optional Hudu base URL.
-When provided, it is applied with New-HuduBaseURL before the request.
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: BaseURL
-
-Required: False
-Position: 1
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
 
 ### -AssetId
 Id of the asset to move
@@ -62,7 +48,7 @@ Parameter Sets: (All)
 Aliases: asset_id, id
 
 Required: True
-Position: 2
+Position: 1
 Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -74,10 +60,10 @@ Destination company id
 ```yaml
 Type: Int32
 Parameter Sets: (All)
-Aliases: company_id
+Aliases: company_id, new_company_id, destination_company_id, target_company_id
 
 Required: True
-Position: 3
+Position: 2
 Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
