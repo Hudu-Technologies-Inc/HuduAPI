@@ -118,6 +118,8 @@ function New-HuduAssetLayout {
             'addressdata'       { $field.'field_type' = 'AddressData' }
             'assettag'          { $field.'field_type' = 'AssetTag' }
             'assetlink'         { $field.'field_type' = 'AssetTag' }
+            'divider'           { $field.'field_type' = 'Divider' }
+            'seperator'          { $field.'field_type' = 'Divider' }
             'website'           { $field.'field_type' = 'Website' }
             'link'              { $field.'field_type' = 'Website' }
             'password'          { $field.'field_type' = 'Password' }
