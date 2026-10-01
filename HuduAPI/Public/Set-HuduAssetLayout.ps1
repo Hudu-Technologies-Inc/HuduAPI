@@ -123,6 +123,8 @@ function Set-HuduAssetLayout {
             'website'           { $field.'field_type' = 'Website' }
             'link'              { $field.'field_type' = 'Website' }
             'password'          { $field.'field_type' = 'Password' }
+            'divider'           { $field.'field_type' = 'Divider' }
+            'seperator'          { $field.'field_type' = 'Divider' }
             'confidentialtext'  { $field.'field_type' = 'Password' }
             'listselect' { $field.'field_type' = 'ListSelect' }
             Default { throw "Invalid field type: $($field.'field_type') found in field $($field.name)" }
