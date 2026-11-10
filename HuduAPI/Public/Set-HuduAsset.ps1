@@ -16,7 +16,8 @@ function Set-HuduAsset {
     Asset layout id
 
     .PARAMETER Fields
-    List of fields
+    List of fields. If omitted, the existing custom fields are retained in the update payload.
+    An explicitly supplied empty array is sent as custom_fields: []; an explicit null is sent as JSON null.
 
     .PARAMETER AssetId
     Id of the requested Asset
@@ -103,7 +104,7 @@ function Set-HuduAsset {
             $Asset.asset.primary_manufacturer = $PrimaryManufacturer
         }
     
-        if ($Fields) {
+        if ($PSBoundParameters.ContainsKey('Fields')) {
             $Asset.asset.custom_fields = $Fields
         }
     

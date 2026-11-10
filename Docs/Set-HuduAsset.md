@@ -77,7 +77,8 @@ Accept wildcard characters: False
 ```
 
 ### -Fields
-List of fields
+List of fields. If omitted, the existing custom fields are retained in the update payload.
+An explicitly supplied empty array is sent as `custom_fields: []`; an explicit null is sent as JSON `null`.
 
 ```yaml
 Type: Array
