@@ -6,6 +6,15 @@ https://github.com/lwhitelock/HuduAPI/releases
 
     install-module HuduAPI
 
+## Publishing
+
+Pushing a version tag (for example, `4.1.3`, `v4.1.3`, or `4.1.3-alpha1`)
+triggers the publish workflow. ModuleBuilder builds the module into `Output/HuduAPI`
+and sets its version and prerelease metadata from the tag, removing an optional
+leading `v`. The workflow validates the generated manifest, then publishes to
+PowerShell Gallery using PowerShell's `Publish-Module` command and the repository's
+`PS_GALLERY_KEY` secret. No third-party metadata or publishing actions are required.
+
 ## Languages
 
 Colors and Object types can be referred to using common terms in the following languages
@@ -208,6 +217,7 @@ False
     Set-HuduVLANZone
     Set-HuduRackStorageItem
     Set-HuduRackStorage
+    Set-HuduRequestOption
     Set-HuduVLAN
     Set-HuduVLANZone
     Set-HuduWebsite
