@@ -33,4 +33,4 @@ $config.TestResult.Enabled = $true
 $config.TestResult.OutputPath = [IO.Path]::GetFullPath($ResultsPath)
 $config.TestResult.OutputFormat = 'NUnitXml'
 $result = Invoke-Pester -Configuration $config
-if ($result.FailedCount -gt 0 -or $result.FailedContainersCount -gt 0 -or $result.TotalCount -eq 0) { exit 1 }
+if ($result.FailedCount -gt 0 -or $result.FailedBlocksCount -gt 0 -or $result.FailedContainersCount -gt 0 -or $result.TotalCount -eq 0) { exit 1 }
