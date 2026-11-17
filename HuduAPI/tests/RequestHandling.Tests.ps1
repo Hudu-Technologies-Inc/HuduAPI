@@ -3,7 +3,7 @@ BeforeAll {
     foreach ($file in @(
         'Private\Invoke-HuduRequest.ps1'
         'Private\Write-ErrorObject.ps1'
-        'Public\Get-HuduAPIKey.ps1'
+        'Public\Get-HuduApiKey.ps1'
         'Public\Get-HuduBaseURL.ps1'
         'Public\Get-HuduAssets.ps1'
         'Public\New-HuduCustomHeaders.ps1'
