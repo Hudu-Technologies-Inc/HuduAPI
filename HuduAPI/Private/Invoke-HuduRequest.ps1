@@ -76,9 +76,14 @@ function Invoke-HuduRequest {
     }
     Write-Verbose ( '{0} [{1}]' -f $Method, $Uri )
 
-    # One session for every request, so calls reuse the connection instead of a new TCP and TLS handshake each time
-    if (-not $Script:Int_HuduWebSession) { $Script:Int_HuduWebSession = [Microsoft.PowerShell.Commands.WebRequestSession]::new() }
+    # Reuse connections while keeping each call's headers and cookies independent.
+    if (-not $Script:Int_HuduWebSession) {
+        $Script:Int_HuduWebSession = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+        $Script:Int_HuduDefaultUserAgent = $Script:Int_HuduWebSession.UserAgent
+    }
     $Script:Int_HuduWebSession.Headers.Clear()
+    $Script:Int_HuduWebSession.UserAgent = $Script:Int_HuduDefaultUserAgent
+    Clear-HuduRequestCookies -Session $Script:Int_HuduWebSession
 
     $RestMethod = @{
         Method      = $Method
@@ -116,12 +121,6 @@ function Invoke-HuduRequest {
         } else {
             if (($script:SKIP_HAPI_ERROR_RETRY -and $true -eq $script:SKIP_HAPI_ERROR_RETRY) -or
                 ($script:SKIP_HAPI_POST_RETRY -and $Method -eq 'POST')) {
-                Write-APIErrorObject -name "$($resource ?? 'general')-$($method ?? 'unknown')" -ErrorObject @{
-                    exception = $_
-                    request = "$Method $Uri"
-                    resolution = 'Retry skipped by request options.'
-                }
-                Write-Error "$_"
                 return $null
             }
             Write-APIErrorObject -name "$($resource ?? 'general')-$($method ?? 'unknown')" -ErrorObject @{
@@ -132,6 +131,8 @@ function Invoke-HuduRequest {
             Start-Sleep -Seconds ($script:HAPI_RETRY_DELAY_SECONDS ?? 5)
         }
 
+        # The original retry used a fresh web request session as well.
+        Clear-HuduRequestCookies -Session $Script:Int_HuduWebSession
         try {
             $Results = Invoke-RestMethod @RestMethod
         } catch {
@@ -140,11 +141,23 @@ function Invoke-HuduRequest {
                 request = "$Method $Uri"
                 resolution = "Retry failed as well. Handle this error here or avoid it prior."
             }
-            Write-Error "$_"
             return $null
         }
     }
 
 
     $Results
+}
+
+function Clear-HuduRequestCookies {
+    param([Microsoft.PowerShell.Commands.WebRequestSession]$Session)
+
+    if ($Session.Cookies.Count -eq 0) { return }
+    if ($Session.Cookies.PSObject.Methods['GetAllCookies']) {
+        # Expire in place: replacing the container would reset the pooled HTTP client.
+        foreach ($cookie in $Session.Cookies.GetAllCookies()) { $cookie.Expired = $true }
+    } else {
+        # PowerShell 7.0's runtime has no GetAllCookies or persistent WebSession client.
+        $Session.Cookies = [System.Net.CookieContainer]::new()
+    }
 }

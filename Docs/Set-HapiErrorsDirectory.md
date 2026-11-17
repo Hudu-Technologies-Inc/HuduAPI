@@ -18,8 +18,9 @@ Set-HapiErrorsDirectory [[-Path] <String>] [[-skipRetry] <Boolean>] [[-Color] <S
 ```
 
 ## DESCRIPTION
-By default a failed request is reported only on the error stream, with its details on the verbose stream (`-Verbose`).
-Calling this cmdlet also writes those details to a log file in -Path and to the host.
+Failed requests return null after the existing retry behavior, with diagnostics available through `-Verbose`.
+Calling this cmdlet also writes those details to a log file in -Path and to the host. Setting a directory is optional.
+With `-skipRetry $true`, non-rate-limited failures return null quietly without logging, including expected duplicate relations.
 
 ## EXAMPLES
 

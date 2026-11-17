@@ -107,14 +107,25 @@ Describe 'Existing asset identity' {
     }
 
     It 'still fetches the asset when ExistingAsset is omitted' {
+        $script:asset.company_id = 9
+        $script:asset.asset_layout_id = 8
         $result = Set-HuduAsset -Id 42 -Name 'Updated' -Confirm:$false
         $result.asset.id | Should -Be 42
+        $result.asset.company_id | Should -Be 9
+        $result.asset.asset_layout_id | Should -Be 8
         Should -Invoke Get-HuduAssets -Times 1 -Exactly -ParameterFilter { $Id -eq 42 }
-        Should -Invoke Invoke-HuduRequest -Times 1 -Exactly
+        Should -Invoke Invoke-HuduRequest -Times 1 -Exactly -ParameterFilter { $Resource -eq '/api/v1/companies/9/assets/42' }
+    }
+
+    It 'produces the same payload from a fresh ExistingAsset while avoiding only the GET' {
+        $normal = Set-HuduAsset -Id 42 -Name 'Updated' -Confirm:$false
+        $cached = Set-HuduAsset -Id 42 -Name 'Updated' -ExistingAsset $script:asset -Confirm:$false
+        ($normal | ConvertTo-Json -Depth 10 -Compress) | Should -Be ($cached | ConvertTo-Json -Depth 10 -Compress)
+        Should -Invoke Get-HuduAssets -Times 1 -Exactly
     }
 }
 
-Describe 'Skipped retry diagnostics' {
+Describe 'Legacy retries and optional diagnostics' {
     BeforeEach {
         $script:logDirectory = Join-Path $TestDrive ([guid]::NewGuid().ToString())
         New-Item -ItemType Directory -Path $script:logDirectory | Out-Null
@@ -125,6 +136,7 @@ Describe 'Skipped retry diagnostics' {
         $script:SKIP_HAPI_ERROR_RETRY = $false
         $script:SKIP_HAPI_POST_RETRY = $false
         $script:HAPI_RETRY_DELAY_SECONDS = 0
+        $script:HAPI_RATE_LIMIT_WINDOW_SECONDS = $null
         Mock Get-HuduApiKey { ConvertTo-SecureString 'test-api-key' -AsPlainText -Force }
         Mock Get-HuduBaseURL { 'https://test.example' }
         Mock Invoke-RestMethod { throw 'Simulated server failure' }
@@ -132,7 +144,7 @@ Describe 'Skipped retry diagnostics' {
         Mock Write-Host {}
     }
 
-    It 'logs the failure when <Option> skips retries' -ForEach @(
+    It 'returns null quietly when <Option> skips retries, even with ErrorAction Stop' -ForEach @(
         @{ Option = 'SkipPostRetry' }
         @{ Option = 'SkipRetry' }
     ) {
@@ -142,17 +154,10 @@ Describe 'Skipped retry diagnostics' {
         } else {
             Set-HapiErrorsDirectory -Path $script:logDirectory -skipRetry $true | Out-Null
         }
-        $records = @(Invoke-HuduRequest -Method POST -Resource '/api/v1/assets' -Body '{"secret":"body-secret"}' -Verbose -ErrorAction SilentlyContinue -ErrorVariable requestErrors 4>&1)
-        $logs = @(Get-ChildItem $script:logDirectory -Filter '*.log')
-        $logs.Count | Should -Be 1
-        $content = Get-Content $logs[0].FullName -Raw
-        $content | Should -Match 'Retry skipped'
-        $content | Should -Match 'Simulated server failure'
-        $content | Should -Match 'POST https://test.example/api/v1/assets'
-        $content | Should -Not -Match 'test-api-key|body-secret'
-        ($records | Where-Object { $_ -is [System.Management.Automation.VerboseRecord] } | Out-String) |
-            Should -Match 'Retry skipped'
-        $requestErrors | Should -Not -BeNullOrEmpty
+        @(Invoke-HuduRequest -Method POST -Resource '/api/v1/assets' -Body '{"secret":"body-secret"}' -ErrorAction Stop 2>&1 3>&1) |
+            Should -BeNullOrEmpty
+        @(Get-ChildItem $script:logDirectory -Filter '*.log').Count | Should -Be 0
+        Should -Invoke Write-Host -Times 0 -Exactly
         Should -Invoke Invoke-RestMethod -Times 1 -Exactly
         Should -Invoke Start-Sleep -Times 0 -Exactly
     }
@@ -165,18 +170,40 @@ Describe 'Skipped retry diagnostics' {
         Should -Invoke Invoke-RestMethod -Times 1 -Exactly
     }
 
-    It 'logs before honoring ErrorAction Stop' {
-        Set-HuduRequestOption -SkipPostRetry $true | Out-Null
+    It 'returns null after exhausted retries under ErrorAction Stop and logs only when configured' {
         Set-HapiErrorsDirectory -Path $script:logDirectory | Out-Null
-        { Invoke-HuduRequest -Method POST -Resource '/api/v1/assets' -ErrorAction Stop } |
-            Should -Throw '*Simulated server failure*'
-        @(Get-ChildItem $script:logDirectory -Filter '*.log').Count | Should -Be 1
-        Should -Invoke Invoke-RestMethod -Times 1 -Exactly
+        @(Invoke-HuduRequest -Method POST -Resource '/api/v1/assets' -Body '{"secret":"body-secret"}' -ErrorAction Stop 2>&1) |
+            Should -BeNullOrEmpty
+        $logs = @(Get-ChildItem $script:logDirectory -Filter '*.log')
+        $logs.Count | Should -Be 2
+        ($logs | Get-Content -Raw | Out-String) | Should -Not -Match 'test-api-key|body-secret'
+        Should -Invoke Invoke-RestMethod -Times 2 -Exactly
+    }
+
+    It 'keeps failure diagnostics optional without configuring a log directory' {
+        Invoke-HuduRequest -Resource '/api/v1/assets' -ErrorAction Stop | Should -BeNullOrEmpty
+        @(Get-ChildItem $script:logDirectory -Filter '*.log').Count | Should -Be 0
+        Should -Invoke Write-Host -Times 0 -Exactly
     }
 
     It 'still retries a failed POST by default' {
+        $script:HAPI_RETRY_DELAY_SECONDS = $null
         Invoke-HuduRequest -Method POST -Resource '/api/v1/assets' -ErrorAction SilentlyContinue
         Should -Invoke Invoke-RestMethod -Times 2 -Exactly
-        Should -Invoke Start-Sleep -Times 1 -Exactly
+        Should -Invoke Start-Sleep -Times 1 -Exactly -ParameterFilter { $Seconds -eq 5 }
+    }
+
+    It 'retains rate-limit timing for <Scenario>' -ForEach @(
+        @{ Scenario = 'the default five-minute window'; Window = 300; At = '2026-11-17T12:04:58'; Expected = 4 }
+        @{ Scenario = 'an explicitly configured window'; Window = 17; At = '2026-11-17T00:00:35'; Expected = 18 }
+    ) {
+        if ($Window -ne 300) { Set-HuduRequestOption -RateLimitWindowSeconds $Window | Out-Null }
+        $script:clock = [datetime]$At
+        Mock Get-Date { $script:clock }
+        Mock Get-Random { 2 }
+        Mock Invoke-RestMethod { throw '429 (Too Many Requests)' }
+        Invoke-HuduRequest -Resource '/api/v1/assets' -ErrorAction Stop | Should -BeNullOrEmpty
+        Should -Invoke Start-Sleep -Times 1 -Exactly -ParameterFilter { $Seconds -eq $Expected }
+        Should -Invoke Invoke-RestMethod -Times 2 -Exactly
     }
 }

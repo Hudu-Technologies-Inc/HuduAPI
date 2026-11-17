@@ -20,7 +20,8 @@ Set-HuduRequestOption [[-SkipPostRetry] <Boolean>] [[-RetryDelaySeconds] <Int32>
 ## DESCRIPTION
 A failed request (other than a rate-limited one) is retried once after -RetryDelaySeconds.
 A POST that failed after Hudu had already created the record (for example a timeout) then creates it a second time; -SkipPostRetry turns the retry off for POST requests only.
-Skipping retries does not disable verbose diagnostics or opt-in error logs.
+Skipping retries returns null quietly, without logging the skipped failure, as with `Set-HapiErrorsDirectory -skipRetry $true`.
+Other failures return null after one retry, preserving the existing behavior even with `-ErrorAction Stop`.
 
 A rate-limited request waits until the next rate limit window starts (plus a few seconds of jitter), then is retried.
 Windows are -RateLimitWindowSeconds long, counted from midnight.

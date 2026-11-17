@@ -22,6 +22,10 @@ Set-HuduAsset [[-Name] <String>] [[-CompanyId] <Int32>] [[-AssetLayoutId] <Int32
 ## DESCRIPTION
 Uses Hudu API to update an Asset
 
+Existing calls continue to fetch the current asset before updating it. `-ExistingAsset` is an optional optimization,
+not a required migration change. Supply a complete, current asset from the same Hudu instance. Refresh it after
+moving the asset or changing its layout; a cached snapshot can otherwise send stale fields or company information.
+
 ## EXAMPLES
 
 ### EXAMPLE 1
