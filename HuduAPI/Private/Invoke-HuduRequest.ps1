@@ -76,11 +76,21 @@ function Invoke-HuduRequest {
     }
     Write-Verbose ( '{0} [{1}]' -f $Method, $Uri )
 
+    # Reuse connections while keeping each call's headers and cookies independent.
+    if (-not $Script:Int_HuduWebSession) {
+        $Script:Int_HuduWebSession = [Microsoft.PowerShell.Commands.WebRequestSession]::new()
+        $Script:Int_HuduDefaultUserAgent = $Script:Int_HuduWebSession.UserAgent
+    }
+    $Script:Int_HuduWebSession.Headers.Clear()
+    $Script:Int_HuduWebSession.UserAgent = $Script:Int_HuduDefaultUserAgent
+    Clear-HuduRequestCookies -Session $Script:Int_HuduWebSession
+
     $RestMethod = @{
         Method      = $Method
         Uri         = $Uri
         Headers     = $Headers
         ContentType = $ContentType
+        WebSession  = $Script:Int_HuduWebSession
     }
 
     if ($Body) {
@@ -98,9 +108,8 @@ function Invoke-HuduRequest {
     } catch {
         $errorMessage = $_.Exception.Message
         if ($errorMessage -ilike '*Retry later*' -or $errorMessage -ilike '*429*Too Many Requests*') {
-            $now = Get-Date
-            $windowLength = 5 * 60  # 5 minutes in seconds
-            $secondsIntoWindow = (($now.Minute % 5) * 60) + $now.Second
+            $windowLength = $script:HAPI_RATE_LIMIT_WINDOW_SECONDS ?? 300
+            $secondsIntoWindow = [int][math]::Floor((Get-Date).TimeOfDay.TotalSeconds) % $windowLength
             $secondsUntilNextWindow = [math]::Max(0, $windowLength - $secondsIntoWindow)
 
             $jitter = Get-Random -Minimum 1 -Maximum 5
@@ -110,21 +119,26 @@ function Invoke-HuduRequest {
         } elseif ($errorMessage -ilike '*Not Found*') {
             return $null
         } else {
-            if ($script:SKIP_HAPI_ERROR_RETRY -and $true -eq $script:SKIP_HAPI_ERROR_RETRY) { return $null }
+            if (($script:SKIP_HAPI_ERROR_RETRY -and $true -eq $script:SKIP_HAPI_ERROR_RETRY) -or
+                ($script:SKIP_HAPI_POST_RETRY -and $Method -eq 'POST')) {
+                return $null
+            }
             Write-APIErrorObject -name "$($resource ?? 'general')-$($method ?? 'unknown')" -ErrorObject @{
                 exception = $_
-                request = $RestMethod
-                resolution = "Trying again in 5 seconds."
+                request = "$Method $Uri"
+                resolution = "Trying again in $($script:HAPI_RETRY_DELAY_SECONDS ?? 5) seconds."
             }
-            Start-Sleep -Seconds 5
+            Start-Sleep -Seconds ($script:HAPI_RETRY_DELAY_SECONDS ?? 5)
         }
 
+        # The original retry used a fresh web request session as well.
+        Clear-HuduRequestCookies -Session $Script:Int_HuduWebSession
         try {
             $Results = Invoke-RestMethod @RestMethod
         } catch {
             Write-APIErrorObject -name "$($resource ?? 'general')-$($method ?? 'unknown')-retry" -ErrorObject @{
                 exception = $_
-                request = $RestMethod
+                request = "$Method $Uri"
                 resolution = "Retry failed as well. Handle this error here or avoid it prior."
             }
             return $null
@@ -133,4 +147,17 @@ function Invoke-HuduRequest {
 
 
     $Results
+}
+
+function Clear-HuduRequestCookies {
+    param([Microsoft.PowerShell.Commands.WebRequestSession]$Session)
+
+    if ($Session.Cookies.Count -eq 0) { return }
+    if ($Session.Cookies.PSObject.Methods['GetAllCookies']) {
+        # Expire in place: replacing the container would reset the pooled HTTP client.
+        foreach ($cookie in $Session.Cookies.GetAllCookies()) { $cookie.Expired = $true }
+    } else {
+        # PowerShell 7.0's runtime has no GetAllCookies or persistent WebSession client.
+        $Session.Cookies = [System.Net.CookieContainer]::new()
+    }
 }

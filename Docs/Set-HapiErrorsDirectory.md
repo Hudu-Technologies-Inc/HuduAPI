@@ -8,7 +8,7 @@ schema: 2.0.0
 # Set-HapiErrorsDirectory
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Turns on writing failed-request details to log files and the host.
 
 ## SYNTAX
 
@@ -18,21 +18,23 @@ Set-HapiErrorsDirectory [[-Path] <String>] [[-skipRetry] <Boolean>] [[-Color] <S
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Failed requests return null after the existing retry behavior, with diagnostics available through `-Verbose`.
+Calling this cmdlet also writes those details to a log file in -Path and to the host. Setting a directory is optional.
+With `-skipRetry $true`, non-rate-limited failures return null quietly without logging, including expected duplicate relations.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Set-HapiErrorsDirectory
 ```
 
-{{ Add example description here }}
+Logs failed requests under the local application data folder, in a folder named after the Hudu instance.
 
 ## PARAMETERS
 
 ### -Color
-{{ Fill Color Description }}
+Host colour for the logged details.
 
 ```yaml
 Type: String
@@ -48,7 +50,7 @@ Accept wildcard characters: False
 ```
 
 ### -Path
-{{ Fill Path Description }}
+Folder for the log files. Defaults to `<LocalApplicationData>/<hudu host>-errors`.
 
 ```yaml
 Type: String
@@ -63,7 +65,7 @@ Accept wildcard characters: False
 ```
 
 ### -skipRetry
-{{ Fill skipRetry Description }}
+Do not retry a failed request (other than a rate-limited one).
 
 ```yaml
 Type: Boolean

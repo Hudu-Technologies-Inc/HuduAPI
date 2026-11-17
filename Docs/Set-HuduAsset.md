@@ -15,12 +15,16 @@ Update an Asset
 ```
 Set-HuduAsset [[-Name] <String>] [[-CompanyId] <Int32>] [[-AssetLayoutId] <Int32>] [[-Fields] <Array>]
  [-Id] <Int32> [[-PrimarySerial] <String>] [[-PrimaryMail] <String>] [[-PrimaryModel] <String>]
- [[-PrimaryManufacturer] <String>] [[-Slug] <String>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm]
+ [[-PrimaryManufacturer] <String>] [[-Slug] <String>] [[-ExistingAsset] <Object>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm]
  [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Uses Hudu API to update an Asset
+
+Existing calls continue to fetch the current asset before updating it. `-ExistingAsset` is an optional optimization,
+not a required migration change. Supply a complete, current asset from the same Hudu instance. Refresh it after
+moving the asset or changing its layout; a cached snapshot can otherwise send stale fields or company information.
 
 ## EXAMPLES
 
@@ -176,6 +180,22 @@ Aliases:
 
 Required: False
 Position: 10
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ExistingAsset
+The asset as already returned by Get-HuduAssets. Its id must match -Id.
+The update is built from it instead of fetching the asset again.
+
+```yaml
+Type: Object
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 11
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

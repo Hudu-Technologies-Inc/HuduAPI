@@ -216,6 +216,7 @@
     'Set-HuduVLANZone',
     'Set-HuduRackStorageItem',
     'Set-HuduRackStorage',
+    'Set-HuduRequestOption',
     'Set-HuduVLAN',
     'Set-HuduVLANZone',
     'Set-HuduWebsite',
@@ -251,7 +252,7 @@
 
         PSData = @{
 
-            #Prerelease = 'alpha1'
+            Prerelease = ''
             # Tags applied to this module. These help with module discovery in online galleries.
             # Tags = @()
 
